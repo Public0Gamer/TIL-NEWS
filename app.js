@@ -294,20 +294,194 @@ function renderLiveBlogWidget() {
     `).join("");
 }
 
-// 5. Render Sponsor Ad Banners
-function renderAdBanners() {
-    const ads = StorageService.getAds();
-    if (!ads) return;
+// 5. Universal Ad & Promotional Campaigns Engine
+const AdEngine = {
+    init() {
+        this.renderRandomPopup();
+        this.renderFloatingBottomBar();
+        this.renderInPageSlots();
+    },
 
-    const headerAd = document.getElementById("header-ad-banner");
-    if (headerAd && ads.headerBanner && ads.headerBanner.enabled) {
-        headerAd.innerHTML = `
-            <a href="${ads.headerBanner.linkUrl}" target="_blank" class="block w-full max-h-24 overflow-hidden rounded-xl border border-slate-200 relative group">
-                <img src="${ads.headerBanner.imageUrl}" alt="${ads.headerBanner.title}" class="w-full h-20 sm:h-24 object-cover">
-                <span class="absolute top-1 right-1 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded uppercase font-bold">विज्ञापन (Ad)</span>
-            </a>
-        `;
-        headerAd.classList.remove("hidden");
+    // A. High-Impact Random Promotional Center Popup Modal
+    renderRandomPopup(forceAd = null) {
+        // Do not auto-display on admin page unless previewing
+        const isAdmin = window.location.pathname.includes("admin.html");
+        if (isAdmin && !forceAd) return;
+
+        // Retrieve a random active popup ad
+        const ad = forceAd || StorageService.getRandomActiveAd("popup");
+        if (!ad) return;
+
+        // Prevent popup spam within the exact same session visit unless forced
+        if (!forceAd) {
+            const popupShown = sessionStorage.getItem("todayindia_popup_dismissed_" + ad.id);
+            if (popupShown) return;
+        }
+
+        // Delay popup appearance by 2.2 seconds for great user experience
+        setTimeout(() => {
+            const existing = document.getElementById("universal-ad-popup");
+            if (existing) existing.remove();
+
+            const popupModal = document.createElement("div");
+            popupModal.id = "universal-ad-popup";
+            popupModal.className = "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs transition-opacity duration-300 font-hindi";
+            popupModal.innerHTML = `
+                <div class="bg-white rounded-3xl overflow-hidden shadow-2xl max-w-lg w-full border border-slate-200 transform scale-100 transition-all relative flex flex-col max-h-[90vh]">
+                    <!-- Header Bar with Sponsored Badge & Close Button -->
+                    <div class="flex items-center justify-between px-5 py-3 bg-gradient-to-r from-slate-900 to-slate-800 text-white shrink-0">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-amber-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider">
+                                प्रायोजित विज्ञापन (SPONSORED)
+                            </span>
+                            <span class="text-xs text-slate-300 truncate max-w-[200px]">${ad.advertiser || "विशेष घोषणा"}</span>
+                        </div>
+                        <button type="button" onclick="AdEngine.closePopup('${ad.id}')" class="w-8 h-8 rounded-full bg-white/15 hover:bg-red-600 flex items-center justify-center text-white transition cursor-pointer text-sm font-bold" title="बंद करें">
+                            ✕
+                        </button>
+                    </div>
+
+                    <!-- Scrollable Ad Body -->
+                    <div class="p-5 overflow-y-auto space-y-4">
+                        <!-- Promotional Image -->
+                        <div class="relative rounded-2xl overflow-hidden border border-slate-100 shadow-xs bg-slate-50 group">
+                            <img src="${ad.imageUrl}" alt="${ad.title}" class="w-full h-48 sm:h-56 object-cover transition duration-300 group-hover:scale-102">
+                            <div class="absolute bottom-2 right-2 bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-0.5 rounded">
+                                <i class="fa-solid fa-bullhorn text-amber-400 mr-1"></i> विशेष प्रमोशन
+                            </div>
+                        </div>
+
+                        <!-- Content -->
+                        <div>
+                            <h3 class="text-lg sm:text-xl font-black text-slate-900 leading-snug">
+                                ${ad.title}
+                            </h3>
+                            ${ad.description ? `
+                                <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+                                    ${ad.description}
+                                </p>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <!-- Action Footer with CTA & Close Buttons -->
+                    <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-3 shrink-0">
+                        <button type="button" onclick="AdEngine.closePopup('${ad.id}')" class="text-xs text-slate-500 hover:text-slate-800 font-semibold px-4 py-2 rounded-xl transition cursor-pointer">
+                            बाद में देखें (Skip)
+                        </button>
+                        <a href="${ad.linkUrl}" target="_blank" onclick="AdEngine.handleAdClick('${ad.id}')" class="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold text-xs sm:text-sm px-6 py-2.5 rounded-xl shadow-md transition transform active:scale-98">
+                            <span>${ad.ctaText || "ऑफर देखें व संपर्क करें"}</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(popupModal);
+            StorageService.recordAdImpression(ad.id);
+        }, forceAd ? 100 : 2200);
+    },
+
+    closePopup(adId) {
+        const modal = document.getElementById("universal-ad-popup");
+        if (modal) {
+            modal.style.opacity = "0";
+            setTimeout(() => modal.remove(), 250);
+        }
+        if (adId) {
+            sessionStorage.setItem("todayindia_popup_dismissed_" + adId, "true");
+        }
+    },
+
+    // B. Sticky Floating Bottom Promotion Bar
+    renderFloatingBottomBar() {
+        const isAdmin = window.location.pathname.includes("admin.html");
+        if (isAdmin) return;
+
+        const ad = StorageService.getRandomActiveAd("bottom_bar");
+        if (!ad) return;
+
+        const isDismissed = sessionStorage.getItem("todayindia_bottom_dismissed_" + ad.id);
+        if (isDismissed) return;
+
+        setTimeout(() => {
+            const existing = document.getElementById("universal-floating-bottom-bar");
+            if (existing) existing.remove();
+
+            const bar = document.createElement("div");
+            bar.id = "universal-floating-bottom-bar";
+            bar.className = "fixed bottom-3 left-3 right-3 sm:left-auto sm:right-6 sm:max-w-md z-40 bg-white/95 backdrop-blur-md rounded-2xl p-3 shadow-2xl border border-slate-200 font-hindi transition-all duration-300 transform translate-y-0";
+            bar.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <img src="${ad.imageUrl}" alt="${ad.title}" class="w-14 h-14 object-cover rounded-xl shrink-0 border border-slate-100">
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[9px] bg-red-100 text-red-700 font-black px-1.5 py-0.2 rounded uppercase">प्रायोजित</span>
+                            <button type="button" onclick="AdEngine.closeBottomBar('${ad.id}')" class="text-slate-400 hover:text-red-600 text-xs px-1 cursor-pointer font-bold">✕</button>
+                        </div>
+                        <h4 class="text-xs font-bold text-slate-900 truncate leading-snug mt-0.5">${ad.title}</h4>
+                        <div class="flex items-center justify-between mt-1">
+                            <span class="text-[10px] text-slate-500 truncate max-w-[150px]">${ad.advertiser || ""}</span>
+                            <a href="${ad.linkUrl}" target="_blank" onclick="AdEngine.handleAdClick('${ad.id}')" class="text-[11px] bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-1 rounded-lg transition inline-flex items-center gap-1 shrink-0">
+                                <span>${ad.ctaText || "देखें"}</span> ➔
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(bar);
+            StorageService.recordAdImpression(ad.id);
+        }, 1500);
+    },
+
+    closeBottomBar(adId) {
+        const bar = document.getElementById("universal-floating-bottom-bar");
+        if (bar) bar.remove();
+        if (adId) sessionStorage.setItem("todayindia_bottom_dismissed_" + adId, "true");
+    },
+
+    // C. Dynamic In-Page & Header Slots
+    renderInPageSlots() {
+        const headerSlot = document.getElementById("header-ad-banner");
+        if (headerSlot) {
+            const ad = StorageService.getRandomActiveAd("inpage") || StorageService.getRandomActiveAd("all");
+            if (ad) {
+                headerSlot.innerHTML = `
+                    <div class="relative group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs">
+                        <div class="flex flex-col sm:flex-row items-center justify-between p-2 sm:p-3 gap-3 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <img src="${ad.imageUrl}" alt="" class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover border border-white/20 shrink-0">
+                                <div class="min-w-0">
+                                    <span class="text-[9px] bg-amber-400 text-slate-950 font-black px-1.5 py-0.5 rounded uppercase">विज्ञापन (SPONSORED)</span>
+                                    <h4 class="text-xs sm:text-sm font-bold text-white truncate mt-0.5">${ad.title}</h4>
+                                    <p class="text-[11px] text-slate-300 truncate hidden sm:block">${ad.advertiser || ""}</p>
+                                </div>
+                            </div>
+                            <a href="${ad.linkUrl}" target="_blank" onclick="AdEngine.handleAdClick('${ad.id}')" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs px-4 py-2 rounded-xl transition shrink-0 flex items-center gap-1.5 shadow-sm">
+                                <span>${ad.ctaText || "ऑफर देखें"}</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+                `;
+                headerSlot.classList.remove("hidden");
+                StorageService.recordAdImpression(ad.id);
+            }
+        }
+    },
+
+    handleAdClick(adId) {
+        if (adId) {
+            StorageService.recordAdClick(adId);
+        }
+    }
+};
+
+window.AdEngine = AdEngine;
+
+function renderAdBanners() {
+    if (typeof AdEngine !== 'undefined') {
+        AdEngine.init();
     }
 }
 

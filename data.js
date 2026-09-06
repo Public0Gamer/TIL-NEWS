@@ -200,19 +200,65 @@ const INITIAL_LIVE_BLOGS = [
     }
 ];
 
-// Initial Advertisement Settings
+// Initial Advertisement Campaigns (Multi-Format Ad Engine)
+const INITIAL_AD_CAMPAIGNS = [
+    {
+        id: "ad-101",
+        title: "श्री श्याम ज्वेलर्स - कानपुर धनतेरस व विवाह महासेल",
+        advertiser: "श्री श्याम ज्वेलर्स, माल रोड, कानपुर",
+        description: "100% हॉलमार्क शुद्ध सोने व हीरे के आभूषणों के मेकिंग चार्ज पर 25% तक की विशेष छूट। सीमित समय का ऑफर!",
+        imageUrl: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&auto=format&fit=crop&q=80",
+        linkUrl: "https://wa.me/919876543210?text=नमस्ते,%20मुझे%20आपके%20विज्ञापन%20के%20बारे%20में%20जानकारी%20चाहिए",
+        ctaText: "ऑफर देखें व संपर्क करें",
+        placement: "all", // "popup", "bottom_bar", "inpage", "all"
+        enabled: true,
+        impressions: 0,
+        clicks: 0,
+        createdAt: "2026-09-06"
+    },
+    {
+        id: "ad-102",
+        title: "कानपुर ग्लोबल एकेडमी - सत्र 2026-27 सीधा प्रवेश प्रारंभ",
+        advertiser: "कानपुर ग्लोबल ग्रुप ऑफ इंस्टीट्यूशंस, कल्याणपुर",
+        description: "स्मार्ट क्लास, रोबोटिक्स लैब और उच्च योग्य संकाय। नर्सरी से 12वीं तक दाखिले के लिए फॉर्म भरें।",
+        imageUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&auto=format&fit=crop&q=80",
+        linkUrl: "https://wa.me/919876543210?text=नमस्ते,%20एडमिशन%20के%20लिए%20जानकारी%20चाहिए",
+        ctaText: "ऑनलाइन दाखिला फॉर्म",
+        placement: "popup",
+        enabled: true,
+        impressions: 0,
+        clicks: 0,
+        createdAt: "2026-09-06"
+    },
+    {
+        id: "ad-103",
+        title: "ग्रीन वैली रेजिडेंसी - गंगा बैराज रोड पर KDA एप्रूव्ड प्लॉट्स",
+        advertiser: "ग्रीन इंफ्रा डेवलपर्स, कानपुर",
+        description: "मात्र ₹21 लाख से शुरू। पार्क, क्लब हाउस, 24 घंटे सुरक्षा और आसान बैंक लोन सुविधा।",
+        imageUrl: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&auto=format&fit=crop&q=80",
+        linkUrl: "https://wa.me/919876543210?text=नमस्ते,%20प्लॉट%20विजिट%20बुक%20करनी%20है",
+        ctaText: "मुफ्त साइट विजिट बुक करें",
+        placement: "bottom_bar",
+        enabled: true,
+        impressions: 0,
+        clicks: 0,
+        createdAt: "2026-09-06"
+    }
+];
+
+// Initial Advertisement Settings (Backwards Compatibility)
 const INITIAL_ADS = {
     headerBanner: {
         enabled: true,
-        title: "कानपुर उद्योग एवं व्यापार मेला 2026",
-        imageUrl: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&auto=format&fit=crop&q=80",
-        linkUrl: "#"
+        title: "श्री श्याम ज्वेलर्स - कानपुर धनतेरस व विवाह महासेल",
+        imageUrl: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&auto=format&fit=crop&q=80",
+        linkUrl: "https://wa.me/919876543210"
     },
     sidebarBanner: {
         enabled: true,
-        title: "कानपुर ज्वेलर्स महाकुंभ",
-        imageUrl: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&auto=format&fit=crop&q=80",
-        linkUrl: "#"
+        title: "कानपुर ग्लोबल एकेडमी - प्रवेश प्रारंभ",
+        imageUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&auto=format&fit=crop&q=80",
+        linkUrl: "https://wa.me/919876543210"
     }
 };
 
@@ -436,19 +482,138 @@ const StorageService = {
         return tips;
     },
 
-    // Ads Settings
-    getAds() {
-        const stored = localStorage.getItem("todayindia_ads");
+    // ==========================================
+    // Universal Ad Campaigns Engine (Multi-Ad, Random Popups & Banners)
+    // ==========================================
+    getAdCampaigns() {
+        const stored = localStorage.getItem("todayindia_ad_campaigns");
         if (!stored) {
-            localStorage.setItem("todayindia_ads", JSON.stringify(INITIAL_ADS));
-            return INITIAL_ADS;
+            localStorage.setItem("todayindia_ad_campaigns", JSON.stringify(INITIAL_AD_CAMPAIGNS));
+            return INITIAL_AD_CAMPAIGNS;
         }
         try {
-            return JSON.parse(stored);
+            const parsed = JSON.parse(stored);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                return parsed;
+            }
+            localStorage.setItem("todayindia_ad_campaigns", JSON.stringify(INITIAL_AD_CAMPAIGNS));
+            return INITIAL_AD_CAMPAIGNS;
         } catch(e) {
-            return INITIAL_ADS;
+            return INITIAL_AD_CAMPAIGNS;
         }
     },
+
+    saveAdCampaigns(campaigns) {
+        localStorage.setItem("todayindia_ad_campaigns", JSON.stringify(campaigns));
+    },
+
+    addAdCampaign(ad) {
+        const campaigns = this.getAdCampaigns();
+        const newAd = {
+            id: "ad-" + Date.now(),
+            title: ad.title || "प्रायोजित विज्ञापन",
+            advertiser: ad.advertiser || "प्रायोजक / विज्ञापनदाता",
+            description: ad.description || "",
+            imageUrl: ad.imageUrl || "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&auto=format&fit=crop&q=80",
+            linkUrl: ad.linkUrl || "#",
+            ctaText: ad.ctaText || "विस्तार से देखें",
+            placement: ad.placement || "all", // "popup", "bottom_bar", "inpage", "all"
+            enabled: ad.enabled !== false,
+            impressions: 0,
+            clicks: 0,
+            createdAt: new Date().toISOString().split('T')[0]
+        };
+        campaigns.unshift(newAd);
+        this.saveAdCampaigns(campaigns);
+        return newAd;
+    },
+
+    updateAdCampaign(id, updatedFields) {
+        let campaigns = this.getAdCampaigns();
+        const index = campaigns.findIndex(c => c.id === id);
+        if (index !== -1) {
+            campaigns[index] = { ...campaigns[index], ...updatedFields };
+            this.saveAdCampaigns(campaigns);
+            return campaigns[index];
+        }
+        return null;
+    },
+
+    deleteAdCampaign(id) {
+        let campaigns = this.getAdCampaigns();
+        campaigns = campaigns.filter(c => c.id !== id);
+        this.saveAdCampaigns(campaigns);
+        return campaigns;
+    },
+
+    toggleAdStatus(id) {
+        let campaigns = this.getAdCampaigns();
+        const ad = campaigns.find(c => c.id === id);
+        if (ad) {
+            ad.enabled = !ad.enabled;
+            this.saveAdCampaigns(campaigns);
+            return ad.enabled;
+        }
+        return false;
+    },
+
+    recordAdImpression(id) {
+        try {
+            let campaigns = this.getAdCampaigns();
+            const ad = campaigns.find(c => c.id === id);
+            if (ad) {
+                ad.impressions = (parseInt(ad.impressions) || 0) + 1;
+                this.saveAdCampaigns(campaigns);
+                return ad.impressions;
+            }
+        } catch(e) {}
+        return 0;
+    },
+
+    recordAdClick(id) {
+        try {
+            let campaigns = this.getAdCampaigns();
+            const ad = campaigns.find(c => c.id === id);
+            if (ad) {
+                ad.clicks = (parseInt(ad.clicks) || 0) + 1;
+                this.saveAdCampaigns(campaigns);
+                return ad.clicks;
+            }
+        } catch(e) {}
+        return 0;
+    },
+
+    getRandomActiveAd(placement = "all") {
+        try {
+            const campaigns = this.getAdCampaigns();
+            const active = campaigns.filter(c => {
+                if (!c.enabled) return false;
+                if (placement === "all") return true;
+                return c.placement === placement || c.placement === "all";
+            });
+            if (active.length === 0) return null;
+            const randomIndex = Math.floor(Math.random() * active.length);
+            return active[randomIndex];
+        } catch(e) {
+            return null;
+        }
+    },
+
+    // Backwards Compatibility for existing templates
+    getAds() {
+        const campaigns = this.getAdCampaigns();
+        const active = campaigns.find(c => c.enabled) || campaigns[0] || INITIAL_AD_CAMPAIGNS[0];
+        return {
+            headerBanner: {
+                enabled: active ? active.enabled : true,
+                title: active ? active.title : "विशेष विज्ञापन",
+                imageUrl: active ? active.imageUrl : "",
+                linkUrl: active ? active.linkUrl : "#"
+            },
+            campaigns: campaigns
+        };
+    },
+
     saveAds(ads) {
         localStorage.setItem("todayindia_ads", JSON.stringify(ads));
     },
@@ -456,13 +621,16 @@ const StorageService = {
     // Analytics Counter
     getAnalytics() {
         const articles = this.getArticles();
+        const campaigns = this.getAdCampaigns();
         return {
             todayViews: TrackingService.getTotalViews(),
             liveVisitors: TrackingService.getLiveVisitors(),
             totalStories: articles.length,
             totalTips: this.getCitizenTips().length,
             loginStats: TrackingService.getLoginStats(),
-            uploadLedgerCount: TrackingService.getUploadLedger().length
+            uploadLedgerCount: TrackingService.getUploadLedger().length,
+            adCampaignsCount: campaigns.length,
+            activeAdsCount: campaigns.filter(c => c.enabled).length
         };
     }
 };

@@ -432,7 +432,7 @@
                 </button>
                 <button onclick="switchTab('ads')" id="nav-btn-ads" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 transition flex items-center justify-between">
                     <span class="flex items-center gap-2"><i class="fa-solid fa-rectangle-ad w-5 text-center text-indigo-600"></i> विज्ञापन प्रबंधन (Ad Space)</span>
-                    <span class="text-[10px] bg-slate-200 px-1.5 py-0.5 rounded">Ads</span>
+                    <span id="sidebar-ads-count" class="text-xs bg-indigo-100 text-indigo-800 font-mono px-1.5 py-0.5 rounded font-bold">3</span>
                 </button>
                 <button onclick="switchTab('audit')" id="nav-btn-audit" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 transition flex items-center justify-between">
                     <span class="flex items-center gap-2"><i class="fa-solid fa-list-check w-5 text-center text-purple-600"></i> अपलोड लेजर (Upload History)</span>
@@ -983,48 +983,148 @@
                 </div>
             </div>
 
-            <!-- SECTION 7: AD REVENUE & BANNER MANAGEMENT -->
+            <!-- SECTION 6: MULTI-AD CAMPAIGNS & PROMOTIONS MANAGER -->
             <div id="tab-ads" class="hidden space-y-6">
                 <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs font-hindi">
                     
-                    <div class="pb-3 mb-5 border-b border-slate-100 flex items-center justify-between">
+                    <!-- Header -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-5 border-b border-slate-100 gap-3">
                         <div>
-                            <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
-                                <i class="fa-solid fa-rectangle-ad text-indigo-600"></i> विज्ञापन व राजस्व प्रबंधन (Ad Manager)
-                            </h2>
-                            <p class="text-xs text-slate-500">वेबसाइट पर प्रायोजित बैनर और स्थानीय विज्ञापनों का नियंत्रण।</p>
+                            <div class="flex items-center gap-2">
+                                <span class="bg-indigo-100 text-indigo-800 text-[10px] font-black px-2 py-0.5 rounded uppercase font-mono">MULTI-AD ENGINE</span>
+                                <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
+                                    <i class="fa-solid fa-rectangle-ad text-indigo-600"></i> विज्ञापन व प्रमोशन हब (Campaign Manager)
+                                </h2>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">
+                                वेबसाइट के सभी पेजों पर रैंडम पॉपअप, फ्लोटिंग बॉटम बार और प्रायोजित बैनर विज्ञापनों का पूर्ण नियंत्रण।
+                            </p>
+                        </div>
+                        
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="toggleAddAdForm()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition shadow-xs flex items-center gap-1.5 cursor-pointer">
+                                <i class="fa-solid fa-plus"></i> नया विज्ञापन जोड़ें
+                            </button>
                         </div>
                     </div>
 
-                    <form id="ads-management-form" class="space-y-5">
-                        <!-- Header Leaderboard Banner -->
-                        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-3">
-                            <div class="flex items-center justify-between">
-                                <strong class="text-sm text-slate-900">1. मुख्य हेडर बैनर (Top Header Ad - 728x90)</strong>
-                                <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700">
-                                    <input type="checkbox" id="ad-header-enabled" class="w-4 h-4 text-red-600 rounded">
-                                    <span>सक्रिय (Show on Site)</span>
-                                </label>
-                            </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                                <div>
-                                    <label class="block text-slate-600 mb-1 font-semibold">विज्ञापनदाता / शीर्षक:</label>
-                                    <input type="text" id="ad-header-title" class="w-full p-2.5 rounded-lg border border-slate-300 bg-white">
-                                </div>
-                                <div>
-                                    <label class="block text-slate-600 mb-1 font-semibold">बैनर इमेज URL:</label>
-                                    <input type="url" id="ad-header-image" class="w-full p-2.5 rounded-lg border border-slate-300 bg-white">
-                                </div>
-                            </div>
+                    <!-- 4 Summary Stats Cards for Ads -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6 font-hindi">
+                        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                            <div class="text-[11px] text-slate-500 font-bold mb-0.5">कुल विज्ञापन (Total)</div>
+                            <h4 id="ad-stat-total" class="text-xl font-black text-slate-900 font-brand">3</h4>
+                            <span class="text-[10px] text-slate-400">पोर्टल में पंजीकृत</span>
+                        </div>
+                        <div class="bg-emerald-50 p-3.5 rounded-xl border border-emerald-200">
+                            <div class="text-[11px] text-emerald-800 font-bold mb-0.5">सक्रिय अभियान (Active)</div>
+                            <h4 id="ad-stat-active" class="text-xl font-black text-emerald-900 font-brand">3</h4>
+                            <span class="text-[10px] text-emerald-700">अभी लाइव चल रहे हैं</span>
+                        </div>
+                        <div class="bg-blue-50 p-3.5 rounded-xl border border-blue-200">
+                            <div class="text-[11px] text-blue-800 font-bold mb-0.5">कुल इम्प्रेशन्स (Views)</div>
+                            <h4 id="ad-stat-impressions" class="text-xl font-black text-blue-900 font-brand">0</h4>
+                            <span class="text-[10px] text-blue-600">पाठकों ने देखा</span>
+                        </div>
+                        <div class="bg-purple-50 p-3.5 rounded-xl border border-purple-200">
+                            <div class="text-[11px] text-purple-800 font-bold mb-0.5">कुल क्लिक्स (Clicks)</div>
+                            <h4 id="ad-stat-clicks" class="text-xl font-black text-purple-900 font-brand">0</h4>
+                            <span class="text-[10px] text-purple-600">विज्ञापन पर क्लिक</span>
+                        </div>
+                    </div>
+
+                    <!-- Creation / Edit Form Card -->
+                    <div id="add-ad-card" class="hidden mb-6 p-5 rounded-2xl border-2 border-dashed border-indigo-200 bg-indigo-50/40 space-y-4">
+                        <div class="flex items-center justify-between pb-2 border-b border-indigo-100">
+                            <h3 id="ad-form-title" class="text-sm font-black text-indigo-950 flex items-center gap-2">
+                                <i class="fa-solid fa-bullhorn text-indigo-600"></i> नया विज्ञापन / प्रमोशन अभियान बनाएं
+                            </h3>
+                            <span class="text-[11px] text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded font-bold">सभी पेजों पर रैंडम चलेगा</span>
                         </div>
 
-                        <!-- Submit Button -->
-                        <div class="flex justify-end">
-                            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl text-xs transition shadow-xs">
-                                विज्ञापन सेटिंग्स सहेजें (Save Ads)
+                        <form id="campaign-form" onsubmit="handleSaveAdCampaign(event)" class="space-y-4">
+                            <input type="hidden" id="campaign-id" value="">
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                                <div>
+                                    <label class="block text-slate-700 mb-1 font-bold">1. विज्ञापनदाता का नाम (Business / Client Name): *</label>
+                                    <input type="text" id="campaign-advertiser" placeholder="उदा: श्री श्याम ज्वेलर्स, माल रोड या आरके क्लासेज" required class="w-full p-2.5 rounded-xl border border-slate-300 bg-white focus:border-indigo-500 focus:outline-hidden">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-700 mb-1 font-bold">2. मुख्य आकर्षक शीर्षक (Ad Headline): *</label>
+                                    <input type="text" id="campaign-title" placeholder="उदा: महासेल 25% छूट या 2026 में सीधा दाखिला" required class="w-full p-2.5 rounded-xl border border-slate-300 bg-white focus:border-indigo-500 focus:outline-hidden">
+                                </div>
+                            </div>
+
+                            <div class="text-xs">
+                                <label class="block text-slate-700 mb-1 font-bold">3. विवरण / ऑफर पंचलाइन (Description):</label>
+                                <textarea id="campaign-desc" rows="2" placeholder="ऑफर या उत्पाद की पूरी जानकारी लिखें..." class="w-full p-2.5 rounded-xl border border-slate-300 bg-white focus:border-indigo-500 focus:outline-hidden"></textarea>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                                <div class="sm:col-span-2">
+                                    <label class="block text-slate-700 mb-1 font-bold">4. बैनर / इमेज URL या सैंपल चुनें: *</label>
+                                    <div class="flex gap-2">
+                                        <input type="url" id="campaign-image" placeholder="https://..." required class="flex-1 p-2.5 rounded-xl border border-slate-300 bg-white focus:border-indigo-500 focus:outline-hidden text-xs">
+                                        <button type="button" onclick="cycleSampleImages()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-3 py-2 rounded-xl font-bold text-xs shrink-0 cursor-pointer" title="डेमो इमेज चुनें">
+                                            🎨 सैंपल इमेज
+                                        </button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-slate-700 mb-1 font-bold">5. विज्ञापन प्रारूप (Ad Format):</label>
+                                    <select id="campaign-placement" class="w-full p-2.5 rounded-xl border border-slate-300 bg-white focus:border-indigo-500 focus:outline-hidden font-bold">
+                                        <option value="all">🔄 सभी फॉर्मेट (पॉपअप + बॉटम + बैनर)</option>
+                                        <option value="popup">🎯 रैंडम पॉपअप मोडल (Center Popup)</option>
+                                        <option value="bottom_bar">📌 फ्लोटिंग बॉटम बार (Sticky Bottom)</option>
+                                        <option value="inpage">📰 इन-पेज / हेडर बैनर (In-Page)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                                <div>
+                                    <label class="block text-slate-700 mb-1 font-bold">6. टारगेट लिंक (वेबसाइट URL, WhatsApp लिंक या फोन): *</label>
+                                    <input type="text" id="campaign-link" placeholder="उदा: https://wa.me/918840026359 या https://mysite.com" required class="w-full p-2.5 rounded-xl border border-slate-300 bg-white focus:border-indigo-500 focus:outline-hidden">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-700 mb-1 font-bold">7. बटन टेक्स्ट (CTA Text):</label>
+                                    <input type="text" id="campaign-cta" placeholder="उदा: ऑफर देखें व संपर्क करें / अभी कॉल करें" value="ऑफर देखें व संपर्क करें" class="w-full p-2.5 rounded-xl border border-slate-300 bg-white focus:border-indigo-500 focus:outline-hidden">
+                                </div>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="flex items-center justify-between pt-2 border-t border-indigo-100">
+                                <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700">
+                                    <input type="checkbox" id="campaign-enabled" checked class="w-4 h-4 text-emerald-600 rounded">
+                                    <span>तुरंत सक्रिय करें (Make Active)</span>
+                                </label>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" onclick="toggleAddAdForm(false)" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-4 py-2 rounded-xl text-xs transition cursor-pointer">
+                                        रद्द करें
+                                    </button>
+                                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2 rounded-xl text-xs transition shadow-xs flex items-center gap-1.5 cursor-pointer">
+                                        <i class="fa-solid fa-cloud-arrow-up"></i> विज्ञापन सुरक्षित करें (Save Ad)
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Campaigns List Table / Cards -->
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-sm font-black text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-list-check text-slate-600"></i> पंजीकृत विज्ञापन अभियान (Active Campaigns)
+                            </h3>
+                            <button type="button" onclick="resetToDefaultAds()" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold underline cursor-pointer">
+                                🔄 डिफॉल्ट डेमो विज्ञापन रीस्टोर करें
                             </button>
                         </div>
-                    </form>
+
+                        <div id="campaigns-table-container" class="overflow-x-auto rounded-xl border border-slate-200">
+                            <!-- Populated via renderAdCampaignsList() -->
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -1104,8 +1204,8 @@
     </div>
 
     <!-- Scripts -->
-    <script src="js/data.js?v=20260906_v6_real"></script>
-    <script src="js/app.js?v=20260906_v6_real"></script>
+    <script src="js/data.js?v=20260906_v7_adengine"></script>
+    <script src="js/app.js?v=20260906_v7_adengine"></script>
     <script>
         // Floating Toast Notification System
         window.showToast = window.showToast || function(message, type = "success") {
@@ -1512,6 +1612,8 @@
                 renderUploadLedgerTable();
             } else if (tabKey === 'dashboard') {
                 refreshDashboard();
+            } else if (tabKey === 'ads') {
+                renderAdCampaignsList();
             }
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1558,6 +1660,9 @@
 
             const sideLedger = document.getElementById('sidebar-ledger-count');
             if (sideLedger) sideLedger.innerText = TrackingService.getUploadLedger().length;
+
+            const sideAds = document.getElementById('sidebar-ads-count');
+            if (sideAds) sideAds.innerText = StorageService.getAdCampaigns().length;
 
             // Desk Login Tracker Stats
             const loginStats = TrackingService.getLoginStats();
@@ -2070,26 +2175,7 @@
                 window.showToast("⚡ लाइव ब्लॉग में नई अपडेट जोड़ दी गई है!", "success");
             });
 
-            // Ads Form
-            const adsForm = document.getElementById('ads-management-form');
-            adsForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const enabled = document.getElementById('ad-header-enabled').checked;
-                const title = document.getElementById('ad-header-title').value;
-                const image = document.getElementById('ad-header-image').value;
-
-                StorageService.saveAds({
-                    headerBanner: { enabled, title, imageUrl: image, linkUrl: "#" }
-                });
-
-                // Record in internal upload audit ledger
-                const session = getActiveSession();
-                const activeRole = session ? session.role : StorageService.getCurrentRole();
-                TrackingService.recordUploadEvent("विज्ञापन (Ad)", title || "शीर्ष बैनर विज्ञापन", "दीपक राजपूत (डायरेक्टर)", activeRole, "अपडेट");
-
-                renderUploadLedgerTable();
-                alert("विज्ञापन सेटिंग्स सफलतापूर्वक अपडेट हो गई हैं!");
-            });
+            // Ads handling is now managed by handleSaveAdCampaign() in Section 10
         }
 
         // 6. Breaking Ticker Manager
@@ -2473,15 +2559,261 @@
             window.showToast("⭐ यह खबर मुख्य लीड खबर (Hero Lead Story) बन गई है! होमपेज पर शीर्ष पर दिखेगी।", "success");
         };
 
-        // 10. Ads Form Init
-        function initAdsForm() {
-            const ads = StorageService.getAds();
-            if (!ads) return;
-            if (ads.headerBanner) {
-                document.getElementById('ad-header-enabled').checked = ads.headerBanner.enabled;
-                document.getElementById('ad-header-title').value = ads.headerBanner.title || "";
-                document.getElementById('ad-header-image').value = ads.headerBanner.imageUrl || "";
+        // ==========================================
+        // 10. Multi-Ad Campaigns & Promotions Hub
+        // ==========================================
+        const SAMPLE_AD_IMAGES = [
+            "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&auto=format&fit=crop&q=80", // Jewellery
+            "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&auto=format&fit=crop&q=80", // Education/School
+            "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&auto=format&fit=crop&q=80", // Real Estate
+            "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&auto=format&fit=crop&q=80", // Business Event
+            "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&auto=format&fit=crop&q=80"  // Tech/Hospital
+        ];
+        let currentSampleImgIdx = 0;
+
+        function cycleSampleImages() {
+            currentSampleImgIdx = (currentSampleImgIdx + 1) % SAMPLE_AD_IMAGES.length;
+            const imgInput = document.getElementById('campaign-image');
+            if (imgInput) {
+                imgInput.value = SAMPLE_AD_IMAGES[currentSampleImgIdx];
+                window.showToast("🎨 सैंपल इमेज चुनी गई!", "success");
             }
+        }
+
+        function toggleAddAdForm(forceState = null) {
+            const formCard = document.getElementById('add-ad-card');
+            if (!formCard) return;
+            if (forceState === true) {
+                formCard.classList.remove('hidden');
+            } else if (forceState === false) {
+                formCard.classList.add('hidden');
+                resetAdCampaignForm();
+            } else {
+                formCard.classList.toggle('hidden');
+                if (formCard.classList.contains('hidden')) {
+                    resetAdCampaignForm();
+                }
+            }
+        }
+
+        function resetAdCampaignForm() {
+            const form = document.getElementById('campaign-form');
+            if (form) form.reset();
+            document.getElementById('campaign-id').value = "";
+            document.getElementById('ad-form-title').innerHTML = `<i class="fa-solid fa-bullhorn text-indigo-600"></i> नया विज्ञापन / प्रमोशन अभियान बनाएं`;
+            document.getElementById('campaign-enabled').checked = true;
+            document.getElementById('campaign-cta').value = "ऑफर देखें व संपर्क करें";
+        }
+
+        function handleSaveAdCampaign(e) {
+            e.preventDefault();
+            const id = document.getElementById('campaign-id').value;
+            const advertiser = document.getElementById('campaign-advertiser').value.trim();
+            const title = document.getElementById('campaign-title').value.trim();
+            const description = document.getElementById('campaign-desc').value.trim();
+            const imageUrl = document.getElementById('campaign-image').value.trim();
+            const placement = document.getElementById('campaign-placement').value;
+            const linkUrl = document.getElementById('campaign-link').value.trim();
+            const ctaText = document.getElementById('campaign-cta').value.trim() || "ऑफर देखें";
+            const enabled = document.getElementById('campaign-enabled').checked;
+
+            if (!advertiser || !title || !imageUrl || !linkUrl) {
+                window.showToast("कृपया सभी आवश्यक फ़ील्ड (*) भरें!", "error");
+                return;
+            }
+
+            const session = getActiveSession();
+            const activeRole = session ? session.role : StorageService.getCurrentRole();
+
+            if (id) {
+                // Update
+                StorageService.updateAdCampaign(id, {
+                    advertiser, title, description, imageUrl, placement, linkUrl, ctaText, enabled
+                });
+                TrackingService.recordUploadEvent("विज्ञापन (Ad)", `${title} (${advertiser})`, "दीपक राजपूत (डायरेक्टर)", activeRole, "अपडेट");
+                window.showToast("✅ विज्ञापन अभियान सफलतापूर्वक अपडेट कर दिया गया!", "success");
+            } else {
+                // Create
+                StorageService.addAdCampaign({
+                    advertiser, title, description, imageUrl, placement, linkUrl, ctaText, enabled
+                });
+                TrackingService.recordUploadEvent("विज्ञापन (Ad)", `${title} (${advertiser})`, "दीपक राजपूत (डायरेक्टर)", activeRole, "प्रकाशित");
+                window.showToast("🎉 नया विज्ञापन अभियान जुड़ गया! सभी पेजों पर लाइव चलेगा।", "success");
+            }
+
+            toggleAddAdForm(false);
+            renderAdCampaignsList();
+            renderUploadLedgerTable();
+            refreshDashboard();
+        }
+
+        function renderAdCampaignsList() {
+            const campaigns = StorageService.getAdCampaigns();
+            const container = document.getElementById('campaigns-table-container');
+            if (!container) return;
+
+            // Update stats
+            const total = campaigns.length;
+            const active = campaigns.filter(c => c.enabled).length;
+            const impressions = campaigns.reduce((sum, c) => sum + (parseInt(c.impressions) || 0), 0);
+            const clicks = campaigns.reduce((sum, c) => sum + (parseInt(c.clicks) || 0), 0);
+
+            const statTotal = document.getElementById('ad-stat-total');
+            if (statTotal) statTotal.innerText = total;
+            const statActive = document.getElementById('ad-stat-active');
+            if (statActive) statActive.innerText = active;
+            const statImp = document.getElementById('ad-stat-impressions');
+            if (statImp) statImp.innerText = impressions.toLocaleString('en-IN');
+            const statClicks = document.getElementById('ad-stat-clicks');
+            if (statClicks) statClicks.innerText = clicks.toLocaleString('en-IN');
+
+            const sideAds = document.getElementById('sidebar-ads-count');
+            if (sideAds) sideAds.innerText = total;
+
+            if (campaigns.length === 0) {
+                container.innerHTML = `
+                    <div class="p-8 text-center text-slate-500 bg-slate-50">
+                        <i class="fa-solid fa-rectangle-ad text-3xl text-slate-300 mb-2 block"></i>
+                        <p class="font-bold text-sm">अभी कोई विज्ञापन अभियान दर्ज नहीं है।</p>
+                        <p class="text-xs text-slate-400 mt-1">ऊपर "नया विज्ञापन जोड़ें" बटन दबाकर पहला अभियान शुरू करें।</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const placementLabels = {
+                all: { label: "🔄 सभी स्थान (यूनिवर्सल)", badge: "bg-purple-100 text-purple-800" },
+                popup: { label: "🎯 रैंडम पॉपअप मोडल", badge: "bg-red-100 text-red-800" },
+                bottom_bar: { label: "📌 फ्लोटिंग बॉटम बार", badge: "bg-blue-100 text-blue-800" },
+                inpage: { label: "📰 इन-पेज / हेडर बैनर", badge: "bg-amber-100 text-amber-800" }
+            };
+
+            container.innerHTML = `
+                <table class="w-full text-left text-xs text-slate-600 bg-white">
+                    <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 uppercase tracking-wider text-[10px]">
+                        <tr>
+                            <th class="p-3">विज्ञापनदाता व शीर्षक</th>
+                            <th class="p-3">प्रारूप (Format)</th>
+                            <th class="p-3 text-center">इम्प्रेशन्स / क्लिक्स</th>
+                            <th class="p-3 text-center">स्थिति (Status)</th>
+                            <th class="p-3 text-right">कार्रवाई (Actions)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        ${campaigns.map(c => {
+                            const pInfo = placementLabels[c.placement] || placementLabels.all;
+                            return `
+                                <tr class="hover:bg-slate-50/80 transition">
+                                    <td class="p-3">
+                                        <div class="flex items-center gap-3">
+                                            <img src="${c.imageUrl}" alt="" class="w-14 h-11 object-cover rounded-lg border border-slate-200 shrink-0 bg-slate-100">
+                                            <div class="min-w-0 max-w-xs sm:max-w-sm">
+                                                <div class="text-[10px] text-indigo-700 font-bold truncate">${c.advertiser || "प्रायोजक"}</div>
+                                                <div class="font-bold text-slate-900 text-xs truncate leading-snug" title="${c.title}">${c.title}</div>
+                                                <a href="${c.linkUrl}" target="_blank" class="text-[10px] text-slate-400 hover:text-blue-600 truncate block underline">
+                                                    ${c.linkUrl}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="p-3">
+                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${pInfo.badge}">
+                                            ${pInfo.label}
+                                        </span>
+                                    </td>
+                                    <td class="p-3 text-center font-mono">
+                                        <div class="text-slate-900 font-bold">👁️ ${c.impressions || 0}</div>
+                                        <div class="text-[10px] text-purple-700">🖱️ ${c.clicks || 0} क्लिक्स</div>
+                                    </td>
+                                    <td class="p-3 text-center">
+                                        <button type="button" onclick="toggleAdStatus('${c.id}')" class="cursor-pointer inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold transition ${c.enabled ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}">
+                                            <span class="w-1.5 h-1.5 rounded-full ${c.enabled ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}"></span>
+                                            ${c.enabled ? 'सक्रिय (LIVE)' : 'निष्क्रिय (OFF)'}
+                                        </button>
+                                    </td>
+                                    <td class="p-3 text-right">
+                                        <div class="flex items-center justify-end gap-1">
+                                            <button type="button" onclick="previewAdCampaign('${c.id}')" class="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition cursor-pointer" title="लाइव टेस्ट पॉपअप देखें">
+                                                <i class="fa-solid fa-eye text-xs"></i>
+                                            </button>
+                                            <button type="button" onclick="editAdCampaign('${c.id}')" class="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition cursor-pointer" title="संपादित करें">
+                                                <i class="fa-solid fa-pen-to-square text-xs"></i>
+                                            </button>
+                                            <button type="button" onclick="deleteAdCampaign('${c.id}')" class="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition cursor-pointer" title="विज्ञापन हटाएं">
+                                                <i class="fa-solid fa-trash-can text-xs"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join("")}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function toggleAdStatus(id) {
+            const newState = StorageService.toggleAdStatus(id);
+            window.showToast(newState ? "✅ विज्ञापन सक्रिय कर दिया गया!" : "⏸️ विज्ञापन निष्क्रिय कर दिया गया!", "success");
+            renderAdCampaignsList();
+        }
+
+        function previewAdCampaign(id) {
+            const campaigns = StorageService.getAdCampaigns();
+            const ad = campaigns.find(c => c.id === id);
+            if (!ad) return;
+
+            if (typeof AdEngine !== 'undefined' && AdEngine.renderRandomPopup) {
+                AdEngine.renderRandomPopup(ad);
+            } else {
+                window.showToast(`पूर्वावलोकन: ${ad.title}`, "success");
+            }
+        }
+
+        function editAdCampaign(id) {
+            const campaigns = StorageService.getAdCampaigns();
+            const ad = campaigns.find(c => c.id === id);
+            if (!ad) return;
+
+            document.getElementById('campaign-id').value = ad.id;
+            document.getElementById('campaign-advertiser').value = ad.advertiser || "";
+            document.getElementById('campaign-title').value = ad.title || "";
+            document.getElementById('campaign-desc').value = ad.description || "";
+            document.getElementById('campaign-image').value = ad.imageUrl || "";
+            document.getElementById('campaign-placement').value = ad.placement || "all";
+            document.getElementById('campaign-link').value = ad.linkUrl || "";
+            document.getElementById('campaign-cta').value = ad.ctaText || "ऑफर देखें";
+            document.getElementById('campaign-enabled').checked = ad.enabled;
+
+            document.getElementById('ad-form-title').innerHTML = `<i class="fa-solid fa-pen-to-square text-indigo-600"></i> विज्ञापन संपादित करें: <span class="text-slate-900">${ad.title}</span>`;
+            toggleAddAdForm(true);
+            document.getElementById('add-ad-card').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function deleteAdCampaign(id) {
+            if (!confirm("क्या आप वाकई इस विज्ञापन अभियान को हटाना चाहते हैं?")) return;
+            const campaigns = StorageService.getAdCampaigns();
+            const ad = campaigns.find(c => c.id === id);
+            const title = ad ? ad.title : id;
+
+            StorageService.deleteAdCampaign(id);
+            const session = getActiveSession();
+            const activeRole = session ? session.role : StorageService.getCurrentRole();
+            TrackingService.recordUploadEvent("विज्ञापन (Ad)", title, "दीपक राजपूत (डायरेक्टर)", activeRole, "डिलीट");
+
+            window.showToast("🗑️ विज्ञापन हटा दिया गया!", "error");
+            renderAdCampaignsList();
+            renderUploadLedgerTable();
+            refreshDashboard();
+        }
+
+        function resetToDefaultAds() {
+            if (!confirm("क्या आप सभी डिफॉल्ट डेमो विज्ञापनों को रीस्टोर करना चाहते हैं?")) return;
+            localStorage.removeItem("todayindia_ad_campaigns");
+            StorageService.getAdCampaigns();
+            window.showToast("🔄 डिफॉल्ट विज्ञापन रीस्टोर कर दिए गए!", "success");
+            renderAdCampaignsList();
+            refreshDashboard();
         }
 
         // Web Audio Synthesizer for Breaking Alert Chime
