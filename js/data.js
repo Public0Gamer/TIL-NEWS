@@ -27,7 +27,7 @@ const INITIAL_ARTICLES = [
         category: "kanpur",
         categoryName: "हमारा कानपुर",
         subLocation: "बड़ा चौराहा / चुन्नीगंज",
-        author: "अमित कुमार (ब्यूरो चीफ, कानपुर)",
+        author: "दीपक राजपूत (प्रधान संपादक)",
         status: "published",
         date: "6 सितंबर 2026",
         time: "11:45 AM",
