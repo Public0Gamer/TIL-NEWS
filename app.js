@@ -1,17 +1,47 @@
 // TODAYINDIALIVENEWS - Main Application Logic
 
+// Professional Floating Toast Notification System
+window.showToast = function(message, type = "success") {
+    try {
+        let container = document.getElementById("toast-container");
+        if (!container) {
+            container = document.createElement("div");
+            container.id = "toast-container";
+            container.className = "fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm pointer-events-none";
+            document.body.appendChild(container);
+        }
+        const toast = document.createElement("div");
+        const isSuccess = type === "success";
+        toast.className = `flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-2xl text-white text-xs font-bold font-hindi transform translate-y-3 opacity-0 transition-all duration-300 pointer-events-auto border ${isSuccess ? 'bg-slate-900 border-emerald-500' : 'bg-red-950 border-amber-400'}`;
+        toast.innerHTML = `
+            <i class="${isSuccess ? 'fa-solid fa-circle-check text-emerald-400 text-base shrink-0' : 'fa-solid fa-triangle-exclamation text-amber-400 text-base shrink-0'}"></i>
+            <span class="leading-snug">${message}</span>
+        `;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.classList.remove("translate-y-3", "opacity-0");
+        }, 15);
+        setTimeout(() => {
+            toast.classList.add("translate-y-3", "opacity-0");
+            setTimeout(() => toast.remove(), 350);
+        }, 3000);
+    } catch(e) {
+        console.log("Toast:", message);
+    }
+};
+
 document.addEventListener("DOMContentLoaded", () => {
-    initDateTime();
-    initBreakingTicker();
-    renderDailyRatesBar();
-    renderHomePageContent();
-    renderLiveBlogWidget();
-    renderAdBanners();
-    setupLiveTVModal();
-    setupPoll();
-    setupMobileMenu();
-    trackVisitor();
-    setupSearchSystem();
+    try { initDateTime(); } catch(e) {}
+    try { initBreakingTicker(); } catch(e) {}
+    try { renderDailyRatesBar(); } catch(e) {}
+    try { renderHomePageContent(); } catch(e) {}
+    try { renderLiveBlogWidget(); } catch(e) {}
+    try { renderAdBanners(); } catch(e) {}
+    try { setupLiveTVModal(); } catch(e) {}
+    try { setupPoll(); } catch(e) {}
+    try { setupMobileMenu(); } catch(e) {}
+    try { trackVisitor(); } catch(e) {}
+    try { setupSearchSystem(); } catch(e) {}
 });
 
 // 1. Live Date & Panchang Display
@@ -348,10 +378,23 @@ window.shareOnWhatsApp = function(title, path) {
     window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
 };
 
-// 10. Visitor Tracking
+// 10. Visitor Tracking (Real & Accurate)
 function trackVisitor() {
     if (typeof TrackingService !== 'undefined') {
-        TrackingService.recordPageView("home", "होमपेज (मुख्य पृष्ठ)");
+        try {
+            const path = window.location.pathname;
+            let pageId = "home";
+            let pageTitle = "होमपेज (मुख्य पृष्ठ)";
+            if (path.includes("category")) {
+                const urlParams = new URLSearchParams(window.location.search);
+                pageId = "cat-" + (urlParams.get("cat") || urlParams.get("search") || "kanpur");
+                pageTitle = "कैटेगरी पेज (" + pageId + ")";
+            } else if (path.includes("about")) {
+                pageId = "about";
+                pageTitle = "हमारे बारे में";
+            }
+            TrackingService.recordPageView(pageId, pageTitle);
+        } catch(e) {}
     }
 }
 
@@ -427,7 +470,46 @@ function renderDailyRatesBar() {
     }).join("");
 }
 
-// 12. Universal Live Search System
+window.refreshPublicRates = function(btn) {
+    const icon = btn ? btn.querySelector('i') : null;
+    if (icon) icon.classList.add('fa-spin');
+
+    setTimeout(() => {
+        if (typeof DailyRatesService !== 'undefined') {
+            DailyRatesService.refreshDailyRates(true);
+            renderDailyRatesBar();
+        }
+        if (icon) icon.classList.remove('fa-spin');
+        if (typeof window.showToast === 'function') {
+            window.showToast("✅ दैनिक बाजार व मंडी भाव ताज़ा कर दिए गए हैं!", "success");
+        }
+    }, 500);
+};
+
+// 12. Universal Live Search System (Globally Accessible)
+window.openSearchModal = function(initialQuery = "") {
+    const modal = document.getElementById("search-modal");
+    if (!modal) return;
+    modal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+    const input = document.getElementById("global-search-input");
+    if (input) {
+        if (initialQuery) {
+            input.value = initialQuery;
+        }
+        setTimeout(() => {
+            input.focus();
+            if (window.performLiveSearch) window.performLiveSearch(input.value);
+        }, 50);
+    }
+};
+
+window.closeSearchModal = function() {
+    const modal = document.getElementById("search-modal");
+    if (modal) modal.classList.add("hidden");
+    document.body.style.overflow = "auto";
+};
+
 function setupSearchSystem() {
     const modal = document.getElementById("search-modal");
     const input = document.getElementById("global-search-input");
@@ -435,25 +517,6 @@ function setupSearchSystem() {
     const form = document.getElementById("search-form");
 
     if (!modal) return;
-
-    window.openSearchModal = function(initialQuery = "") {
-        modal.classList.remove("hidden");
-        document.body.style.overflow = "hidden";
-        if (input) {
-            if (initialQuery) {
-                input.value = initialQuery;
-            }
-            setTimeout(() => {
-                input.focus();
-                performLiveSearch(input.value);
-            }, 80);
-        }
-    };
-
-    window.closeSearchModal = function() {
-        modal.classList.add("hidden");
-        document.body.style.overflow = "auto";
-    };
 
     modal.addEventListener("click", (e) => {
         if (e.target === modal) {

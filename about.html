@@ -459,8 +459,36 @@
         </div>
     </div>
 
+    <!-- Search Modal Immediate Action Fallback -->
+    <script>
+        window.openSearchModal = window.openSearchModal || function(q) {
+            var modal = document.getElementById('search-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                var input = document.getElementById('global-search-input');
+                if (input) {
+                    if (typeof q === 'string' && q) input.value = q;
+                    setTimeout(function() { input.focus(); }, 50);
+                }
+                if (typeof window.executeLiveSearch === 'function') window.executeLiveSearch();
+            }
+        };
+        window.closeSearchModal = window.closeSearchModal || function() {
+            var modal = document.getElementById('search-modal');
+            if (modal) modal.classList.add('hidden');
+        };
+        window.fillSearchTag = window.fillSearchTag || function(tag) {
+            var input = document.getElementById('global-search-input');
+            if (input) {
+                input.value = tag;
+                input.focus();
+                if (typeof window.executeLiveSearch === 'function') window.executeLiveSearch();
+            }
+        };
+    </script>
+
     <!-- Scripts -->
-    <script src="js/data.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/data.js?v=20260906_v5_live"></script>
+    <script src="js/app.js?v=20260906_v5_live"></script>
 </body>
 </html>

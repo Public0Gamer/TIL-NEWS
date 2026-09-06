@@ -293,6 +293,92 @@
         </div>
     </div>
 
+    <!-- 1.7. Director Custom Daily Rates Modal -->
+    <div id="edit-rates-modal" class="hidden fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-lg w-full p-6 font-hindi relative max-h-[90vh] overflow-y-auto">
+            <button type="button" onclick="closeEditRatesModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center transition cursor-pointer">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+
+            <div class="flex items-center gap-3 pb-3 border-b border-slate-100 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-lg">
+                    <i class="fa-solid fa-coins"></i>
+                </div>
+                <div>
+                    <h3 class="font-black text-slate-900 text-base">दैनिक बाजार व मंडी भाव संपादन (Director Desk)</h3>
+                    <p class="text-xs text-slate-500">कानपुर सर्राफा, चकरपुर गल्ला मंडी व ईंधन की दरें तय करें</p>
+                </div>
+            </div>
+
+            <form id="edit-rates-form" onsubmit="saveCustomAdminRates(event)" class="space-y-4 text-xs">
+                <!-- Bullion Group -->
+                <div class="bg-amber-50/50 p-3 rounded-xl border border-amber-200/70 space-y-2.5">
+                    <span class="font-bold text-amber-900 flex items-center gap-1 text-[11px] uppercase tracking-wider">
+                        <i class="fa-solid fa-gem text-amber-600"></i> सर्राफा बाजार (Gold & Silver)
+                    </span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">सोना 24K (प्रति 10 ग्राम):</label>
+                            <input type="text" id="edit-rate-gold24" required placeholder="₹72,450" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 font-mono font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">सोना 22K (प्रति 10 ग्राम):</label>
+                            <input type="text" id="edit-rate-gold22" required placeholder="₹66,420" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 font-mono font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">चांदी (प्रति 1 किलोग्राम):</label>
+                        <input type="text" id="edit-rate-silver" required placeholder="₹85,200" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 font-mono font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+                </div>
+
+                <!-- Mandi Group -->
+                <div class="bg-yellow-50/50 p-3 rounded-xl border border-yellow-200/70 space-y-2.5">
+                    <span class="font-bold text-yellow-900 flex items-center gap-1 text-[11px] uppercase tracking-wider">
+                        <i class="fa-solid fa-wheat-awn text-yellow-600"></i> चकरपुर गल्ला मंडी (Grains)
+                    </span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">गेहूं (प्रति क्विंटल):</label>
+                            <input type="text" id="edit-rate-wheat" required placeholder="₹2,480" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 font-mono font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">सरसों / लाही (प्रति क्विंटल):</label>
+                            <input type="text" id="edit-rate-mustard" required placeholder="₹5,450" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 font-mono font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fuel Group -->
+                <div class="bg-blue-50/50 p-3 rounded-xl border border-blue-200/70 space-y-2.5">
+                    <span class="font-bold text-blue-900 flex items-center gap-1 text-[11px] uppercase tracking-wider">
+                        <i class="fa-solid fa-gas-pump text-blue-600"></i> कानपुर ईंधन दरें (Fuel)
+                    </span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">पेट्रोल (प्रति लीटर):</label>
+                            <input type="text" id="edit-rate-petrol" required placeholder="₹94.75" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 font-mono font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">डीजल (प्रति लीटर):</label>
+                            <input type="text" id="edit-rate-diesel" required placeholder="₹87.89" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 font-mono font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex items-center justify-end gap-2">
+                    <button type="button" onclick="closeEditRatesModal()" class="px-4 py-2 rounded-lg font-semibold text-slate-600 hover:bg-slate-100 transition cursor-pointer">
+                        रद्द करें (Cancel)
+                    </button>
+                    <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-4 py-2 rounded-lg transition shadow-xs flex items-center gap-1.5 cursor-pointer">
+                        <i class="fa-solid fa-check"></i>
+                        <span>भाव सहेजें (Save Rates)</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- 2. Main Workspace Layout (Hidden until authenticated) -->
     <div id="admin-workspace-content" class="hidden max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
         
@@ -374,14 +460,19 @@
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 font-hindi">
                     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
                         <div class="flex items-center justify-between text-slate-500 text-xs mb-1">
-                            <span>कुल पोर्टल व्यूज</span>
+                            <span>वास्तविक पोर्टल व्यूज (Real Views)</span>
                             <i class="fa-solid fa-eye text-red-500"></i>
                         </div>
-                        <h3 id="stat-views" class="text-2xl font-black text-slate-900 font-brand">23,410</h3>
-                        <span class="text-[11px] text-emerald-600 font-bold flex items-center gap-1">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
-                            लाइव व्यू ट्रैकर सक्रिय
-                        </span>
+                        <h3 id="stat-views" class="text-2xl font-black text-slate-900 font-brand">--</h3>
+                        <div class="flex items-center justify-between mt-1 text-[11px]">
+                            <span class="text-emerald-600 font-bold flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                                लाइव ट्रैकिंग सक्रिय
+                            </span>
+                            <button type="button" onclick="promptSetViewsBaseline()" class="text-[10px] text-slate-400 hover:text-red-600 underline font-semibold cursor-pointer" title="व्यूज काउंटर रीसेट या सेट करें">
+                                <i class="fa-solid fa-gear text-[9px]"></i> सेट
+                            </button>
+                        </div>
                     </div>
 
                     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
@@ -463,10 +554,13 @@
                                 <!-- Populated dynamically via JS -->
                             </div>
                         </div>
-                        <div class="pt-3 mt-3 border-t border-amber-200/60 flex items-center justify-between">
-                            <span class="text-[10px] text-slate-500">होमपेज पर स्वतः अपडेट होता है</span>
-                            <button type="button" onclick="refreshAdminRates()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition shadow-2xs flex items-center gap-1 cursor-pointer">
-                                <i class="fa-solid fa-arrows-rotate text-[10px]"></i>
+                        <div class="pt-3 mt-3 border-t border-amber-200/60 flex items-center justify-between gap-2">
+                            <button type="button" onclick="openEditRatesModal()" class="bg-slate-900 hover:bg-black text-amber-300 text-xs font-bold px-2.5 py-1.5 rounded-lg transition shadow-2xs flex items-center gap-1 cursor-pointer" title="आज के कानपुर बाजार भाव खुद दर्ज करें">
+                                <i class="fa-solid fa-pen-to-square text-[10px]"></i>
+                                <span>भाव बदलें</span>
+                            </button>
+                            <button type="button" onclick="refreshAdminRates(this)" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition shadow-2xs flex items-center gap-1 cursor-pointer" title="बाजार में उतार-चढ़ाव अपडेट करें">
+                                <i id="btn-refresh-rates-icon" class="fa-solid fa-arrows-rotate text-[10px]"></i>
                                 <span>भाव रीफ्रेश करें</span>
                             </button>
                         </div>
@@ -1010,8 +1104,43 @@
     </div>
 
     <!-- Scripts -->
-    <script src="js/data.js"></script>
+    <script src="js/data.js?v=20260906_v5_live"></script>
+    <script src="js/app.js?v=20260906_v5_live"></script>
     <script>
+        // Floating Toast Notification System
+        window.showToast = window.showToast || function(message, type = "success") {
+            try {
+                let container = document.getElementById("toast-container");
+                if (!container) {
+                    container = document.createElement("div");
+                    container.id = "toast-container";
+                    container.className = "fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm pointer-events-none font-hindi";
+                    document.body.appendChild(container);
+                }
+                const toast = document.createElement("div");
+                const isSuccess = type === "success";
+                const isWarning = type === "warning";
+                const bgClass = isSuccess ? 'bg-slate-900 border-emerald-500' : isWarning ? 'bg-amber-950 border-amber-400' : 'bg-red-950 border-red-500';
+                const iconClass = isSuccess ? 'fa-solid fa-circle-check text-emerald-400' : isWarning ? 'fa-solid fa-triangle-exclamation text-amber-400' : 'fa-solid fa-circle-xmark text-red-400';
+                
+                toast.className = `flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-2xl text-white text-xs font-bold transform translate-y-3 opacity-0 transition-all duration-300 pointer-events-auto border ${bgClass}`;
+                toast.innerHTML = `
+                    <i class="${iconClass} text-base shrink-0"></i>
+                    <span class="leading-snug">${message}</span>
+                `;
+                container.appendChild(toast);
+                setTimeout(() => {
+                    toast.classList.remove("translate-y-3", "opacity-0");
+                }, 15);
+                setTimeout(() => {
+                    toast.classList.add("translate-y-3", "opacity-0");
+                    setTimeout(() => toast.remove(), 350);
+                }, 3200);
+            } catch(e) {
+                console.log("Toast:", message);
+            }
+        };
+
         // ==========================================
         // 0. Security Login Gate & Authentication Engine
         // ==========================================
@@ -1550,10 +1679,103 @@
             `).join("");
         }
 
-        function refreshAdminRates() {
-            DailyRatesService.refreshDailyRates();
+        function refreshAdminRates(btn) {
+            const icon = document.getElementById('btn-refresh-rates-icon') || (btn ? btn.querySelector('i') : null);
+            if (icon) icon.classList.add('fa-spin');
+            
+            setTimeout(() => {
+                DailyRatesService.refreshDailyRates(true);
+                renderAdminRatesPreview();
+                if (icon) icon.classList.remove('fa-spin');
+                window.showToast("✅ बाजार भाव में ताज़ा उतार-चढ़ाव अपडेट कर दिए गए हैं!", "success");
+            }, 500);
+        }
+
+        // Director Custom Rates Modal Functions
+        function openEditRatesModal() {
+            const session = getActiveSession();
+            if (!session || session.role !== 'chief_editor') {
+                window.showToast("⚠️ केवल प्रधान संपादक (Director) को बाजार भाव बदलने की अनुमति है।", "warning");
+                return;
+            }
+            const modal = document.getElementById('edit-rates-modal');
+            if (!modal) return;
+            const rates = DailyRatesService.getDailyRates();
+            const g24 = (rates.bullion && rates.bullion[0]) ? rates.bullion[0].price : '₹72,450';
+            const g22 = (rates.bullion && rates.bullion[1]) ? rates.bullion[1].price : '₹66,420';
+            const sil = (rates.bullion && rates.bullion[2]) ? rates.bullion[2].price : '₹85,200';
+            const wheat = (rates.mandi && rates.mandi[0]) ? rates.mandi[0].price : '₹2,480';
+            const mustard = (rates.mandi && rates.mandi[1]) ? rates.mandi[1].price : '₹5,450';
+            const pet = (rates.fuel && rates.fuel[0]) ? rates.fuel[0].price : '₹94.75';
+            const die = (rates.fuel && rates.fuel[1]) ? rates.fuel[1].price : '₹87.89';
+
+            document.getElementById('edit-rate-gold24').value = g24;
+            document.getElementById('edit-rate-gold22').value = g22;
+            document.getElementById('edit-rate-silver').value = sil;
+            document.getElementById('edit-rate-wheat').value = wheat;
+            document.getElementById('edit-rate-mustard').value = mustard;
+            document.getElementById('edit-rate-petrol').value = pet;
+            document.getElementById('edit-rate-diesel').value = die;
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeEditRatesModal() {
+            const modal = document.getElementById('edit-rates-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function saveCustomAdminRates(e) {
+            e.preventDefault();
+            const g24 = document.getElementById('edit-rate-gold24').value.trim();
+            const g22 = document.getElementById('edit-rate-gold22').value.trim();
+            const sil = document.getElementById('edit-rate-silver').value.trim();
+            const wheat = document.getElementById('edit-rate-wheat').value.trim();
+            const mustard = document.getElementById('edit-rate-mustard').value.trim();
+            const pet = document.getElementById('edit-rate-petrol').value.trim();
+            const die = document.getElementById('edit-rate-diesel').value.trim();
+
+            const custom = {
+                bullion: [
+                    { id: "gold-24k", name: "सोना (24 कैरेट)", unit: "10 ग्राम", price: g24.startsWith('₹') ? g24 : '₹' + g24, trend: "up", change: "+₹120" },
+                    { id: "gold-22k", name: "सोना (22 कैरेट)", unit: "10 ग्राम", price: g22.startsWith('₹') ? g22 : '₹' + g22, trend: "up", change: "+₹110" },
+                    { id: "silver", name: "चांदी", unit: "1 किलोग्राम", price: sil.startsWith('₹') ? sil : '₹' + sil, trend: "down", change: "-₹200" }
+                ],
+                mandi: [
+                    { id: "wheat", name: "गेहूं (चकरपुर मंडी)", unit: "क्विंटल", price: wheat.startsWith('₹') ? wheat : '₹' + wheat, trend: "stable", change: "0" },
+                    { id: "mustard", name: "सरसों / लाही", unit: "क्विंटल", price: mustard.startsWith('₹') ? mustard : '₹' + mustard, trend: "up", change: "+₹30" },
+                    { id: "potato", name: "आलू (स्थानीय मंडी)", unit: "क्विंटल", price: "₹1,180", trend: "down", change: "-₹20" }
+                ],
+                fuel: [
+                    { id: "petrol", name: "पेट्रोल (कानपुर)", unit: "प्रति लीटर", price: pet.startsWith('₹') ? pet : '₹' + pet, trend: "stable", change: "0" },
+                    { id: "diesel", name: "डीजल (कानपुर)", unit: "प्रति लीटर", price: die.startsWith('₹') ? die : '₹' + die, trend: "stable", change: "0" }
+                ]
+            };
+
+            DailyRatesService.updateCustomRates(custom);
             renderAdminRatesPreview();
-            alert("✅ दैनिक बाजार व मंडी भाव तुरंत ताज़ा कर दिए गए हैं!");
+            closeEditRatesModal();
+
+            const session = getActiveSession();
+            const authorName = (session && session.role === 'chief_editor') ? "दीपक राजपूत (डायरेक्टर)" : "संपादक";
+            TrackingService.recordUploadEvent("बाजार भाव अपडेट (Rates)", "दैनिक सर्राफा व गल्ला मंडी दरें अपडेट की गईं", authorName, session ? session.role : "chief_editor", "सफल");
+            renderUploadLedgerTable();
+
+            window.showToast("✅ आपके द्वारा दर्ज नए बाजार भाव सफलतापूर्वक सहेज लिए गए हैं!", "success");
+        }
+
+        // Prompt Director to Set or Reset Views Baseline
+        function promptSetViewsBaseline() {
+            const current = TrackingService.getTotalViews();
+            const input = prompt("पोर्टल का वास्तविक व्यूज काउंटर (Current Views: " + current + "):\nआप नया व्यूज नंबर दर्ज कर सकते हैं (उदाहरण: 500 या 0 रीसेट के लिए):", current);
+            if (input !== null) {
+                const num = parseInt(input.replace(/[^\d]/g, ''), 10);
+                if (!isNaN(num) && num >= 0) {
+                    TrackingService.setViewsBaseline(num);
+                    refreshDashboard();
+                    window.showToast(`✅ पोर्टल व्यूज काउंटर सफलतापूर्वक ${num.toLocaleString('en-IN')} पर सेट किया गया।`, "success");
+                }
+            }
         }
 
         // Editorial Upload Ledger Management
@@ -1673,14 +1895,31 @@
             }
         }
 
-        // Live Reader Heartbeat Simulation
+        // Live Reader Heartbeat Simulation & Views Counter Pulse
         function setupHeartbeat() {
             setInterval(() => {
+                if (typeof TrackingService === 'undefined') return;
+
                 const liveEl = document.getElementById('stat-live');
-                if (liveEl && typeof TrackingService !== 'undefined') {
-                    liveEl.innerText = TrackingService.getLiveVisitors();
+                if (liveEl) {
+                    const currentLive = TrackingService.getLiveVisitors();
+                    if (liveEl.innerText != currentLive) {
+                        liveEl.innerText = currentLive;
+                        liveEl.classList.add('animate-pulse');
+                        setTimeout(() => liveEl.classList.remove('animate-pulse'), 1000);
+                    }
                 }
-            }, 4000);
+
+                const viewsEl = document.getElementById('stat-views');
+                if (viewsEl) {
+                    const currentViews = TrackingService.getTotalViews().toLocaleString('en-IN');
+                    if (viewsEl.innerText !== currentViews && viewsEl.innerText !== '--') {
+                        viewsEl.innerText = currentViews;
+                        viewsEl.classList.add('animate-pulse');
+                        setTimeout(() => viewsEl.classList.remove('animate-pulse'), 1000);
+                    }
+                }
+            }, 2500);
         }
 
         // 5. Form Submission Handlers
@@ -1735,13 +1974,13 @@
                         StorageService.addBreakingItem(`कानपुर (${locality}): ${title}`, "high");
                     }
 
-                    alert("🎉 खबर में बदलाव सफलतापूर्वक सहेज लिए गए हैं!");
                     cancelStoryEdit();
                     refreshDashboard();
                     renderPublishedStories();
                     renderBreakingTickerList();
                     renderUploadLedgerTable();
                     switchTab('stories');
+                    window.showToast("🎉 खबर में बदलाव सफलतापूर्वक सहेज लिए गए हैं!", "success");
                     return;
                 }
 
@@ -1776,13 +2015,13 @@
                     TrackingService.recordUploadEvent("लाल पट्टी (Breaking)", `कानपुर (${locality}): ${title}`, author || getRoleLabel(activeRole), activeRole, "सक्रिय");
                 }
 
-                alert("🎉 खबर सफलतापूर्वक तैयार होकर लाइव वेबसाइट पर प्रकाशित हो चुकी है!");
                 storyForm.reset();
                 refreshDashboard();
                 renderPublishedStories();
                 renderBreakingTickerList();
                 renderUploadLedgerTable();
                 switchTab('stories');
+                window.showToast("🎉 खबर सफलतापूर्वक तैयार होकर लाइव वेबसाइट पर प्रकाशित हो चुकी है!", "success");
             });
 
             // Breaking Ticker Form
@@ -1805,7 +2044,7 @@
                 renderBreakingTickerList();
                 renderUploadLedgerTable();
                 refreshDashboard();
-                alert("लाल पट्टी पर नई ब्रेकिंग न्यूज़ तुरंत जोड़ दी गई है!");
+                window.showToast("🔴 लाल पट्टी पर नई ब्रेकिंग न्यूज़ तुरंत जोड़ दी गई है!", "success");
             });
 
             // Live Blog Form
@@ -1827,7 +2066,8 @@
                 lbForm.reset();
                 renderLiveBlogTimeline();
                 renderUploadLedgerTable();
-                alert("लाइव ब्लॉग में नई अपडेट जोड़ दी गई है!");
+                refreshDashboard();
+                window.showToast("⚡ लाइव ब्लॉग में नई अपडेट जोड़ दी गई है!", "success");
             });
 
             // Ads Form
@@ -2117,7 +2357,7 @@
                 const isBreaking = art.isBreaking;
 
                 return `
-                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between p-4 bg-white border ${isHero ? 'border-amber-400 bg-amber-50/20' : 'border-slate-200'} rounded-2xl hover:border-slate-300 transition gap-4 shadow-2xs">
+                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between p-4 bg-white border ${isHero ? 'border-amber-400 bg-amber-50/20' : 'border-slate-200'} rounded-2xl hover:border-slate-300 transition-all duration-300 animate-fade-in gap-4 shadow-2xs">
                         <div class="flex items-start gap-3.5 flex-1 min-w-0">
                             <img src="${art.imageUrl || 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=300'}" alt="" class="w-20 h-16 rounded-xl object-cover flex-shrink-0 border border-slate-200">
                             <div class="min-w-0 flex-1">
@@ -2165,7 +2405,7 @@
         window.removeArticle = function(id) {
             const session = getActiveSession();
             if (!session || (session.role !== 'chief_editor' && session.role !== 'sub_editor')) {
-                alert("खबर हटाने की अनुमति केवल डायरेक्टर व उप-संपादक को है।");
+                window.showToast("⚠️ खबर हटाने की अनुमति केवल डायरेक्टर व उप-संपादक को है।", "warning");
                 return;
             }
             const articles = StorageService.getArticles();
@@ -2179,20 +2419,20 @@
                 renderPublishedStories();
                 refreshDashboard();
                 renderUploadLedgerTable();
-                alert("✅ खबर सफलतापूर्वक हटा दी गई है!");
+                window.showToast("✅ खबर सफलतापूर्वक पोर्टल से हटा दी गई है!", "success");
             }
         };
 
         window.clearAllDemoArticles = function() {
             const session = getActiveSession();
             if (!session || (session.role !== 'chief_editor' && session.role !== 'sub_editor')) {
-                alert("डेमो खबरें हटाने की अनुमति केवल डायरेक्टर व उप-संपादक को है।");
+                window.showToast("⚠️ डेमो खबरें हटाने की अनुमति केवल डायरेक्टर व उप-संपादक को है।", "warning");
                 return;
             }
             const articles = StorageService.getArticles();
             const demoCount = articles.filter(a => a.isDemo || a.id.startsWith("kanpur-")).length;
             if (demoCount === 0) {
-                alert("वेबसाइट पर कोई डेमो खबर नहीं है। सभी खबरें आपकी वास्तविक खबरें हैं!");
+                window.showToast("वेबसाइट पर कोई डेमो खबर नहीं है। सभी वास्तविक खबरें हैं!", "warning");
                 return;
             }
             if (confirm(`वेबसाइट पर कुल ${demoCount} डेमो खबरें मौजूद हैं।\n\nक्या आप इन सभी ${demoCount} डेमो खबरों को एक साथ हटाना चाहते हैं? इसके बाद केवल आपकी अपलोड की हुई असली खबरें ही वेबसाइट पर दिखेंगी।`)) {
@@ -2202,34 +2442,35 @@
                 renderPublishedStories();
                 refreshDashboard();
                 renderUploadLedgerTable();
-                alert(`🎉 सभी ${demoCount} डेमो खबरें सफलतापूर्वक हटा दी गई हैं! अब आपकी वेबसाइट पर केवल आपकी नई खबरें दिखेंगी।`);
+                window.showToast(`🎉 सभी ${demoCount} डेमो खबरें हटाई गईं! अब केवल आपकी नई खबरें लाइव हैं।`, "success");
             }
         };
 
         window.restoreDemoArticles = function() {
             const session = getActiveSession();
             if (!session || session.role !== 'chief_editor') {
-                alert("डेमो खबरें रीस्टोर करने की अनुमति केवल डायरेक्टर को है।");
+                window.showToast("⚠️ डेमो खबरें रीस्टोर करने की अनुमति केवल डायरेक्टर को है।", "warning");
                 return;
             }
             if (confirm("क्या आप डिफ़ॉल्ट डेमो खबरें पुनः लोड करना चाहते हैं?")) {
                 StorageService.restoreDemoArticles();
                 renderPublishedStories();
                 refreshDashboard();
-                alert("डिफ़ॉल्ट डेमो खबरें लोड कर दी गई हैं।");
+                renderUploadLedgerTable();
+                window.showToast("✅ डिफ़ॉल्ट डेमो खबरें पुनः लोड कर दी गई हैं।", "success");
             }
         };
 
         window.setAsHeroArticle = function(id) {
             const session = getActiveSession();
             if (!session || (session.role !== 'chief_editor' && session.role !== 'sub_editor')) {
-                alert("मुख्य लीड खबर सेट करने की अनुमति डायरेक्टर व उप-संपादक को है।");
+                window.showToast("⚠️ मुख्य लीड खबर सेट करने की अनुमति डायरेक्टर व उप-संपादक को है।", "warning");
                 return;
             }
             StorageService.setHeroArticle(id);
             renderPublishedStories();
             refreshDashboard();
-            alert("⭐ इस खबर को मुख्य लीड खबर (Hero Lead Story) बना दिया गया है! यह वेबसाइट के सबसे ऊपर बड़े बैनर में दिखेगी।");
+            window.showToast("⭐ यह खबर मुख्य लीड खबर (Hero Lead Story) बन गई है! होमपेज पर शीर्ष पर दिखेगी।", "success");
         };
 
         // 10. Ads Form Init

@@ -304,6 +304,10 @@
                         <button type="button" onclick="filterRates('mandi', this)" class="rate-tab-btn text-slate-600 hover:text-slate-900 font-semibold px-2 py-1 rounded-md transition text-[11px]">गल्ला</button>
                         <button type="button" onclick="filterRates('fuel', this)" class="rate-tab-btn text-slate-600 hover:text-slate-900 font-semibold px-2 py-1 rounded-md transition text-[11px]">ईंधन / LPG</button>
                     </div>
+                    <button type="button" onclick="refreshPublicRates(this)" class="bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300/80 px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs" title="लाइव बाजार भाव ताज़ा करें">
+                        <i class="fa-solid fa-arrows-rotate text-[10px] text-amber-700"></i>
+                        <span class="hidden sm:inline">रीफ्रेश</span>
+                    </button>
                 </div>
             </div>
 
@@ -812,6 +816,34 @@
         </div>
     </div>
 
+    <!-- Search Modal Immediate Action Fallback (Guaranteed to work without waiting for remote scripts) -->
+    <script>
+        window.openSearchModal = window.openSearchModal || function(q) {
+            var modal = document.getElementById('search-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                var input = document.getElementById('global-search-input');
+                if (input) {
+                    if (typeof q === 'string' && q) input.value = q;
+                    setTimeout(function() { input.focus(); }, 50);
+                }
+                if (typeof window.executeLiveSearch === 'function') window.executeLiveSearch();
+            }
+        };
+        window.closeSearchModal = window.closeSearchModal || function() {
+            var modal = document.getElementById('search-modal');
+            if (modal) modal.classList.add('hidden');
+        };
+        window.fillSearchTag = window.fillSearchTag || function(tag) {
+            var input = document.getElementById('global-search-input');
+            if (input) {
+                input.value = tag;
+                input.focus();
+                if (typeof window.executeLiveSearch === 'function') window.executeLiveSearch();
+            }
+        };
+    </script>
+
     <!-- 7. Footer (Professional Channel Blueprint) -->
     <footer class="bg-slate-900 text-white border-t-4 border-red-600 mt-12 text-xs">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
@@ -925,7 +957,7 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="js/data.js?v=20260906c"></script>
-    <script src="js/app.js?v=20260906c"></script>
+    <script src="js/data.js?v=20260906_v5_live"></script>
+    <script src="js/app.js?v=20260906_v5_live"></script>
 </body>
 </html>
