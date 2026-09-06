@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TODAY INDIA LIVE NEWS | न्यूज़ रूम CMS एवं संपादकीय डेस्क</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'news-red': '#dc2626',
+                        'news-navy': '#0f172a',
+                    },
+                    fontFamily: {
+                        hindi: ['Mukta', 'sans-serif'],
+                        brand: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-slate-100 text-slate-800 flex flex-col min-h-screen">
+
+    <!-- Top Desk Bar -->
+    <header class="bg-slate-900 text-white px-4 sm:px-6 py-3 border-b-2 border-red-600 shadow-md">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="flex items-center gap-2">
+                    <span class="font-brand font-black text-lg">
+                        TODAY<span class="text-red-500">INDIA</span>
+                    </span>
+                </a>
+                <span class="text-slate-600">|</span>
+                <span class="bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded tracking-wide uppercase">
+                    NEWSROOM CMS DESK
+                </span>
+                <span class="text-xs text-slate-400 hidden sm:inline font-hindi">कानपुर केंद्रीय संपादकीय प्रणाली</span>
+            </div>
+
+            <div class="flex items-center gap-3 text-xs">
+                <a href="index.html" target="_blank" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded font-semibold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> लाइव वेबसाइट देखें
+                </a>
+                <div class="flex items-center gap-2 pl-3 border-l border-slate-700">
+                    <div class="w-7 h-7 rounded-full bg-red-600 flex items-center justify-center font-bold text-xs">
+                        सं
+                    </div>
+                    <span class="font-hindi hidden sm:inline">संपादक डेस्क</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-1 w-full space-y-6">
+        
+        <!-- CMS Tabs -->
+        <div class="flex items-center gap-2 border-b border-slate-200 pb-2">
+            <button onclick="switchTab('publish')" id="tab-btn-publish" class="px-4 py-2 bg-red-600 text-white rounded-lg font-bold text-xs sm:text-sm font-hindi flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-pen-nib"></i> नई खबर प्रकाशित करें
+            </button>
+            <button onclick="switchTab('ticker')" id="tab-btn-ticker" class="px-4 py-2 bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 rounded-lg font-bold text-xs sm:text-sm font-hindi flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-bolt text-red-600"></i> ब्रेकिंग न्यूज़ टिकर
+            </button>
+            <button onclick="switchTab('citizen')" id="tab-btn-citizen" class="px-4 py-2 bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 rounded-lg font-bold text-xs sm:text-sm font-hindi flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-inbox text-amber-600"></i> जनता की खबरें (<span id="tips-badge-count">0</span>)
+            </button>
+            <button onclick="switchTab('list')" id="tab-btn-list" class="px-4 py-2 bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 rounded-lg font-bold text-xs sm:text-sm font-hindi flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-list"></i> प्रकाशित खबरें (<span id="articles-badge-count">0</span>)
+            </button>
+        </div>
+
+        <!-- TAB 1: Publish New Article -->
+        <section id="pane-publish" class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
+            <div class="pb-3 mb-5 border-b border-slate-100 flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-black text-slate-900 font-hindi">नई खबर का प्रारूप (Publish Story)</h2>
+                    <p class="text-xs text-slate-500 font-hindi">यह खबर तुरंत TODAY INDIA LIVE NEWS के होमपेज और संबंधित श्रेणी में दिखने लगेगी।</p>
+                </div>
+                <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded">
+                    ● सिस्टम सक्रिय
+                </span>
+            </div>
+
+            <form id="admin-publish-form" class="space-y-4 font-hindi">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                    <!-- Title (8 cols) -->
+                    <div class="md:col-span-8">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">खबर का मुख्य शीर्षक (Headline) *</label>
+                        <input type="text" id="new-art-title" required placeholder="जैसे: कानपुर के गोविंद नगर में नई सीवर लाइन का कार्य शुरू, 20 हजार परिवारों को राहत" class="w-full text-sm p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:outline-none">
+                    </div>
+
+                    <!-- Category (4 cols) -->
+                    <div class="md:col-span-4">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">श्रेणी (Category) *</label>
+                        <select id="new-art-category" class="w-full text-sm p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:outline-none bg-white">
+                            <option value="kanpur">📍 हमारा कानपुर</option>
+                            <option value="up">उत्तर प्रदेश</option>
+                            <option value="crime">अपराध (Crime)</option>
+                            <option value="politics">राजनीति</option>
+                            <option value="business">व्यापार / मंडी भाव</option>
+                            <option value="sports">खेल</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">कानपुर इलाका (Sub-Location) *</label>
+                        <input type="text" id="new-art-location" required placeholder="जैसे: कल्याणपुर, सिविल लाइंस, किदवई नगर" class="w-full text-sm p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">रिपोर्टर का नाम (Byline) *</label>
+                        <input type="text" id="new-art-author" required value="अमित कुमार (ब्यूरो चीफ)" class="w-full text-sm p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">फोटो URL (Image Link)</label>
+                        <input type="url" id="new-art-image" value="https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&auto=format&fit=crop&q=80" class="w-full text-sm p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">संक्षिप्त सारांश (Summary) *</label>
+                    <input type="text" id="new-art-summary" required placeholder="1-2 पंक्तियों में खबर का सार" class="w-full text-sm p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">विस्तृत समाचार सामग्री (Full News Story) *</label>
+                    <textarea id="new-art-content" rows="6" required placeholder="पैराग्राफ में पूरी खबर का विवरण लिखें..." class="w-full text-sm p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:outline-none"></textarea>
+                </div>
+
+                <div class="flex items-center justify-between pt-2">
+                    <label class="flex items-center gap-2 cursor-pointer text-sm font-bold text-slate-800">
+                        <input type="checkbox" id="new-art-breaking" class="w-4 h-4 text-red-600 rounded focus:ring-red-500">
+                        <span>🔴 इसे लाल पट्टी (Breaking Ticker) और मुख्य बैनर में शामिल करें</span>
+                    </label>
+
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-extrabold px-6 py-3 rounded-xl text-sm transition shadow-md shadow-red-200 flex items-center gap-2">
+                        <i class="fa-solid fa-upload"></i> तुरंत प्रकाशित करें (Publish Now)
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- TAB 2: Breaking News Ticker Manager -->
+        <section id="pane-ticker" class="hidden bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
+            <div class="pb-3 mb-5 border-b border-slate-100">
+                <h2 class="text-xl font-black text-slate-900 font-hindi">लाल पट्टी (Breaking News Flash) प्रबंधन</h2>
+                <p class="text-xs text-slate-500 font-hindi">होमपेज पर लगातार चलने वाली ब्रेकिंग न्यूज़ को तुरंत बदलें या नई लाइन जोड़ें।</p>
+            </div>
+
+            <!-- Add new ticker line -->
+            <form id="add-ticker-form" class="flex gap-2 mb-6 font-hindi">
+                <input type="text" id="ticker-input" required placeholder="जैसे: कानपुर: गंगा बैराज पर भारी वाहनों का प्रवेश 2 घंटे के लिए बंद" class="flex-1 text-sm p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:outline-none">
+                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold px-5 rounded-xl text-sm transition">
+                    + ब्रेकिंग जोड़ें
+                </button>
+            </form>
+
+            <div id="ticker-list-container" class="space-y-2 font-hindi text-sm">
+                <!-- Injected via script -->
+            </div>
+        </section>
+
+        <!-- TAB 3: Citizen Reporter Inbox -->
+        <section id="pane-citizen" class="hidden bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
+            <div class="pb-3 mb-5 border-b border-slate-100">
+                <h2 class="text-xl font-black text-slate-900 font-hindi">कानपुर नागरिक रिपोर्ट (Citizen Tips)</h2>
+                <p class="text-xs text-slate-500 font-hindi">शहरवासियों द्वारा 'खबर भेजें' फॉर्म से भेजी गई ताज़ा सूचनाएं।</p>
+            </div>
+
+            <div id="citizen-tips-container" class="space-y-4">
+                <!-- Injected via script -->
+            </div>
+        </section>
+
+        <!-- TAB 4: Published Articles List -->
+        <section id="pane-list" class="hidden bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
+            <div class="pb-3 mb-5 border-b border-slate-100 flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-black text-slate-900 font-hindi">वेबसाइट पर लाइव खबरें</h2>
+                    <p class="text-xs text-slate-500 font-hindi">मौजूदा खबरों की सूची, संपादन एवं प्रबंधन।</p>
+                </div>
+            </div>
+
+            <div id="articles-table-container" class="space-y-3 font-hindi text-sm">
+                <!-- Injected via script -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Scripts -->
+    <script src="js/data.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            updateBadgeCounters();
+            renderTickerList();
+            renderCitizenTips();
+            renderArticlesList();
+            setupFormListeners();
+        });
+
+        function switchTab(tab) {
+            const tabs = ['publish', 'ticker', 'citizen', 'list'];
+            tabs.forEach(t => {
+                const pane = document.getElementById(`pane-${t}`);
+                const btn = document.getElementById(`tab-btn-${t}`);
+                if (t === tab) {
+                    pane.classList.remove('hidden');
+                    btn.classList.remove('bg-white', 'text-slate-700');
+                    btn.classList.add('bg-red-600', 'text-white');
+                } else {
+                    pane.classList.add('hidden');
+                    btn.classList.remove('bg-red-600', 'text-white');
+                    btn.classList.add('bg-white', 'text-slate-700');
+                }
+            });
+        }
+
+        function updateBadgeCounters() {
+            const articles = StorageService.getArticles();
+            const tips = StorageService.getCitizenTips();
+            document.getElementById('articles-badge-count').innerText = articles.length;
+            document.getElementById('tips-badge-count').innerText = tips.length;
+        }
+
+        function setupFormListeners() {
+            // 1. Publish Article
+            const publishForm = document.getElementById('admin-publish-form');
+            publishForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const categoryMap = {
+                    kanpur: "हमारा कानपुर",
+                    up: "उत्तर प्रदेश",
+                    crime: "अपराध",
+                    politics: "राजनीति",
+                    business: "व्यापार / मंडी",
+                    sports: "खेल"
+                };
+
+                const catKey = document.getElementById('new-art-category').value;
+                const title = document.getElementById('new-art-title').value.trim();
+                const location = document.getElementById('new-art-location').value.trim();
+                const author = document.getElementById('new-art-author').value.trim();
+                const image = document.getElementById('new-art-image').value.trim();
+                const summary = document.getElementById('new-art-summary').value.trim();
+                const content = document.getElementById('new-art-content').value.trim();
+                const isBreaking = document.getElementById('new-art-breaking').checked;
+
+                const newArt = {
+                    id: "art-" + Date.now(),
+                    title: title,
+                    summary: summary,
+                    content: content,
+                    category: catKey,
+                    categoryName: categoryMap[catKey] || "हमारा कानपुर",
+                    subLocation: location,
+                    author: author,
+                    date: "6 सितंबर 2026",
+                    time: new Date().toLocaleTimeString("hi-IN", { hour: '2-digit', minute: '2-digit' }),
+                    views: 1,
+                    shares: 0,
+                    isBreaking: isBreaking,
+                    isHero: isBreaking,
+                    imageUrl: image,
+                    tags: ["KanpurNews", location]
+                };
+
+                StorageService.addArticle(newArt);
+
+                if (isBreaking) {
+                    const breaking = StorageService.getBreakingNews();
+                    breaking.unshift(`कानपुर (${location}): ${title}`);
+                    StorageService.saveBreakingNews(breaking);
+                }
+
+                alert("खबर सफलतापूर्वक लाइव वेबसाइट पर प्रकाशित कर दी गई है!");
+                publishForm.reset();
+                updateBadgeCounters();
+                renderArticlesList();
+                renderTickerList();
+            });
+
+            // 2. Add Ticker Line
+            const tickerForm = document.getElementById('add-ticker-form');
+            tickerForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const input = document.getElementById('ticker-input');
+                const val = input.value.trim();
+                if (!val) return;
+
+                const list = StorageService.getBreakingNews();
+                list.unshift(val);
+                StorageService.saveBreakingNews(list);
+
+                input.value = "";
+                renderTickerList();
+                alert("ब्रेकिंग न्यूज़ टिकर में जोड़ दी गई है!");
+            });
+        }
+
+        function renderTickerList() {
+            const list = StorageService.getBreakingNews();
+            const container = document.getElementById('ticker-list-container');
+
+            if (list.length === 0) {
+                container.innerHTML = `<p class="text-slate-400">कोई ब्रेकिंग न्यूज़ उपलब्ध नहीं है।</p>`;
+                return;
+            }
+
+            container.innerHTML = list.map((item, idx) => `
+                <div class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                    <span class="font-semibold text-slate-800 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-red-600"></span>
+                        ${item}
+                    </span>
+                    <button onclick="removeTickerItem(${idx})" class="text-xs text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-2 py-1 rounded transition font-bold">
+                        <i class="fa-solid fa-trash mr-1"></i> हटाएं
+                    </button>
+                </div>
+            `).join("");
+        }
+
+        window.removeTickerItem = function(index) {
+            const list = StorageService.getBreakingNews();
+            list.splice(index, 1);
+            StorageService.saveBreakingNews(list);
+            renderTickerList();
+        };
+
+        function renderCitizenTips() {
+            const tips = StorageService.getCitizenTips();
+            const container = document.getElementById('citizen-tips-container');
+
+            if (tips.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-10 text-slate-400 font-hindi">
+                        <i class="fa-regular fa-folder-open text-3xl mb-2 block"></i>
+                        अभी कोई नई नागरिक रिपोर्ट प्राप्त नहीं हुई है।
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = tips.map(tip => `
+                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col md:flex-row gap-4 justify-between items-start font-hindi">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1 text-xs">
+                            <span class="bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">रेफरेंस: ${tip.id}</span>
+                            <span class="text-slate-500">📍 ${tip.locality}</span>
+                            <span class="text-slate-400">• ${tip.submittedAt}</span>
+                        </div>
+                        <h3 class="font-black text-base text-slate-900 mb-1">${tip.title}</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed mb-2">${tip.details}</p>
+                        <div class="text-xs text-slate-500">
+                            <strong>भेजने वाले:</strong> ${tip.name} (${tip.phone})
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <button onclick="publishCitizenTip('${tip.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+                            <i class="fa-solid fa-check"></i> खबर बनाकर प्रकाशित करें
+                        </button>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        window.publishCitizenTip = function(tipId) {
+            const tips = StorageService.getCitizenTips();
+            const tip = tips.find(t => t.id === tipId);
+            if (!tip) return;
+
+            // Fill form with tip
+            switchTab('publish');
+            document.getElementById('new-art-title').value = tip.title;
+            document.getElementById('new-art-location').value = tip.locality;
+            document.getElementById('new-art-author').value = `${tip.name} (सिटीजन रिपोर्टर)`;
+            document.getElementById('new-art-summary').value = tip.details.substring(0, 100) + "...";
+            document.getElementById('new-art-content').value = `${tip.details}\n\n[यह खबर कानपुर के सजग नागरिक ${tip.name} द्वारा TODAY INDIA LIVE NEWS डेस्क को भेजी गई है।]`;
+            if (tip.imageUrl) {
+                document.getElementById('new-art-image').value = tip.imageUrl;
+            }
+            alert("नागरिक रिपोर्ट का डेटा फॉर्म में लोड हो गया है। समीक्षा करके 'तुरंत प्रकाशित करें' पर क्लिक करें।");
+        };
+
+        function renderArticlesList() {
+            const articles = StorageService.getArticles();
+            const container = document.getElementById('articles-table-container');
+
+            container.innerHTML = articles.map(art => `
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 bg-white border border-slate-200 rounded-xl hover:border-slate-300 transition gap-3">
+                    <div class="flex items-center gap-3">
+                        <img src="${art.imageUrl}" alt="" class="w-16 h-12 rounded-lg object-cover flex-shrink-0">
+                        <div>
+                            <span class="text-[11px] font-bold text-red-600">📍 ${art.subLocation || "कानपुर"} • ${art.categoryName}</span>
+                            <h4 class="font-bold text-slate-900 line-clamp-1">${art.title}</h4>
+                            <span class="text-xs text-slate-400">${art.date} • ${art.views} व्यूज</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <a href="article.html?id=${art.id}" target="_blank" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded font-semibold transition">
+                            देखें
+                        </a>
+                        <button onclick="deleteArticle('${art.id}')" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 px-2.5 py-1 rounded font-bold transition">
+                            हटाएं
+                        </button>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        window.deleteArticle = function(id) {
+            if (confirm("क्या आप वाकई इस खबर को हटाना चाहते हैं?")) {
+                StorageService.deleteArticle(id);
+                updateBadgeCounters();
+                renderArticlesList();
+            }
+        };
+    </script>
+</body>
+</html>
