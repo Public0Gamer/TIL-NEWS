@@ -59,11 +59,42 @@ function initBreakingTicker() {
 // 3. Render Homepage Content
 function renderHomePageContent() {
     const articles = StorageService.getArticles();
-    if (!articles || articles.length === 0) return;
+    const heroContainer = document.getElementById("hero-main-story");
+    const sideStoriesContainer = document.getElementById("hero-side-stories");
+    const kanpurGrid = document.getElementById("kanpur-special-grid");
+
+    if (!articles || articles.length === 0) {
+        if (heroContainer) {
+            heroContainer.innerHTML = `
+                <div class="p-12 text-center bg-white rounded-xl border border-dashed border-slate-300 shadow-2xs">
+                    <i class="fa-solid fa-newspaper text-slate-300 text-5xl mb-3"></i>
+                    <h3 class="text-xl font-bold text-slate-700 font-hindi">कोई खबर अभी उपलब्ध नहीं है</h3>
+                    <p class="text-sm text-slate-500 font-hindi mt-1">एडमिन रूम (Admin Room) से ताज़ा खबरें प्रकाशित करें।</p>
+                    <a href="admin.html" class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-red-600 text-white text-xs font-bold rounded-lg hover:bg-red-700 transition">
+                        <i class="fa-solid fa-plus"></i> एडमिन रूम में जाएं
+                    </a>
+                </div>
+            `;
+        }
+        if (sideStoriesContainer) {
+            sideStoriesContainer.innerHTML = `
+                <div class="p-6 text-center text-slate-400 font-hindi text-xs bg-white rounded-xl border border-slate-100">
+                    अतिरिक्त खबरें यहां दिखाई देंगी
+                </div>
+            `;
+        }
+        if (kanpurGrid) {
+            kanpurGrid.innerHTML = `
+                <div class="col-span-full p-8 text-center text-slate-400 font-hindi text-sm bg-white rounded-xl border border-slate-100">
+                    इस अनुभाग में अभी कोई खबर उपलब्ध नहीं है।
+                </div>
+            `;
+        }
+        return;
+    }
 
     // A. Lead Hero Story
     const heroArticle = articles.find(a => a.isHero) || articles[0];
-    const heroContainer = document.getElementById("hero-main-story");
     if (heroContainer) {
         heroContainer.innerHTML = `
             <a href="article.html?id=${heroArticle.id}" class="group block relative overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition">
@@ -98,46 +129,59 @@ function renderHomePageContent() {
     }
 
     // B. Hero Side Stories
-    const sideStoriesContainer = document.getElementById("hero-side-stories");
     if (sideStoriesContainer) {
         const sideArticles = articles.filter(a => a.id !== heroArticle.id).slice(0, 4);
-        sideStoriesContainer.innerHTML = sideArticles.map(art => `
-            <a href="article.html?id=${art.id}" class="news-card flex gap-3 p-3 rounded-xl bg-white border border-slate-200/80 shadow-xs hover:border-red-200 transition group">
-                <div class="w-28 h-24 flex-shrink-0 overflow-hidden rounded-lg relative">
-                    <img src="${art.imageUrl}" alt="${art.title}" class="w-full h-full object-cover">
-                    <span class="absolute bottom-1 left-1 bg-black/75 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
-                        ${art.categoryName}
-                    </span>
+        if (sideArticles.length === 0) {
+            sideStoriesContainer.innerHTML = `
+                <div class="p-6 text-center text-slate-400 font-hindi text-xs bg-white rounded-xl border border-slate-100">
+                    और खबरें जोड़ने पर यहां दिखाई देंगी
                 </div>
-                <div class="flex flex-col justify-between">
-                    <div>
-                        <span class="text-[11px] font-bold text-red-600 uppercase tracking-wide">📍 ${art.subLocation || "कानपुर"}</span>
-                        <h3 class="text-sm font-bold text-slate-900 group-hover:text-red-600 transition clamp-2 font-hindi leading-snug mt-0.5">
-                            ${art.title}
-                        </h3>
+            `;
+        } else {
+            sideStoriesContainer.innerHTML = sideArticles.map(art => `
+                <a href="article.html?id=${art.id}" class="news-card flex gap-3 p-3 rounded-xl bg-white border border-slate-200/80 shadow-xs hover:border-red-200 transition group">
+                    <div class="w-28 h-24 flex-shrink-0 overflow-hidden rounded-lg relative">
+                        <img src="${art.imageUrl}" alt="${art.title}" class="w-full h-full object-cover">
+                        <span class="absolute bottom-1 left-1 bg-black/75 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+                            ${art.categoryName}
+                        </span>
                     </div>
-                    <div class="flex items-center text-[11px] text-slate-500 gap-2 mt-1">
-                        <span><i class="fa-regular fa-clock mr-0.5 text-slate-400"></i> ${art.time}</span>
-                        <span>•</span>
-                        <span><i class="fa-regular fa-eye mr-0.5 text-slate-400"></i> ${art.views}</span>
+                    <div class="flex flex-col justify-between">
+                        <div>
+                            <span class="text-[11px] font-bold text-red-600 uppercase tracking-wide">📍 ${art.subLocation || "कानपुर"}</span>
+                            <h3 class="text-sm font-bold text-slate-900 group-hover:text-red-600 transition clamp-2 font-hindi leading-snug mt-0.5">
+                                ${art.title}
+                            </h3>
+                        </div>
+                        <div class="flex items-center text-[11px] text-slate-500 gap-2 mt-1">
+                            <span><i class="fa-regular fa-clock mr-0.5 text-slate-400"></i> ${art.time}</span>
+                            <span>•</span>
+                            <span><i class="fa-regular fa-eye mr-0.5 text-slate-400"></i> ${art.views}</span>
+                        </div>
                     </div>
-                </div>
-            </a>
-        `).join("");
+                </a>
+            `).join("");
+        }
     }
 
     // C. Kanpur Special Grid ("हमारा कानपुर")
-    const kanpurGrid = document.getElementById("kanpur-special-grid");
     if (kanpurGrid) {
         const kanpurArticles = articles.filter(a => a.category === "kanpur" || a.subLocation).slice(0, 6);
-        kanpurGrid.innerHTML = kanpurArticles.map(art => `
-            <div class="news-card bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col justify-between shadow-xs">
-                <a href="article.html?id=${art.id}" class="block relative h-44 overflow-hidden group">
-                    <img src="${art.imageUrl}" alt="${art.title}" class="w-full h-full object-cover">
-                    <span class="absolute top-3 left-3 bg-red-600 text-white text-[11px] font-bold px-2 py-0.5 rounded shadow-sm">
-                        📍 ${art.subLocation}
-                    </span>
-                </a>
+        if (kanpurArticles.length === 0) {
+            kanpurGrid.innerHTML = `
+                <div class="col-span-full p-8 text-center text-slate-400 font-hindi text-sm bg-white rounded-xl border border-slate-100">
+                    इस अनुभाग में अभी कोई खबर उपलब्ध नहीं है।
+                </div>
+            `;
+        } else {
+            kanpurGrid.innerHTML = kanpurArticles.map(art => `
+                <div class="news-card bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col justify-between shadow-xs">
+                    <a href="article.html?id=${art.id}" class="block relative h-44 overflow-hidden group">
+                        <img src="${art.imageUrl}" alt="${art.title}" class="w-full h-full object-cover">
+                        <span class="absolute top-3 left-3 bg-red-600 text-white text-[11px] font-bold px-2 py-0.5 rounded shadow-sm">
+                            📍 ${art.subLocation}
+                        </span>
+                    </a>
                 <div class="p-4 flex-1 flex flex-col justify-between">
                     <div>
                         <a href="article.html?id=${art.id}">

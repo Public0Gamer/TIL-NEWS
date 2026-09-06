@@ -35,6 +35,7 @@ const INITIAL_ARTICLES = [
         shares: 890,
         isBreaking: true,
         isHero: true,
+        isDemo: true,
         imageUrl: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=1000&auto=format&fit=crop&q=80",
         tags: ["KanpurMetro", "KanpurNews", "UPMRC", "SmartCity"]
     },
@@ -60,6 +61,7 @@ const INITIAL_ARTICLES = [
         shares: 640,
         isBreaking: true,
         isHero: false,
+        isDemo: true,
         imageUrl: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&auto=format&fit=crop&q=80",
         tags: ["CyberCrime", "KanpurPolice", "DigitalArrest"]
     },
@@ -89,6 +91,7 @@ const INITIAL_ARTICLES = [
         shares: 410,
         isBreaking: false,
         isHero: false,
+        isDemo: true,
         imageUrl: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=800&auto=format&fit=crop&q=80",
         tags: ["MandiBhav", "KanpurMandi", "GoldSilverRate"]
     },
@@ -110,6 +113,7 @@ const INITIAL_ARTICLES = [
         shares: 512,
         isBreaking: false,
         isHero: false,
+        isDemo: true,
         imageUrl: "https://images.unsplash.com/photo-1596176530529-78163a4f7af2?w=800&auto=format&fit=crop&q=80",
         tags: ["NamamiGange", "KanpurTourism", "Bithoor"]
     },
@@ -131,6 +135,7 @@ const INITIAL_ARTICLES = [
         shares: 780,
         isBreaking: false,
         isHero: false,
+        isDemo: true,
         imageUrl: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800&auto=format&fit=crop&q=80",
         tags: ["GreenPark", "Cricket", "UPCA", "KanpurSports"]
     },
@@ -152,6 +157,7 @@ const INITIAL_ARTICLES = [
         shares: 320,
         isBreaking: false,
         isHero: false,
+        isDemo: true,
         imageUrl: "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=800&auto=format&fit=crop&q=80",
         tags: ["NagarNigam", "KanpurPolitics", "Motijheel"]
     }
@@ -266,6 +272,10 @@ const StorageService = {
     },
     addArticle(newArticle) {
         const articles = this.getArticles();
+        if (newArticle.isHero) {
+            articles.forEach(a => a.isHero = false);
+        }
+        newArticle.isDemo = false;
         articles.unshift(newArticle);
         this.saveArticles(articles);
         return articles;
@@ -276,10 +286,32 @@ const StorageService = {
         this.saveArticles(articles);
         return articles;
     },
+    deleteDemoArticles() {
+        let articles = this.getArticles();
+        articles = articles.filter(a => !a.isDemo && !a.id.startsWith("kanpur-"));
+        this.saveArticles(articles);
+        return articles;
+    },
+    restoreDemoArticles() {
+        this.saveArticles(INITIAL_ARTICLES);
+        return INITIAL_ARTICLES;
+    },
+    setHeroArticle(id) {
+        let articles = this.getArticles();
+        articles = articles.map(a => ({
+            ...a,
+            isHero: (a.id === id)
+        }));
+        this.saveArticles(articles);
+        return articles;
+    },
     updateArticle(id, updatedData) {
         let articles = this.getArticles();
         const index = articles.findIndex(a => a.id === id);
         if (index !== -1) {
+            if (updatedData.isHero) {
+                articles.forEach(a => a.isHero = false);
+            }
             articles[index] = { ...articles[index], ...updatedData };
             this.saveArticles(articles);
         }
