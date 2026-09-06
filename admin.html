@@ -1008,6 +1008,36 @@
                         </div>
                     </div>
 
+                    <!-- 3-Step Easy Guide Box -->
+                    <div class="bg-indigo-50/90 p-4 rounded-2xl border border-indigo-200 mb-6 text-xs">
+                        <h4 class="font-black text-indigo-950 flex items-center gap-2 text-sm mb-2">
+                            <i class="fa-solid fa-circle-question text-indigo-600"></i> विज्ञापन कैसे लगाएं, बदलें और हटाएं? (3 आसान चरण)
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-slate-700 font-hindi">
+                            <div class="flex items-start gap-2.5 bg-white p-2.5 rounded-xl border border-indigo-100 shadow-2xs">
+                                <span class="w-6 h-6 rounded-full bg-indigo-600 text-white font-black text-xs flex items-center justify-center shrink-0">1</span>
+                                <div>
+                                    <strong class="text-indigo-950 block text-[11px]">नया विज्ञापन लगाएं:</strong>
+                                    <span class="text-[11px] text-slate-600">ऊपर <strong>"+ नया विज्ञापन जोड़ें"</strong> दबाएं। अपने फोन से फोटो चुनें, लिंक डालें और सेव करें।</span>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-2.5 bg-white p-2.5 rounded-xl border border-indigo-100 shadow-2xs">
+                                <span class="w-6 h-6 rounded-full bg-emerald-600 text-white font-black text-xs flex items-center justify-center shrink-0">2</span>
+                                <div>
+                                    <strong class="text-emerald-950 block text-[11px]">चालू या बंद करें:</strong>
+                                    <span class="text-[11px] text-slate-600">तालिका में हरे <strong>"सक्रिय (LIVE)"</strong> बटन पर 1 क्लिक करके कभी भी रोकें या शुरू करें।</span>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-2.5 bg-white p-2.5 rounded-xl border border-indigo-100 shadow-2xs">
+                                <span class="w-6 h-6 rounded-full bg-red-600 text-white font-black text-xs flex items-center justify-center shrink-0">3</span>
+                                <div>
+                                    <strong class="text-red-950 block text-[11px]">एडिट या डिलीट:</strong>
+                                    <span class="text-[11px] text-slate-600">विज्ञापन का ऑफर बदलने के लिए <strong>✏️ बदलें</strong> और हटाने के लिए <strong>🗑️ हटाएं</strong> दबाएं।</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- 4 Summary Stats Cards for Ads -->
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6 font-hindi">
                         <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
@@ -1062,12 +1092,24 @@
 
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                                 <div class="sm:col-span-2">
-                                    <label class="block text-slate-700 mb-1 font-bold">4. बैनर / इमेज URL या सैंपल चुनें: *</label>
+                                    <label class="block text-slate-700 mb-1 font-bold">4. बैनर / पोस्टर फोटो (अपने फोन से चुनें या URL डालें): *</label>
+                                    <input type="file" id="campaign-file-input" accept="image/*" onchange="handleAdImageFileUpload(event)" class="hidden">
                                     <div class="flex gap-2">
-                                        <input type="url" id="campaign-image" placeholder="https://..." required class="flex-1 p-2.5 rounded-xl border border-slate-300 bg-white focus:border-indigo-500 focus:outline-hidden text-xs">
-                                        <button type="button" onclick="cycleSampleImages()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-3 py-2 rounded-xl font-bold text-xs shrink-0 cursor-pointer" title="डेमो इमेज चुनें">
-                                            🎨 सैंपल इमेज
+                                        <button type="button" onclick="document.getElementById('campaign-file-input').click()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-2 rounded-xl font-bold text-xs shrink-0 cursor-pointer flex items-center gap-1.5 shadow-2xs">
+                                            <i class="fa-solid fa-folder-open"></i> फोन / लैपटॉप से फोटो चुनें
                                         </button>
+                                        <input type="url" id="campaign-image" placeholder="या इमेज URL: https://..." required class="flex-1 p-2 rounded-xl border border-slate-300 bg-white focus:border-indigo-500 focus:outline-hidden text-xs">
+                                        <button type="button" onclick="cycleSampleImages()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-3 py-2 rounded-xl font-bold text-xs shrink-0 cursor-pointer" title="डेमो सैंपल इमेज चुनें">
+                                            🎨 सैंपल
+                                        </button>
+                                    </div>
+                                    <!-- Live Selected Image Preview Box -->
+                                    <div id="campaign-image-preview-container" class="mt-2 hidden flex items-center gap-3 p-2 bg-white rounded-xl border border-indigo-200">
+                                        <img id="campaign-image-preview" src="" class="w-16 h-12 object-cover rounded-lg border border-slate-200 shadow-2xs">
+                                        <div class="min-w-0 flex-1 text-xs">
+                                            <span class="text-emerald-700 font-bold block flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> फोटो चुनी गई</span>
+                                            <span id="campaign-image-preview-name" class="text-slate-500 text-[11px] truncate block"></span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div>
@@ -2571,11 +2613,49 @@
         ];
         let currentSampleImgIdx = 0;
 
+        function handleAdImageFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) {
+                window.showToast("कृपया केवल फोटो (JPG, PNG, WebP) फाइल चुनें!", "error");
+                return;
+            }
+            if (file.size > 2.5 * 1024 * 1024) {
+                window.showToast("फोटो का साइज 2.5 MB से कम होना चाहिए!", "error");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64 = e.target.result;
+                const imgInput = document.getElementById('campaign-image');
+                if (imgInput) imgInput.value = base64;
+
+                const prevBox = document.getElementById('campaign-image-preview-container');
+                const prevImg = document.getElementById('campaign-image-preview');
+                const prevName = document.getElementById('campaign-image-preview-name');
+                if (prevBox && prevImg) {
+                    prevImg.src = base64;
+                    if (prevName) prevName.innerText = `📁 ${file.name} (${Math.round(file.size/1024)} KB)`;
+                    prevBox.classList.remove('hidden');
+                }
+                window.showToast("✅ फोटो सफलतापूर्वक लोड हो गई!", "success");
+            };
+            reader.readAsDataURL(file);
+        }
+
         function cycleSampleImages() {
             currentSampleImgIdx = (currentSampleImgIdx + 1) % SAMPLE_AD_IMAGES.length;
             const imgInput = document.getElementById('campaign-image');
             if (imgInput) {
                 imgInput.value = SAMPLE_AD_IMAGES[currentSampleImgIdx];
+                const prevBox = document.getElementById('campaign-image-preview-container');
+                const prevImg = document.getElementById('campaign-image-preview');
+                const prevName = document.getElementById('campaign-image-preview-name');
+                if (prevBox && prevImg) {
+                    prevImg.src = SAMPLE_AD_IMAGES[currentSampleImgIdx];
+                    if (prevName) prevName.innerText = "🎨 सैंपल इमेज";
+                    prevBox.classList.remove('hidden');
+                }
                 window.showToast("🎨 सैंपल इमेज चुनी गई!", "success");
             }
         }
@@ -2603,6 +2683,8 @@
             document.getElementById('ad-form-title').innerHTML = `<i class="fa-solid fa-bullhorn text-indigo-600"></i> नया विज्ञापन / प्रमोशन अभियान बनाएं`;
             document.getElementById('campaign-enabled').checked = true;
             document.getElementById('campaign-cta').value = "ऑफर देखें व संपर्क करें";
+            const prevBox = document.getElementById('campaign-image-preview-container');
+            if (prevBox) prevBox.classList.add('hidden');
         }
 
         function handleSaveAdCampaign(e) {
@@ -2732,15 +2814,15 @@
                                         </button>
                                     </td>
                                     <td class="p-3 text-right">
-                                        <div class="flex items-center justify-end gap-1">
-                                            <button type="button" onclick="previewAdCampaign('${c.id}')" class="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition cursor-pointer" title="लाइव टेस्ट पॉपअप देखें">
-                                                <i class="fa-solid fa-eye text-xs"></i>
+                                        <div class="flex items-center justify-end gap-1.5 flex-wrap">
+                                            <button type="button" onclick="previewAdCampaign('${c.id}')" class="px-2.5 py-1 text-slate-700 hover:text-indigo-700 bg-slate-100 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-lg transition cursor-pointer font-bold text-[10px] flex items-center gap-1" title="मुख्य वेबसाइट पर यह विज्ञापन कैसा दिखेगा देखें">
+                                                <i class="fa-solid fa-eye text-indigo-600"></i> टेस्ट देखें
                                             </button>
-                                            <button type="button" onclick="editAdCampaign('${c.id}')" class="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition cursor-pointer" title="संपादित करें">
-                                                <i class="fa-solid fa-pen-to-square text-xs"></i>
+                                            <button type="button" onclick="editAdCampaign('${c.id}')" class="px-2.5 py-1 text-blue-700 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition cursor-pointer font-bold text-[10px] flex items-center gap-1" title="विज्ञापन की फोटो, लिंक या टेक्स्ट बदलें">
+                                                <i class="fa-solid fa-pen-to-square"></i> बदलें (Edit)
                                             </button>
-                                            <button type="button" onclick="deleteAdCampaign('${c.id}')" class="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition cursor-pointer" title="विज्ञापन हटाएं">
-                                                <i class="fa-solid fa-trash-can text-xs"></i>
+                                            <button type="button" onclick="deleteAdCampaign('${c.id}')" class="px-2.5 py-1 text-red-700 hover:text-red-800 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition cursor-pointer font-bold text-[10px] flex items-center gap-1" title="यह विज्ञापन पूरी तरह हटाएं">
+                                                <i class="fa-solid fa-trash-can"></i> हटाएं
                                             </button>
                                         </div>
                                     </td>
@@ -2754,7 +2836,7 @@
 
         function toggleAdStatus(id) {
             const newState = StorageService.toggleAdStatus(id);
-            window.showToast(newState ? "✅ विज्ञापन सक्रिय कर दिया गया!" : "⏸️ विज्ञापन निष्क्रिय कर दिया गया!", "success");
+            window.showToast(newState ? "✅ विज्ञापन सक्रिय कर दिया गया! अब मुख्य वेबसाइट पर दिखेगा।" : "⏸️ विज्ञापन रोक दिया गया! अब मुख्य वेबसाइट पर नहीं दिखेगा।", "success");
             renderAdCampaignsList();
         }
 
@@ -2784,6 +2866,15 @@
             document.getElementById('campaign-link').value = ad.linkUrl || "";
             document.getElementById('campaign-cta').value = ad.ctaText || "ऑफर देखें";
             document.getElementById('campaign-enabled').checked = ad.enabled;
+
+            const prevBox = document.getElementById('campaign-image-preview-container');
+            const prevImg = document.getElementById('campaign-image-preview');
+            const prevName = document.getElementById('campaign-image-preview-name');
+            if (prevBox && prevImg && ad.imageUrl) {
+                prevImg.src = ad.imageUrl;
+                if (prevName) prevName.innerText = `वर्तमान फोटो (${ad.title})`;
+                prevBox.classList.remove('hidden');
+            }
 
             document.getElementById('ad-form-title').innerHTML = `<i class="fa-solid fa-pen-to-square text-indigo-600"></i> विज्ञापन संपादित करें: <span class="text-slate-900">${ad.title}</span>`;
             toggleAddAdForm(true);
