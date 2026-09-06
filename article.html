@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">TODAY INDIA LIVE NEWS | खबर पढ़ें</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'news-red': '#dc2626',
+                        'news-navy': '#0f172a',
+                    },
+                    fontFamily: {
+                        hindi: ['Mukta', 'sans-serif'],
+                        brand: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+
+    <!-- Top Header -->
+    <header class="bg-white border-b border-slate-200 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex items-center justify-between">
+            <div class="flex items-center gap-4 text-slate-600">
+                <span id="live-date">रविवार, 6 सितंबर 2026</span>
+                <span>|</span>
+                <span>कानपुर: 29°C धूप</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="text-red-600 font-bold hover:underline">← मुख्य पृष्ठ पर जाएं</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Branding Bar -->
+    <div class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-4">
+            <a href="index.html" class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-600 to-rose-900 text-white flex items-center justify-center shadow-md">
+                    <i class="fa-solid fa-satellite-dish text-xl"></i>
+                </div>
+                <div class="flex flex-col">
+                    <div class="flex items-center gap-1.5">
+                        <span class="font-brand font-black text-xl sm:text-2xl text-slate-900">
+                            TODAY<span class="text-red-600">INDIA</span><span class="text-slate-700">LIVE</span>
+                        </span>
+                        <span class="live-dot"></span>
+                    </div>
+                    <span class="text-[10px] text-slate-500 font-hindi">सच की आवाज़ • कानपुर</span>
+                </div>
+            </a>
+            <div class="flex items-center gap-2">
+                <a href="submit-news.html" class="bg-amber-50 text-amber-800 border border-amber-300 px-3 py-1.5 rounded-lg text-xs font-bold">
+                    <i class="fa-solid fa-camera mr-1"></i> खबर भेजें
+                </a>
+                <a href="index.html" class="bg-red-600 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold">
+                    <i class="fa-solid fa-tv mr-1"></i> LIVE TV
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Article Content Area -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-1 w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Main Article Column (8 Cols) -->
+            <article class="lg:col-span-8 bg-white rounded-2xl p-4 sm:p-7 border border-slate-200 shadow-xs">
+                
+                <!-- Breadcrumb -->
+                <div class="flex items-center gap-2 text-xs text-slate-500 mb-3 font-hindi">
+                    <a href="index.html" class="hover:text-red-600">होम</a>
+                    <span>/</span>
+                    <a href="category.html?cat=kanpur" id="article-breadcrumb-cat" class="hover:text-red-600 font-bold text-red-600">हमारा कानपुर</a>
+                    <span>/</span>
+                    <span class="text-slate-400">विस्तृत रिपोर्ट</span>
+                </div>
+
+                <!-- Badges & Location -->
+                <div class="flex flex-wrap items-center gap-2 mb-3">
+                    <span id="article-badge" class="bg-red-600 text-white text-xs font-black px-2.5 py-0.5 rounded uppercase">
+                        ब्रेकिंग न्यूज़
+                    </span>
+                    <span id="article-sublocation" class="bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-0.5 rounded">
+                        📍 कानपुर
+                    </span>
+                </div>
+
+                <!-- Title -->
+                <h1 id="article-title" class="text-2xl sm:text-3xl md:text-4xl font-black text-slate-950 font-hindi leading-tight mb-4">
+                    लोड हो रहा है...
+                </h1>
+
+                <!-- Reporter Byline & Metadata -->
+                <div class="flex flex-wrap items-center justify-between gap-3 py-3 border-y border-slate-100 text-xs text-slate-600 mb-5 font-hindi">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-red-100 text-red-700 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-user-pen"></i>
+                        </div>
+                        <div>
+                            <p id="article-author" class="font-bold text-slate-900 leading-tight">ब्यूरो रिपोर्ट</p>
+                            <p class="text-[11px] text-slate-500">TODAY INDIA LIVE NEWS नेटवर्क</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 text-slate-500">
+                        <span id="article-date"><i class="fa-regular fa-calendar text-red-500 mr-1"></i> आज</span>
+                        <span id="article-time"><i class="fa-regular fa-clock text-red-500 mr-1"></i> अभी</span>
+                        <span id="article-views"><i class="fa-regular fa-eye text-red-500 mr-1"></i> 1,200 व्यूज</span>
+                    </div>
+                </div>
+
+                <!-- Interactive Action Bar: Font Sizing & Audio Reader & WhatsApp Share -->
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/80 mb-6 flex flex-wrap items-center justify-between gap-3">
+                    <!-- Audio Voice Simulation -->
+                    <div class="flex items-center gap-2">
+                        <button id="tts-btn" onclick="toggleAudioReading()" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-2xs">
+                            <i class="fa-solid fa-volume-high"></i>
+                            <span id="tts-label">खबर सुनें</span>
+                        </button>
+                        <span class="text-xs text-slate-500 hidden sm:inline">| फ़ॉन्ट साइज:</span>
+                        <!-- Font Size Adjuster -->
+                        <div class="inline-flex rounded-md shadow-2xs border border-slate-200 overflow-hidden bg-white text-xs">
+                            <button onclick="changeFontSize(-2)" class="px-2.5 py-1 hover:bg-slate-100 font-bold text-slate-700" title="छोटा फ़ॉन्ट">A-</button>
+                            <button onclick="resetFontSize()" class="px-2.5 py-1 hover:bg-slate-100 font-semibold border-x border-slate-200 text-slate-700" title="सामान्य फ़ॉन्ट">A</button>
+                            <button onclick="changeFontSize(2)" class="px-2.5 py-1 hover:bg-slate-100 font-bold text-slate-700" title="बड़ा फ़ॉन्ट">A+</button>
+                        </div>
+                    </div>
+
+                    <!-- Social Share -->
+                    <div class="flex items-center gap-2">
+                        <button onclick="shareCurrentArticleWhatsApp()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
+                            <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp शेयर
+                        </button>
+                        <button onclick="copyArticleLink()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-2.5 py-1.5 rounded-lg text-xs font-medium transition" title="लिंक कॉपी करें">
+                            <i class="fa-solid fa-link"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Featured Image -->
+                <div class="relative rounded-xl overflow-hidden mb-6 border border-slate-200">
+                    <img id="article-img" src="" alt="" class="w-full h-auto max-h-[460px] object-cover">
+                    <div class="bg-slate-900/90 text-slate-300 text-xs px-3 py-1.5 font-hindi flex items-center justify-between">
+                        <span>फोटो: TODAY INDIA LIVE न्यूज़ नेटवर्क, कानपुर</span>
+                        <span class="text-slate-400">विशेष ग्राउंड रिपोर्ट</span>
+                    </div>
+                </div>
+
+                <!-- Article Body Text -->
+                <div id="article-content-body" class="prose max-w-none text-slate-800 font-hindi text-base sm:text-lg leading-relaxed space-y-4">
+                    <!-- Injected dynamically -->
+                </div>
+
+                <!-- WhatsApp Community Banner -->
+                <div class="mt-8 bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center text-2xl flex-shrink-0">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-emerald-950 font-hindi text-base">कानपुर न्यूज़ WhatsApp ग्रुप से जुड़ें</h4>
+                            <p class="text-xs text-emerald-700 font-hindi">शहर की कोई भी खबर न छूटे, 1 लाख+ कानपुर वासियों के साथ जुड़ें</p>
+                        </div>
+                    </div>
+                    <a href="https://whatsapp.com" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-lg text-xs transition flex-shrink-0">
+                        अभी ग्रुप में शामिल हों →
+                    </a>
+                </div>
+
+                <!-- Comment Section -->
+                <div class="mt-10 pt-6 border-t border-slate-200 font-hindi">
+                    <h3 class="font-bold text-xl text-slate-900 mb-4 flex items-center gap-2">
+                        <i class="fa-regular fa-comments text-red-600"></i> पाठकों की राय (टिप्पणियाँ)
+                    </h3>
+                    
+                    <!-- Comment Input Form -->
+                    <form id="comment-form" class="space-y-3 mb-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <input type="text" id="commenter-name" placeholder="आपका नाम (Name)" required class="w-full text-sm p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-red-500 focus:outline-none">
+                            <input type="text" id="commenter-city" placeholder="आपका इलाका (जैसे: कल्याणपुर, कानपुर)" class="w-full text-sm p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-red-500 focus:outline-none">
+                        </div>
+                        <textarea id="comment-text" rows="3" placeholder="इस खबर पर अपनी राय लिखें..." required class="w-full text-sm p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-red-500 focus:outline-none"></textarea>
+                        <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2 rounded-lg transition">
+                            टिप्पणी पोस्ट करें
+                        </button>
+                    </form>
+
+                    <!-- Comments List -->
+                    <div id="comments-list" class="space-y-3">
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs">
+                            <div class="flex items-center justify-between mb-1">
+                                <strong class="text-slate-900 font-bold">दिनेश त्रिवेदी (गोविंद नगर)</strong>
+                                <span class="text-slate-400">1 घंटे पहले</span>
+                            </div>
+                            <p class="text-slate-700">बहुत ही सटीक और निष्पक्ष रिपोर्टिंग। कानपुर में ऐसे ही मुद्दों को उठाने की सख्त जरूरत है।</p>
+                        </div>
+                    </div>
+                </div>
+
+            </article>
+
+            <!-- Sidebar (4 Cols) -->
+            <aside class="lg:col-span-4 space-y-6">
+                <!-- Kanpur Bureau Highlight -->
+                <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs">
+                    <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                        <div class="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center font-black">
+                            TL
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-sm">TODAY INDIA LIVE कानपुर</h3>
+                            <p class="text-[11px] text-slate-500 font-hindi">24 घंटे ज़मीनी पत्रकारिता</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-600 font-hindi mt-3 leading-relaxed">
+                        हमारे संवाददाता शहर के हर वार्ड और तहसील में सक्रिय हैं। कोई भी सूचना साझा करने के लिए कॉल करें।
+                    </p>
+                    <a href="submit-news.html" class="mt-3 block text-center bg-red-50 hover:bg-red-100 text-red-700 font-bold py-2 rounded-lg text-xs transition border border-red-200">
+                        <i class="fa-solid fa-camera mr-1"></i> अपनी खबर हमें भेजें
+                    </a>
+                </div>
+
+                <!-- Related Kanpur News -->
+                <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs">
+                    <h3 class="font-bold text-base text-slate-900 font-hindi pb-2 mb-3 border-b-2 border-red-600 flex items-center gap-1.5">
+                        <i class="fa-solid fa-location-dot text-red-600"></i> कानपुर की अन्य बड़ी खबरें
+                    </h3>
+                    <div id="sidebar-related-news" class="space-y-3">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-white border-t-4 border-red-600 mt-12 py-6 text-xs text-center text-slate-400">
+        <p>© 2026 TODAY INDIA LIVE NEWS • कानपुर, उत्तर प्रदेश</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/data.js"></script>
+    <script>
+        let currentArticle = null;
+        let baseFontSize = 18;
+        let isSpeaking = false;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const articleId = urlParams.get("id");
+            
+            const articles = StorageService.getArticles();
+            currentArticle = articles.find(a => a.id === articleId) || articles[0];
+
+            renderArticleDetail(currentArticle);
+            renderSidebarNews(articles, currentArticle.id);
+            setupComments(currentArticle.id);
+        });
+
+        function renderArticleDetail(art) {
+            document.getElementById("page-title").innerText = `${art.title} | TODAY INDIA LIVE NEWS`;
+            document.getElementById("article-title").innerText = art.title;
+            document.getElementById("article-breadcrumb-cat").innerText = art.categoryName;
+            document.getElementById("article-sublocation").innerText = `📍 ${art.subLocation || "कानपुर"}`;
+            document.getElementById("article-author").innerText = art.author;
+            document.getElementById("article-date").innerHTML = `<i class="fa-regular fa-calendar text-red-500 mr-1"></i> ${art.date}`;
+            document.getElementById("article-time").innerHTML = `<i class="fa-regular fa-clock text-red-500 mr-1"></i> ${art.time}`;
+            document.getElementById("article-views").innerHTML = `<i class="fa-regular fa-eye text-red-500 mr-1"></i> ${art.views} व्यूज`;
+            
+            const imgEl = document.getElementById("article-img");
+            imgEl.src = art.imageUrl;
+            imgEl.alt = art.title;
+
+            const contentEl = document.getElementById("article-content-body");
+            const paragraphs = art.content.split("\n\n");
+            contentEl.innerHTML = paragraphs.map(p => `<p class="mb-4">${p.replace(/\n/g, "<br>")}</p>`).join("");
+        }
+
+        function renderSidebarNews(articles, currentId) {
+            const sidebarEl = document.getElementById("sidebar-related-news");
+            const related = articles.filter(a => a.id !== currentId).slice(0, 5);
+            
+            sidebarEl.innerHTML = related.map(a => `
+                <a href="article.html?id=${a.id}" class="flex gap-2.5 group p-1.5 rounded-lg hover:bg-slate-50 transition">
+                    <img src="${a.imageUrl}" alt="${a.title}" class="w-18 h-16 object-cover rounded-md flex-shrink-0">
+                    <div>
+                        <span class="text-[10px] font-bold text-red-600 uppercase">📍 ${a.subLocation || "कानपुर"}</span>
+                        <h4 class="text-xs font-bold text-slate-900 group-hover:text-red-600 transition font-hindi clamp-2 leading-snug">
+                            ${a.title}
+                        </h4>
+                    </div>
+                </a>
+            `).join("");
+        }
+
+        function changeFontSize(delta) {
+            baseFontSize = Math.max(14, Math.min(26, baseFontSize + delta));
+            const contentEl = document.getElementById("article-content-body");
+            contentEl.style.fontSize = baseFontSize + "px";
+            contentEl.style.lineHeight = (baseFontSize * 1.6) + "px";
+        }
+
+        function resetFontSize() {
+            baseFontSize = 18;
+            const contentEl = document.getElementById("article-content-body");
+            contentEl.style.fontSize = "18px";
+            contentEl.style.lineHeight = "28px";
+        }
+
+        function toggleAudioReading() {
+            if (!('speechSynthesis' in window)) {
+                alert("आपके ब्राउज़र में वॉइस सपोर्ट उपलब्ध नहीं है।");
+                return;
+            }
+
+            const btn = document.getElementById("tts-btn");
+            const label = document.getElementById("tts-label");
+
+            if (isSpeaking) {
+                window.speechSynthesis.cancel();
+                isSpeaking = false;
+                label.innerText = "खबर सुनें";
+                btn.classList.remove("bg-slate-800");
+                btn.classList.add("bg-red-600");
+            } else {
+                const textToRead = `${currentArticle.title}। ${currentArticle.summary}`;
+                const utterance = new SpeechSynthesisUtterance(textToRead);
+                utterance.lang = "hi-IN";
+                utterance.rate = 0.95;
+
+                utterance.onend = () => {
+                    isSpeaking = false;
+                    label.innerText = "खबर सुनें";
+                    btn.classList.remove("bg-slate-800");
+                    btn.classList.add("bg-red-600");
+                };
+
+                window.speechSynthesis.speak(utterance);
+                isSpeaking = true;
+                label.innerText = "पढ़ना रोकें ⏹";
+                btn.classList.remove("bg-red-600");
+                btn.classList.add("bg-slate-800");
+            }
+        }
+
+        function shareCurrentArticleWhatsApp() {
+            if (!currentArticle) return;
+            const text = encodeURIComponent(`*${currentArticle.title}*\n\nविस्तृत खबर पढ़ें TODAY INDIA LIVE NEWS कानपुर पर:\n${window.location.href}`);
+            window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
+        }
+
+        function copyArticleLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert("खबर का लिंक कॉपी हो गया है!");
+            });
+        }
+
+        function setupComments(articleId) {
+            const commentKey = `todayindia_comments_${articleId}`;
+            const listEl = document.getElementById("comments-list");
+            const form = document.getElementById("comment-form");
+
+            function renderComments() {
+                const stored = JSON.parse(localStorage.getItem(commentKey) || "[]");
+                if (stored.length === 0) return;
+
+                const defaultHTML = `
+                    <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs">
+                        <div class="flex items-center justify-between mb-1">
+                            <strong class="text-slate-900 font-bold">दिनेश त्रिवेदी (गोविंद नगर)</strong>
+                            <span class="text-slate-400">1 घंटे पहले</span>
+                        </div>
+                        <p class="text-slate-700">बहुत ही सटीक और निष्पक्ष रिपोर्टिंग। कानपुर में ऐसे ही मुद्दों को उठाने की सख्त जरूरत है।</p>
+                    </div>
+                `;
+
+                const newHTML = stored.map(c => `
+                    <div class="p-3 bg-red-50/50 rounded-lg border border-red-100 text-xs">
+                        <div class="flex items-center justify-between mb-1">
+                            <strong class="text-slate-900 font-bold">${c.name} (${c.city || "कानपुर"})</strong>
+                            <span class="text-slate-400">अभी</span>
+                        </div>
+                        <p class="text-slate-700">${c.text}</p>
+                    </div>
+                `).join("");
+
+                listEl.innerHTML = newHTML + defaultHTML;
+            }
+
+            renderComments();
+
+            form.addEventListener("submit", (e) => {
+                e.preventDefault();
+                const name = document.getElementById("commenter-name").value.trim();
+                const city = document.getElementById("commenter-city").value.trim();
+                const text = document.getElementById("comment-text").value.trim();
+
+                if (!name || !text) return;
+
+                const stored = JSON.parse(localStorage.getItem(commentKey) || "[]");
+                stored.unshift({ name, city, text, timestamp: new Date().toISOString() });
+                localStorage.setItem(commentKey, JSON.stringify(stored));
+
+                form.reset();
+                renderComments();
+                alert("आपकी टिप्पणी दर्ज कर ली गई है!");
+            });
+        }
+    </script>
+</body>
+</html>

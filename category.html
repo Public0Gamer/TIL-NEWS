@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="category-page-title">TODAY INDIA LIVE NEWS | श्रेणी अनुसार खबरें</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'news-red': '#dc2626',
+                        'news-navy': '#0f172a',
+                    },
+                    fontFamily: {
+                        hindi: ['Mukta', 'sans-serif'],
+                        brand: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex items-center justify-between">
+            <a href="index.html" class="text-red-600 font-bold hover:underline">← मुख्य पृष्ठ (Home)</a>
+            <span class="text-slate-500">TODAY INDIA LIVE NEWS • कानपुर</span>
+        </div>
+    </header>
+
+    <!-- Branding -->
+    <div class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-600 to-rose-900 text-white flex items-center justify-center shadow-md">
+                    <i class="fa-solid fa-satellite-dish text-xl"></i>
+                </div>
+                <div class="font-brand font-black text-xl text-slate-900">
+                    TODAY<span class="text-red-600">INDIA</span><span class="text-slate-700">LIVE</span>
+                </div>
+            </a>
+            <div class="flex items-center gap-2">
+                <a href="submit-news.html" class="bg-amber-50 text-amber-800 border border-amber-300 px-3 py-1.5 rounded-lg text-xs font-bold">
+                    <i class="fa-solid fa-camera mr-1"></i> खबर भेजें
+                </a>
+            </div>
+        </div>
+
+        <!-- Category Tabs -->
+        <nav class="bg-slate-900 text-white text-xs font-semibold overflow-x-auto no-scrollbar">
+            <div class="max-w-7xl mx-auto px-4 flex items-center">
+                <a href="category.html?cat=all" id="tab-all" class="px-4 py-2.5 hover:bg-slate-800 transition">सभी खबरें</a>
+                <a href="category.html?cat=kanpur" id="tab-kanpur" class="px-4 py-2.5 hover:bg-slate-800 transition text-amber-400 font-bold">📍 हमारा कानपुर</a>
+                <a href="category.html?cat=up" id="tab-up" class="px-4 py-2.5 hover:bg-slate-800 transition">उत्तर प्रदेश</a>
+                <a href="category.html?cat=crime" id="tab-crime" class="px-4 py-2.5 hover:bg-slate-800 transition">अपराध (Crime)</a>
+                <a href="category.html?cat=politics" id="tab-politics" class="px-4 py-2.5 hover:bg-slate-800 transition">राजनीति</a>
+                <a href="category.html?cat=business" id="tab-business" class="px-4 py-2.5 hover:bg-slate-800 transition">व्यापार / मंडी भाव</a>
+                <a href="category.html?cat=sports" id="tab-sports" class="px-4 py-2.5 hover:bg-slate-800 transition">खेल (Sports)</a>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full">
+        <!-- Category Title & Counter -->
+        <div class="flex items-center justify-between pb-3 mb-6 border-b-2 border-red-600">
+            <div>
+                <h1 id="category-heading" class="text-2xl sm:text-3xl font-black text-slate-950 font-hindi">
+                    हमारा कानपुर
+                </h1>
+                <p id="category-subheading" class="text-xs text-slate-500 font-hindi mt-0.5">कानपुर नगर, देहात और आस-पास के सभी प्रमुख समाचार</p>
+            </div>
+            <span id="article-count-badge" class="bg-red-50 text-red-700 border border-red-200 text-xs font-bold px-3 py-1 rounded-full">
+                0 खबरें
+            </span>
+        </div>
+
+        <!-- News Grid -->
+        <div id="category-news-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Populated via script -->
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-white border-t-4 border-red-600 mt-12 py-6 text-xs text-center text-slate-400">
+        <p>© 2026 TODAY INDIA LIVE NEWS • कानपुर, उत्तर प्रदेश</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/data.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoryKey = urlParams.get("cat") || "kanpur";
+
+            const categoryMap = {
+                all: { title: "सभी ताज़ा खबरें", desc: "कानपुर एवं देश-प्रदेश की तमाम बड़ी खबरें", tabId: "tab-all" },
+                kanpur: { title: "हमारा कानपुर", desc: "कल्याणपुर, गोविंद नगर, किदवई नगर, बिठूर और पूरे शहर की खबरें", tabId: "tab-kanpur" },
+                up: { title: "उत्तर प्रदेश", desc: "लखनऊ, प्रयागराज, वाराणसी और पूरे प्रदेश की हलचल", tabId: "tab-up" },
+                crime: { title: "क्राइम फाइल्स", desc: "कानपुर कमिश्नरेट पुलिस एवं अपराध जगत की खबरें", tabId: "tab-crime" },
+                politics: { title: "राजनीति", desc: "चुनावी विश्लेषण, नगर निगम और राजनीतिक बयानबाजी", tabId: "tab-politics" },
+                business: { title: "व्यापार / मंडी भाव", desc: "चकरपुर गल्ला मंडी, सर्राफा बाजार और उद्योग जगत", tabId: "tab-business" },
+                sports: { title: "खेल समाचार", desc: "ग्रीन पार्क स्टेडियम, क्रिकेट व स्थानीय खेल कूद", tabId: "tab-sports" }
+            };
+
+            const catInfo = categoryMap[categoryKey] || categoryMap.kanpur;
+            document.getElementById("category-page-title").innerText = `${catInfo.title} | TODAY INDIA LIVE NEWS`;
+            document.getElementById("category-heading").innerText = catInfo.title;
+            document.getElementById("category-subheading").innerText = catInfo.desc;
+
+            // Highlight Active Tab
+            const activeTab = document.getElementById(catInfo.tabId);
+            if (activeTab) {
+                activeTab.classList.add("bg-red-600", "text-white");
+            }
+
+            const allArticles = StorageService.getArticles();
+            const filtered = categoryKey === "all" 
+                ? allArticles 
+                : allArticles.filter(a => a.category === categoryKey);
+
+            document.getElementById("article-count-badge").innerText = `${filtered.length} खबरें उपलब्ध`;
+
+            const grid = document.getElementById("category-news-grid");
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 bg-white rounded-xl border border-slate-200">
+                        <i class="fa-regular fa-newspaper text-4xl text-slate-300 mb-3 block"></i>
+                        <p class="text-slate-500 font-hindi">इस श्रेणी में फिलहाल कोई खबर उपलब्ध नहीं है।</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(art => `
+                <div class="news-card bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col justify-between shadow-xs">
+                    <a href="article.html?id=${art.id}" class="block relative h-48 overflow-hidden group">
+                        <img src="${art.imageUrl}" alt="${art.title}" class="w-full h-full object-cover">
+                        <span class="absolute top-3 left-3 bg-red-600 text-white text-[11px] font-bold px-2 py-0.5 rounded shadow-sm">
+                            📍 ${art.subLocation || "कानपुर"}
+                        </span>
+                    </a>
+                    <div class="p-4 flex-1 flex flex-col justify-between">
+                        <div>
+                            <a href="article.html?id=${art.id}">
+                                <h3 class="font-bold text-base text-slate-900 hover:text-red-600 transition font-hindi clamp-2 leading-snug mb-2">
+                                    ${art.title}
+                                </h3>
+                            </a>
+                            <p class="text-slate-600 text-xs font-hindi clamp-3 mb-3">
+                                ${art.summary}
+                            </p>
+                        </div>
+                        <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                            <span><i class="fa-regular fa-clock mr-1"></i> ${art.time}</span>
+                            <a href="article.html?id=${art.id}" class="text-red-600 font-bold hover:underline">
+                                पूरी खबर पढ़ें →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `).join("");
+        });
+    </script>
+</body>
+</html>
