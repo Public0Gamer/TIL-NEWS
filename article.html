@@ -298,6 +298,11 @@
             const articles = StorageService.getArticles();
             currentArticle = articles.find(a => a.id === articleId) || articles[0];
 
+            if (typeof TrackingService !== 'undefined' && currentArticle) {
+                TrackingService.recordPageView(currentArticle.id, currentArticle.title);
+                currentArticle.views = (currentArticle.views || 0) + 1;
+            }
+
             renderArticleDetail(currentArticle);
             renderSidebarNews(articles, currentArticle.id);
             setupComments(currentArticle.id);

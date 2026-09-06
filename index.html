@@ -260,37 +260,39 @@
             </div>
         </section>
 
-        <!-- SECTION B: Kanpur Mandi & City Vital Stats Bar -->
-        <section class="bg-gradient-to-r from-amber-500/10 via-red-500/5 to-slate-100 rounded-2xl p-4 border border-amber-200/70">
-            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <!-- SECTION B: Daily Kanpur Mandi, Bullion & Fuel Rates Bar (Auto-Updating) -->
+        <section id="mandi-rates-section" class="bg-gradient-to-r from-amber-500/10 via-red-500/5 to-slate-100 rounded-2xl p-4 sm:p-5 border border-amber-200/80 shadow-xs">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 pb-3 mb-3 border-b border-amber-200/60 font-hindi">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 text-white flex items-center justify-center font-bold text-lg shadow-xs">
                         <i class="fa-solid fa-coins"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-slate-900 font-hindi text-base leading-tight">कानपुर गल्ला व सर्राफा मंडी भाव</h3>
-                        <p class="text-xs text-slate-500">चकरपुर मंडी एवं नयागंज सर्राफा समिति लाइव रेट</p>
+                        <div class="flex items-center gap-2">
+                            <span class="bg-red-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded uppercase">LIVE RATES</span>
+                            <h3 class="font-bold text-slate-900 text-base leading-tight">दैनिक बाजार व मंडी भाव (Daily Rates)</h3>
+                        </div>
+                        <p class="text-xs text-slate-500">चकरपुर गल्ला मंडी, नयागंज सर्राफा एवं ईंधन दरें — कानपुर लाइव</p>
                     </div>
                 </div>
 
-                <div class="flex flex-wrap items-center gap-3 sm:gap-6 text-xs sm:text-sm font-hindi">
-                    <div class="bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-2xs">
-                        <span class="text-slate-500">🌾 गेहूं (दड़ा):</span>
-                        <strong class="text-slate-900 font-bold ml-1">₹2,480/कुं.</strong>
-                    </div>
-                    <div class="bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-2xs">
-                        <span class="text-slate-500">🥣 अरहर दाल:</span>
-                        <strong class="text-slate-900 font-bold ml-1">₹11,400/कुं.</strong>
-                    </div>
-                    <div class="bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-2xs">
-                        <span class="text-slate-500">✨ सोना (24K):</span>
-                        <strong class="text-amber-700 font-bold ml-1">₹72,450/10gm</strong>
-                    </div>
-                    <div class="bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-2xs">
-                        <span class="text-slate-500">⚪ चांदी:</span>
-                        <strong class="text-slate-700 font-bold ml-1">₹84,200/kg</strong>
+                <div class="flex flex-wrap items-center gap-2">
+                    <span id="mandi-date-badge" class="bg-white px-2.5 py-1 rounded-lg border border-slate-200 text-slate-600 text-xs font-semibold shadow-2xs">
+                        <i class="fa-solid fa-clock-rotate-left mr-1 text-red-500"></i> आज का भाव
+                    </span>
+                    <!-- Category Tabs -->
+                    <div class="flex items-center gap-1 bg-white/80 backdrop-blur p-1 rounded-lg border border-slate-200 text-xs">
+                        <button type="button" onclick="filterRates('all', this)" class="rate-tab-btn active bg-slate-900 text-white font-bold px-2.5 py-1 rounded-md transition text-[11px]">सभी (All)</button>
+                        <button type="button" onclick="filterRates('bullion', this)" class="rate-tab-btn text-slate-600 hover:text-slate-900 font-semibold px-2 py-1 rounded-md transition text-[11px]">सर्राफा</button>
+                        <button type="button" onclick="filterRates('mandi', this)" class="rate-tab-btn text-slate-600 hover:text-slate-900 font-semibold px-2 py-1 rounded-md transition text-[11px]">गल्ला</button>
+                        <button type="button" onclick="filterRates('fuel', this)" class="rate-tab-btn text-slate-600 hover:text-slate-900 font-semibold px-2 py-1 rounded-md transition text-[11px]">ईंधन / LPG</button>
                     </div>
                 </div>
+            </div>
+
+            <!-- Dynamic Live Cards Container -->
+            <div id="mandi-rates-cards" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5 sm:gap-3 font-hindi">
+                <!-- Injected dynamically via DailyRatesService in app.js -->
             </div>
         </section>
 

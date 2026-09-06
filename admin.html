@@ -76,20 +76,28 @@
 
             <!-- Authenticated Role Selector & Status Controls -->
             <div id="header-auth-controls" class="hidden flex flex-wrap items-center gap-2 sm:gap-3">
-                <!-- Role Switcher -->
-                <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg text-xs font-hindi">
-                    <span class="text-slate-400">आपकी भूमिका:</span>
+                <!-- Role Switcher (Visible to Director only) -->
+                <div id="header-role-container" class="flex items-center gap-2 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg text-xs font-hindi">
+                    <span class="text-slate-400">सक्रिय भूमिका:</span>
                     <select id="role-selector" onchange="changeRole(this.value)" class="bg-slate-800 text-amber-400 font-bold rounded px-2 py-0.5 focus:outline-none cursor-pointer border border-slate-700">
-                        <option value="chief_editor">👑 प्रधान संपादक (Chief Editor)</option>
+                        <option value="chief_editor">👑 डायरेक्टर / प्रधान संपादक (दीपक राजपूत)</option>
                         <option value="sub_editor">📝 उप-संपादक (Sub-Editor)</option>
                         <option value="reporter">🎤 फील्ड रिपोर्टर (Reporter)</option>
                     </select>
                 </div>
 
-                <!-- Password Change Button -->
-                <button type="button" onclick="openChangePasswordModal()" class="bg-slate-900 hover:bg-slate-800 text-amber-300 hover:text-amber-200 text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-slate-700 transition flex items-center gap-1.5 cursor-pointer shadow-xs" title="सुरक्षा पासवर्ड या पिन बदलें">
+                <!-- Role Locked Badge (Visible to Sub-Editor and Reporter) -->
+                <div id="header-role-locked-badge" class="hidden flex items-center gap-2 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg text-xs font-hindi">
+                    <i class="fa-solid fa-lock text-slate-500 text-[10px]"></i>
+                    <span class="text-slate-400">आपकी भूमिका:</span>
+                    <span id="header-locked-role-text" class="text-amber-400 font-bold">उप-संपादक</span>
+                    <span class="bg-slate-800 text-slate-400 text-[9px] px-1.5 py-0.5 rounded font-mono">LOCKED</span>
+                </div>
+
+                <!-- Password Change Button (DIRECTOR ONLY) -->
+                <button type="button" id="btn-change-pass" onclick="openChangePasswordModal()" class="bg-slate-900 hover:bg-slate-800 text-amber-300 hover:text-amber-200 text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-slate-700 transition flex items-center gap-1.5 cursor-pointer shadow-xs" title="सुरक्षा पासवर्ड या पिन प्रबंधन (केवल डायरेक्टर)">
                     <i class="fa-solid fa-key text-[11px] text-amber-400"></i>
-                    <span class="hidden sm:inline font-hindi">पासवर्ड बदलें</span>
+                    <span class="hidden sm:inline font-hindi">पासवर्ड प्रबंधन</span>
                 </button>
 
                 <!-- YouTube Channel Link -->
@@ -198,32 +206,11 @@
                     </button>
                 </form>
 
-                <!-- Credentials Info Reference Box -->
-                <div class="bg-slate-50 border-t border-slate-200 p-4">
-                    <div class="text-[11px] font-bold text-slate-700 mb-2 flex items-center gap-1.5">
-                        <i class="fa-solid fa-circle-info text-blue-600"></i>
-                        <span>अधिकृत टीम हेतु डिफ़ॉल्ट क्रेडेंशियल्स:</span>
-                    </div>
-                    <div class="space-y-1.5 text-[11px] text-slate-600 font-mono">
-                        <div class="flex items-center justify-between bg-white px-2.5 py-1.5 rounded-lg border border-slate-200 shadow-2xs">
-                            <span>👑 <b>प्रधान संपादक:</b></span>
-                            <span class="text-red-700 font-bold bg-red-50 px-2 py-0.5 rounded border border-red-100">Deepak@TIL2026</span>
-                            <span class="text-slate-400 text-[10px]">(पिन: 884002)</span>
-                        </div>
-                        <div class="flex items-center justify-between bg-white px-2.5 py-1.5 rounded-lg border border-slate-200 shadow-2xs">
-                            <span>📝 <b>उप-संपादक:</b></span>
-                            <span class="text-blue-700 font-bold bg-blue-50 px-2 py-0.5 rounded border border-blue-100">Sub@TIL2026</span>
-                            <span class="text-slate-400 text-[10px]">(पिन: 112233)</span>
-                        </div>
-                        <div class="flex items-center justify-between bg-white px-2.5 py-1.5 rounded-lg border border-slate-200 shadow-2xs">
-                            <span>🎤 <b>फील्ड रिपोर्टर:</b></span>
-                            <span class="text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded border border-amber-100">Rep@TIL2026</span>
-                            <span class="text-slate-400 text-[10px]">(पिन: 445566)</span>
-                        </div>
-                    </div>
-                    <p class="text-[10px] text-slate-500 mt-2.5 text-center font-hindi">
-                        <i class="fa-solid fa-shield-cat text-amber-500 mr-1"></i>
-                        लॉगिन के बाद आप कभी भी ऊपर <b>"पासवर्ड बदलें"</b> विकल्प से अपना नया गुप्त पासवर्ड सहेज सकते हैं।
+                <!-- Security Privacy Notice (Default credentials removed for privacy) -->
+                <div class="bg-slate-50 border-t border-slate-200 p-4 text-center">
+                    <p class="text-[11px] text-slate-500 flex items-center justify-center gap-1.5 font-hindi font-medium">
+                        <i class="fa-solid fa-shield-halved text-emerald-600"></i>
+                        <span>सुरक्षित एन्क्रिप्टेड न्यूज़ गेटवे • अनाधिकृत लॉगिन प्रयास ट्रैक किए जाते हैं।</span>
                     </p>
                 </div>
             </div>
@@ -239,7 +226,7 @@
         </div>
     </div>
 
-    <!-- 1.6. Change Password Modal (For Authenticated Desk) -->
+    <!-- 1.6. Director Master Password Modal (Only accessible to Director) -->
     <div id="change-pass-modal" class="hidden fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 font-hindi relative">
             <button type="button" onclick="closeChangePasswordModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center transition cursor-pointer">
@@ -251,8 +238,8 @@
                     <i class="fa-solid fa-key"></i>
                 </div>
                 <div>
-                    <h3 class="font-black text-slate-900 text-base">संपादकीय पासवर्ड / पिन बदलें</h3>
-                    <p class="text-xs text-slate-500">भूमिका: <span id="modal-role-label" class="font-bold text-red-600">प्रधान संपादक</span></p>
+                    <h3 class="font-black text-slate-900 text-base">संपादकीय पासवर्ड प्रबंधन (Director Master)</h3>
+                    <p class="text-xs text-slate-500">केवल डायरेक्टर को सभी भूमिकाओं के पासवर्ड बदलने की अनुमति है</p>
                 </div>
             </div>
 
@@ -266,19 +253,32 @@
                     <span id="modal-success-text">पासवर्ड सफलतापूर्वक बदल दिया गया है!</span>
                 </div>
 
+                <!-- Select Target Role -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">वर्तमान पासवर्ड या पिन दर्ज करें:</label>
-                    <input type="password" id="current-pass-input" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-red-600 font-sans">
+                    <label for="target-role-select" class="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
+                        <span>किस भूमिका का पासवर्ड बदलना है?</span>
+                        <span class="text-[10px] text-red-600 font-bold">*अनिवार्य</span>
+                    </label>
+                    <select id="target-role-select" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600 cursor-pointer">
+                        <option value="chief_editor">👑 डायरेक्टर / प्रधान संपादक (दीपक राजपूत)</option>
+                        <option value="sub_editor">📝 उप-संपादक (डेस्क)</option>
+                        <option value="reporter">🎤 फील्ड रिपोर्टर (संवाददाता)</option>
+                    </select>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">नया पासवर्ड या पिन दर्ज करें (कम से कम 4 अक्षर/अंक):</label>
-                    <input type="password" id="new-pass-input" required minlength="4" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-red-600 font-sans">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">डायरेक्टर का वर्तमान पासवर्ड या पिन (प्रमाणीकरण हेतु):</label>
+                    <input type="password" id="current-pass-input" required placeholder="अपना डायरेक्टर पासवर्ड दर्ज करें..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-red-600 font-sans">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">चुनी गई भूमिका के लिए नया पासवर्ड या 6-अंकीय पिन:</label>
+                    <input type="password" id="new-pass-input" required minlength="4" placeholder="नया पासवर्ड या 6-अंकीय पिन..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-red-600 font-sans">
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">नए पासवर्ड / पिन की पुष्टि करें:</label>
-                    <input type="password" id="confirm-pass-input" required minlength="4" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-red-600 font-sans">
+                    <input type="password" id="confirm-pass-input" required minlength="4" placeholder="नया पासवर्ड दोबारा दर्ज करें..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-red-600 font-sans">
                 </div>
 
                 <div class="pt-2 flex items-center justify-end gap-2">
@@ -286,7 +286,7 @@
                         रद्द करें (Cancel)
                     </button>
                     <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg text-xs transition shadow-xs cursor-pointer">
-                        नया पासवर्ड सहेजें (Save)
+                        नया पासवर्ड सहेजें (Save Password)
                     </button>
                 </div>
             </form>
@@ -348,6 +348,10 @@
                     <span class="flex items-center gap-2"><i class="fa-solid fa-rectangle-ad w-5 text-center text-indigo-600"></i> विज्ञापन प्रबंधन (Ad Space)</span>
                     <span class="text-[10px] bg-slate-200 px-1.5 py-0.5 rounded">Ads</span>
                 </button>
+                <button onclick="switchTab('audit')" id="nav-btn-audit" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 transition flex items-center justify-between">
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-list-check w-5 text-center text-purple-600"></i> अपलोड लेजर (Upload History)</span>
+                    <span id="sidebar-ledger-count" class="text-xs bg-purple-100 text-purple-800 font-mono px-1.5 py-0.5 rounded font-bold">0</span>
+                </button>
             </div>
 
             <!-- Quick Guidelines -->
@@ -370,11 +374,14 @@
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 font-hindi">
                     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
                         <div class="flex items-center justify-between text-slate-500 text-xs mb-1">
-                            <span>आज के कुल व्यूज</span>
+                            <span>कुल पोर्टल व्यूज</span>
                             <i class="fa-solid fa-eye text-red-500"></i>
                         </div>
                         <h3 id="stat-views" class="text-2xl font-black text-slate-900 font-brand">23,410</h3>
-                        <span class="text-[11px] text-emerald-600 font-bold">↑ 14% कल से ज्यादा</span>
+                        <span class="text-[11px] text-emerald-600 font-bold flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                            लाइव व्यू ट्रैकर सक्रिय
+                        </span>
                     </div>
 
                     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
@@ -383,7 +390,7 @@
                             <span class="w-2 h-2 rounded-full bg-red-600 animate-ping"></span>
                         </div>
                         <h3 id="stat-live" class="text-2xl font-black text-slate-900 font-brand">194</h3>
-                        <span class="text-[11px] text-slate-400">वेबसाइट पर सक्रिय</span>
+                        <span class="text-[11px] text-slate-400">पोर्टल पर सक्रिय पाठक</span>
                     </div>
 
                     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
@@ -397,12 +404,74 @@
 
                     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
                         <div class="flex items-center justify-between text-slate-500 text-xs mb-1">
-                            <span>जनता की सूचनाएं</span>
-                            <i class="fa-solid fa-camera text-amber-500"></i>
+                            <span>कुल डेस्क लॉगिन</span>
+                            <i class="fa-solid fa-users-gear text-purple-600"></i>
                         </div>
-                        <h3 id="stat-tips" class="text-2xl font-black text-slate-900 font-brand">0</h3>
-                        <span class="text-[11px] text-amber-700 font-bold">समीक्षा बाकी</span>
+                        <h3 id="stat-logins" class="text-2xl font-black text-purple-900 font-brand">1</h3>
+                        <div class="text-[10px] text-slate-500 font-hindi flex items-center gap-1.5 truncate">
+                            <span>👑 <b id="stat-login-chief">1</b></span>
+                            <span>•</span>
+                            <span>📝 <b id="stat-login-sub">0</b></span>
+                            <span>•</span>
+                            <span>🎤 <b id="stat-login-rep">0</b></span>
+                        </div>
                     </div>
+                </div>
+
+                <!-- 2-Column Split: Login Activity Audit & Daily Mandi Rates Status -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 font-hindi">
+                    
+                    <!-- Left: Recent Login Activity Card (7 Cols) -->
+                    <div class="lg:col-span-7 bg-white rounded-2xl p-5 border border-slate-200 shadow-xs">
+                        <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+                            <h3 class="text-base font-black text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-user-clock text-blue-600"></i>
+                                हालिया लॉगिन गतिविधि (Login Tracker)
+                            </h3>
+                            <span class="text-[10px] bg-blue-50 text-blue-700 font-bold px-2 py-0.5 rounded font-mono">LIVE AUDIT</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead>
+                                    <tr class="text-slate-400 border-b border-slate-100">
+                                        <th class="pb-2 font-semibold">उपयोगकर्ता / भूमिका</th>
+                                        <th class="pb-2 font-semibold">समय व तारीख</th>
+                                        <th class="pb-2 font-semibold">डिवाइस</th>
+                                        <th class="pb-2 font-semibold text-right">स्थिति</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashboard-login-history-body" class="divide-y divide-slate-100">
+                                    <!-- Populated dynamically via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Right: Daily Mandi & Rates Quick Status (5 Cols) -->
+                    <div class="lg:col-span-5 bg-gradient-to-br from-amber-500/10 via-white to-amber-500/5 rounded-2xl p-5 border border-amber-200 shadow-xs flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between pb-2 mb-3 border-b border-amber-200/60">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-coins text-amber-600 text-base"></i>
+                                    <h3 class="text-base font-black text-slate-900">दैनिक बाजार व मंडी भाव</h3>
+                                </div>
+                                <span id="admin-rates-date-badge" class="text-[10px] bg-white px-2 py-0.5 rounded border border-amber-200 text-slate-600 font-semibold">
+                                    आज का भाव
+                                </span>
+                            </div>
+                            <div id="admin-rates-summary-list" class="space-y-1.5 text-xs">
+                                <!-- Populated dynamically via JS -->
+                            </div>
+                        </div>
+                        <div class="pt-3 mt-3 border-t border-amber-200/60 flex items-center justify-between">
+                            <span class="text-[10px] text-slate-500">होमपेज पर स्वतः अपडेट होता है</span>
+                            <button type="button" onclick="refreshAdminRates()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition shadow-2xs flex items-center gap-1 cursor-pointer">
+                                <i class="fa-solid fa-arrows-rotate text-[10px]"></i>
+                                <span>भाव रीफ्रेश करें</span>
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- Recent Top News Activity & Breaking Status -->
@@ -803,6 +872,76 @@
                 </div>
             </div>
 
+            <!-- SECTION 7: EDITORIAL UPLOAD HISTORY & AUDIT LEDGER (NEW) -->
+            <div id="tab-audit" class="hidden space-y-6">
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs font-hindi">
+                    
+                    <!-- Header -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-5 border-b border-slate-100 gap-3">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="bg-purple-100 text-purple-800 text-[10px] font-black px-2 py-0.5 rounded uppercase font-mono">AUDIT LEDGER</span>
+                                <h2 class="text-xl font-black text-slate-900">संपादकीय अपलोड लेजर (किसने क्या अपलोड किया)</h2>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-0.5">
+                                किस पत्रकार या संपादक ने कौन सी खबर, ब्रेकिंग टिकर या लाइव ब्लॉग पोस्ट किया, इसका संपूर्ण आंतरिक लेखा-जोखा।
+                            </p>
+                        </div>
+                        
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="renderUploadLedgerTable()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
+                                <i class="fa-solid fa-arrows-rotate text-[11px]"></i>
+                                <span>ताज़ा करें (Refresh)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Role Filters & Search -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 border-b border-slate-100 text-xs">
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <span class="text-slate-500 font-bold mr-1">फ़िल्टर करें:</span>
+                            <button type="button" onclick="filterLedger('all', this)" class="ledger-filter-btn active bg-slate-900 text-white font-bold px-3 py-1.5 rounded-lg transition">सभी (All)</button>
+                            <button type="button" onclick="filterLedger('chief_editor', this)" class="ledger-filter-btn text-slate-600 hover:bg-slate-100 font-semibold px-3 py-1.5 rounded-lg transition">👑 केवल डायरेक्टर</button>
+                            <button type="button" onclick="filterLedger('sub_editor', this)" class="ledger-filter-btn text-slate-600 hover:bg-slate-100 font-semibold px-3 py-1.5 rounded-lg transition">📝 उप-संपादक</button>
+                            <button type="button" onclick="filterLedger('reporter', this)" class="ledger-filter-btn text-slate-600 hover:bg-slate-100 font-semibold px-3 py-1.5 rounded-lg transition">🎤 रिपोर्टर</button>
+                        </div>
+
+                        <div class="relative w-full sm:w-64">
+                            <input type="text" id="ledger-search-input" oninput="searchLedger(this.value)" placeholder="शीर्षक या लेखक का नाम खोजें..." class="w-full text-xs pl-8 pr-3 py-2 rounded-lg border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-600 font-sans">
+                            <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-slate-400 text-xs"></i>
+                        </div>
+                    </div>
+
+                    <!-- Ledger Table -->
+                    <div class="overflow-x-auto rounded-xl border border-slate-200">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold">
+                                <tr>
+                                    <th class="p-3">समय व तारीख</th>
+                                    <th class="p-3">अपलोडकर्ता (Author & Role)</th>
+                                    <th class="p-3">प्रकार (Type)</th>
+                                    <th class="p-3">शीर्षक / विवरण (Title / Text)</th>
+                                    <th class="p-3">स्थिति (Status)</th>
+                                    <th class="p-3 text-right">कार्रवाई</th>
+                                </tr>
+                            </thead>
+                            <tbody id="audit-ledger-table-body" class="divide-y divide-slate-100">
+                                <!-- Populated dynamically via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-4 p-3 rounded-xl bg-purple-50/60 border border-purple-100 flex flex-wrap items-center justify-between text-xs text-purple-900 gap-2">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info text-purple-600 text-sm shrink-0"></i>
+                            <span>यह लेजर केवल अधिकृत संपादकीय टीम के आंतरिक उपयोग के लिए है और मुख्य वेबसाइट पर प्रदर्शित नहीं होता।</span>
+                        </div>
+                        <span id="ledger-total-count" class="font-bold font-mono">0 प्रविष्टियां</span>
+                    </div>
+
+                </div>
+            </div>
+
         </main>
 
     </div>
@@ -873,9 +1012,30 @@
                 if (headerGateLabel) headerGateLabel.classList.add("hidden");
                 if (headerAuthControls) headerAuthControls.classList.remove("hidden");
 
-                if (roleSelector) {
-                    roleSelector.value = session.role;
+                const isDirector = (session.role === 'chief_editor');
+                const btnChangePass = document.getElementById("btn-change-pass");
+                const headerRoleContainer = document.getElementById("header-role-container");
+                const headerRoleLockedBadge = document.getElementById("header-role-locked-badge");
+                const headerLockedRoleText = document.getElementById("header-locked-role-text");
+
+                if (isDirector) {
+                    // Director can manage all passwords and switch roles
+                    if (btnChangePass) btnChangePass.classList.remove("hidden");
+                    if (headerRoleContainer) headerRoleContainer.classList.remove("hidden");
+                    if (headerRoleLockedBadge) headerRoleLockedBadge.classList.add("hidden");
+                    if (roleSelector) roleSelector.value = session.role;
+                } else {
+                    // Non-directors: Cannot change passwords, cannot switch role!
+                    if (btnChangePass) btnChangePass.classList.add("hidden");
+                    if (headerRoleContainer) headerRoleContainer.classList.add("hidden");
+                    if (headerRoleLockedBadge) {
+                        headerRoleLockedBadge.classList.remove("hidden");
+                        if (headerLockedRoleText) {
+                            headerLockedRoleText.innerText = getRoleLabel(session.role);
+                        }
+                    }
                 }
+
                 applyRolePermissions(session.role);
 
                 if (!isWorkspaceInitialized) {
@@ -884,8 +1044,11 @@
                     renderLiveBlogTimeline();
                     renderCitizenTipsList();
                     renderPublishedStories();
+                    renderUploadLedgerTable();
+                    renderAdminRatesPreview();
                     initAdsForm();
                     setupFormHandlers();
+                    setupHeartbeat();
                     isWorkspaceInitialized = true;
                 }
             } else {
@@ -913,6 +1076,9 @@
             const isValid = (inputPass === roleCreds.pass || inputPass === roleCreds.pin);
 
             if (!isValid) {
+                if (typeof TrackingService !== 'undefined') {
+                    TrackingService.recordLoginEvent(role, getRoleLabel(role), false);
+                }
                 if (errorAlert) {
                     errorAlert.classList.remove("hidden");
                     errorText.innerText = "अमान्य पासवर्ड या पिन! कृपया सही क्रेडेंशियल्स दर्ज करें।";
@@ -925,6 +1091,10 @@
             }
 
             // Successful Login
+            if (typeof TrackingService !== 'undefined') {
+                TrackingService.recordLoginEvent(role, getRoleLabel(role), true);
+            }
+
             if (errorAlert) errorAlert.classList.add("hidden");
             const sessionData = {
                 role: role,
@@ -975,21 +1145,21 @@
             }
         }
 
-        // Change Password Modal Controls
+        // Change Password Modal Controls (Director Only)
         function openChangePasswordModal() {
             const session = getActiveSession();
-            const role = (session && session.role) ? session.role : StorageService.getCurrentRole();
+            if (!session || session.role !== 'chief_editor') {
+                alert("पासवर्ड बदलने की अनुमति केवल डायरेक्टर को है।");
+                return;
+            }
             const modal = document.getElementById("change-pass-modal");
-            const modalRoleLabel = document.getElementById("modal-role-label");
             const err = document.getElementById("modal-error-alert");
             const succ = document.getElementById("modal-success-alert");
 
-            if (modalRoleLabel) {
-                modalRoleLabel.innerText = getRoleLabel(role);
-            }
             if (err) err.classList.add("hidden");
             if (succ) succ.classList.add("hidden");
             document.getElementById("change-password-form").reset();
+            document.getElementById("target-role-select").value = "chief_editor";
             if (modal) modal.classList.remove("hidden");
         }
 
@@ -1001,7 +1171,12 @@
         function saveNewPassword(e) {
             e.preventDefault();
             const session = getActiveSession();
-            const role = (session && session.role) ? session.role : StorageService.getCurrentRole();
+            if (!session || session.role !== 'chief_editor') {
+                alert("पासवर्ड बदलने की अनुमति केवल डायरेक्टर को है।");
+                return;
+            }
+
+            const targetRole = document.getElementById("target-role-select").value;
             const currentPass = (document.getElementById("current-pass-input").value || "").trim();
             const newPass = (document.getElementById("new-pass-input").value || "").trim();
             const confirmPass = (document.getElementById("confirm-pass-input").value || "").trim();
@@ -1015,12 +1190,12 @@
             succ.classList.add("hidden");
 
             const creds = getStoredCredentials();
-            const activeRoleCreds = creds[role] || DEFAULT_CREDENTIALS[role];
+            const directorCreds = creds['chief_editor'] || DEFAULT_CREDENTIALS['chief_editor'];
 
-            // Verify current password or pin
-            if (currentPass !== activeRoleCreds.pass && currentPass !== activeRoleCreds.pin) {
+            // Verify Director's current password or pin
+            if (currentPass !== directorCreds.pass && currentPass !== directorCreds.pin) {
                 err.classList.remove("hidden");
-                errText.innerText = "वर्तमान पासवर्ड या पिन गलत है!";
+                errText.innerText = "डायरेक्टर का वर्तमान पासवर्ड या पिन गलत है!";
                 return;
             }
 
@@ -1036,16 +1211,22 @@
                 return;
             }
 
-            // Save new password
-            activeRoleCreds.pass = newPass;
+            // Update credentials for targetRole
+            const targetCreds = creds[targetRole] || DEFAULT_CREDENTIALS[targetRole];
+            targetCreds.pass = newPass;
             if (/^\d{6}$/.test(newPass)) {
-                activeRoleCreds.pin = newPass;
+                targetCreds.pin = newPass;
             }
-            creds[role] = activeRoleCreds;
+            creds[targetRole] = targetCreds;
             saveStoredCredentials(creds);
 
+            if (typeof TrackingService !== 'undefined') {
+                TrackingService.recordUploadEvent("पासवर्ड अपडेट", `${getRoleLabel(targetRole)} का पासवर्ड बदला गया`, "दीपक राजपूत (डायरेक्टर)", "chief_editor", "सफल");
+                renderUploadLedgerTable();
+            }
+
             succ.classList.remove("hidden");
-            succText.innerText = `नया पासवर्ड '${getRoleLabel(role)}' के लिए सफलतापूर्वक सहेजा गया!`;
+            succText.innerText = `'${getRoleLabel(targetRole)}' का नया पासवर्ड सफलतापूर्वक सहेजा गया!`;
 
             setTimeout(() => {
                 closeChangePasswordModal();
@@ -1062,14 +1243,16 @@
         }
 
         function changeRole(role) {
-            StorageService.setCurrentRole(role);
             const session = getActiveSession();
-            if (session) {
-                session.role = role;
-                sessionStorage.setItem("til_newsroom_active_session", JSON.stringify(session));
-                if (localStorage.getItem("til_newsroom_remembered_session")) {
-                    localStorage.setItem("til_newsroom_remembered_session", JSON.stringify(session));
-                }
+            if (!session || session.role !== 'chief_editor') {
+                alert("भूमिका बदलने की अनुमति केवल डायरेक्टर को है। आपकी भूमिका लॉक है।");
+                return;
+            }
+            StorageService.setCurrentRole(role);
+            session.role = role;
+            sessionStorage.setItem("til_newsroom_active_session", JSON.stringify(session));
+            if (localStorage.getItem("til_newsroom_remembered_session")) {
+                localStorage.setItem("til_newsroom_remembered_session", JSON.stringify(session));
             }
             applyRolePermissions(role);
             alert(`भूमिका बदलकर '${getRoleLabel(role)}' कर दी गई है।`);
@@ -1078,7 +1261,7 @@
         function getRoleLabel(role) {
             if (role === 'reporter') return 'फील्ड रिपोर्टर';
             if (role === 'sub_editor') return 'उप-संपादक (डेस्क)';
-            return 'प्रधान संपादक';
+            return 'डायरेक्टर / प्रधान संपादक';
         }
 
         function applyRolePermissions(role) {
@@ -1091,36 +1274,37 @@
             if (role === 'reporter') {
                 avatar.innerHTML = `<i class="fa-solid fa-microphone text-amber-600"></i>`;
                 avatar.className = "w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-lg";
-                nameEl.innerText = "फील्ड रिपोर्टर (Reporter)";
-                badgeEl.innerText = "ड्राफ्ट व खबर भेजने की अनुमति";
+                nameEl.innerText = "फील्ड रिपोर्टर (संवाददाता)";
+                badgeEl.innerText = "ड्राफ्ट व खबर भेजने की अनुमति (Locked)";
                 badgeEl.className = "bg-amber-100 text-amber-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full";
                 submitBtnLabel.innerText = "डेस्क को अनुमोदन हेतु भेजें (Submit Draft)";
                 roleNotice.innerText = "रिपोर्टर मोड: खबर पहले डेस्क जांच के लिए जाएगी";
             } else if (role === 'sub_editor') {
                 avatar.innerHTML = `<i class="fa-solid fa-pen-nib text-blue-600"></i>`;
                 avatar.className = "w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-lg";
-                nameEl.innerText = "उप-संपादक (Sub-Editor)";
-                badgeEl.innerText = "संपादन व तथ्य-जांच अनुमति";
+                nameEl.innerText = "उप-संपादक (डेस्क)";
+                badgeEl.innerText = "संपादन व तथ्य-जांच अनुमति (Locked)";
                 badgeEl.className = "bg-blue-100 text-blue-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full";
                 submitBtnLabel.innerText = "संपादित करके प्रकाशित करें";
                 roleNotice.innerText = "उप-संपादक मोड: तथ्य जांच एवं प्रकाशन सक्रिय";
             } else {
                 avatar.innerHTML = `<i class="fa-solid fa-user-shield text-red-600"></i>`;
                 avatar.className = "w-10 h-10 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold text-lg";
-                nameEl.innerText = "प्रधान संपादक (Chief Editor)";
-                badgeEl.innerText = "पूर्ण नियंत्रण (Full Access)";
+                nameEl.innerText = "दीपक राजपूत (डायरेक्टर / प्रधान संपादक)";
+                badgeEl.innerText = "पूर्ण नियंत्रण (Full Master Access)";
                 badgeEl.className = "bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full";
                 submitBtnLabel.innerText = "सीधे प्रकाशित करें (Publish Live)";
-                roleNotice.innerText = "प्रधान संपादक मोड: सीधा प्रकाशन व ब्रेकिंग कंट्रोल सक्रिय";
+                roleNotice.innerText = "डायरेक्टर मोड: सीधा प्रकाशन, पासवर्ड प्रबंधन व ऑडिट सक्रिय";
             }
         }
 
         // 2. Tab Navigation
         function switchTab(tabKey) {
-            const tabs = ['dashboard', 'editor', 'breaking', 'liveblog', 'inbox', 'stories', 'ads'];
+            const tabs = ['dashboard', 'editor', 'breaking', 'liveblog', 'inbox', 'stories', 'ads', 'audit'];
             tabs.forEach(t => {
                 const pane = document.getElementById(`tab-${t}`);
                 const btn = document.getElementById(`nav-btn-${t}`);
+                if (!pane || !btn) return;
                 if (t === tabKey) {
                     pane.classList.remove('hidden');
                     btn.classList.remove('hover:bg-slate-100', 'text-slate-700');
@@ -1131,6 +1315,13 @@
                     btn.classList.add('hover:bg-slate-100', 'text-slate-700');
                 }
             });
+
+            if (tabKey === 'audit') {
+                renderUploadLedgerTable();
+            } else if (tabKey === 'dashboard') {
+                refreshDashboard();
+            }
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -1152,27 +1343,281 @@
             document.getElementById('char-counter').innerText = `${title.length}/120 अक्षर`;
         }
 
-        // 4. Refresh Dashboard Stats
+        // 4. Refresh Dashboard Stats & Analytics Tracker
         function refreshDashboard() {
             const analytics = StorageService.getAnalytics();
-            document.getElementById('stat-views').innerText = analytics.todayViews.toLocaleString('en-IN');
-            document.getElementById('stat-live').innerText = analytics.liveVisitors;
-            document.getElementById('stat-stories').innerText = analytics.totalStories;
-            document.getElementById('stat-tips').innerText = analytics.totalTips;
+            const viewsEl = document.getElementById('stat-views');
+            if (viewsEl) viewsEl.innerText = analytics.todayViews.toLocaleString('en-IN');
+            
+            const liveEl = document.getElementById('stat-live');
+            if (liveEl) liveEl.innerText = analytics.liveVisitors;
 
-            document.getElementById('sidebar-stories-count').innerText = analytics.totalStories;
-            document.getElementById('sidebar-tips-count').innerText = analytics.totalTips;
+            const storiesEl = document.getElementById('stat-stories');
+            if (storiesEl) storiesEl.innerText = analytics.totalStories;
+
+            const tipsEl = document.getElementById('stat-tips');
+            if (tipsEl) tipsEl.innerText = analytics.totalTips;
+
+            const sideStories = document.getElementById('sidebar-stories-count');
+            if (sideStories) sideStories.innerText = analytics.totalStories;
+
+            const sideTips = document.getElementById('sidebar-tips-count');
+            if (sideTips) sideTips.innerText = analytics.totalTips;
+
+            const sideLedger = document.getElementById('sidebar-ledger-count');
+            if (sideLedger) sideLedger.innerText = TrackingService.getUploadLedger().length;
+
+            // Desk Login Tracker Stats
+            const loginStats = TrackingService.getLoginStats();
+            const loginsEl = document.getElementById('stat-logins');
+            if (loginsEl) loginsEl.innerText = loginStats.total;
+
+            const chiefLoginEl = document.getElementById('stat-login-chief');
+            if (chiefLoginEl) chiefLoginEl.innerText = loginStats.chief_editor;
+
+            const subLoginEl = document.getElementById('stat-login-sub');
+            if (subLoginEl) subLoginEl.innerText = loginStats.sub_editor;
+
+            const repLoginEl = document.getElementById('stat-login-rep');
+            if (repLoginEl) repLoginEl.innerText = loginStats.reporter;
+
+            // Render Recent Logins Table
+            renderLoginHistoryTable();
+
+            // Render Daily Mandi Rates Preview
+            renderAdminRatesPreview();
 
             // Breaking News preview on dashboard
             const breakingList = StorageService.getBreakingNews();
-            document.getElementById('sidebar-breaking-count').innerText = breakingList.length;
+            const sideBreaking = document.getElementById('sidebar-breaking-count');
+            if (sideBreaking) sideBreaking.innerText = breakingList.length;
+
             const container = document.getElementById('dashboard-breaking-preview');
-            container.innerHTML = breakingList.slice(0, 3).map(b => `
-                <div class="flex items-center gap-2 p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
-                    <span class="w-2 h-2 rounded-full bg-red-600"></span>
-                    <span class="font-bold text-slate-800 text-xs">${b.text}</span>
+            if (container) {
+                if (breakingList.length === 0) {
+                    container.innerHTML = `<p class="text-xs text-slate-400">कोई सक्रिय ब्रेकिंग न्यूज़ नहीं है।</p>`;
+                } else {
+                    container.innerHTML = breakingList.slice(0, 3).map(b => `
+                        <div class="flex items-center gap-2 p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
+                            <span class="w-2 h-2 rounded-full bg-red-600"></span>
+                            <span class="font-bold text-slate-800 text-xs">${b.text}</span>
+                        </div>
+                    `).join("");
+                }
+            }
+        }
+
+        // Render Recent Login Activity Trail
+        function renderLoginHistoryTable() {
+            const tbody = document.getElementById('dashboard-login-history-body');
+            if (!tbody) return;
+            const stats = TrackingService.getLoginStats();
+            const history = stats.recentHistory || [];
+
+            if (history.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400 text-xs">अभी कोई लॉगिन गतिविधि दर्ज नहीं हुई है।</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = history.slice(0, 6).map(log => {
+                let badgeClass = "bg-purple-100 text-purple-800";
+                let roleIcon = "fa-user-shield";
+                if (log.role === 'reporter') {
+                    badgeClass = "bg-amber-100 text-amber-800";
+                    roleIcon = "fa-microphone";
+                } else if (log.role === 'sub_editor') {
+                    badgeClass = "bg-blue-100 text-blue-800";
+                    roleIcon = "fa-pen-nib";
+                }
+
+                return `
+                    <tr class="hover:bg-slate-50/80 transition">
+                        <td class="py-2.5 font-bold text-slate-900 flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-lg flex items-center justify-center text-[10px] ${badgeClass}">
+                                <i class="fa-solid ${roleIcon}"></i>
+                            </span>
+                            <div>
+                                <p class="text-xs font-bold leading-tight">${log.authorName}</p>
+                                <span class="text-[10px] text-slate-400 font-normal">${log.role === 'chief_editor' ? 'डायरेक्टर' : log.role === 'sub_editor' ? 'उप-संपादक' : 'रिपोर्टर'}</span>
+                            </div>
+                        </td>
+                        <td class="py-2.5 text-slate-600 font-mono text-[11px] whitespace-nowrap">
+                            ${log.dateStr}, ${log.timeStr}
+                        </td>
+                        <td class="py-2.5 text-slate-500 text-[11px] whitespace-nowrap">
+                            <i class="fa-solid ${log.device.includes('Mobile') ? 'fa-mobile-screen' : 'fa-laptop'} mr-1 text-slate-400"></i>
+                            ${log.device}
+                        </td>
+                        <td class="py-2.5 text-right whitespace-nowrap">
+                            <span class="inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-full ${log.isSuccess ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
+                                <span class="w-1 h-1 rounded-full ${log.isSuccess ? 'bg-emerald-500' : 'bg-red-500'}"></span>
+                                ${log.isSuccess ? 'सफल' : 'विफल'}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }).join("");
+        }
+
+        // Render Daily Mandi & Commodity Rates on Dashboard
+        function renderAdminRatesPreview() {
+            const listEl = document.getElementById('admin-rates-summary-list');
+            const dateBadge = document.getElementById('admin-rates-date-badge');
+            if (!listEl) return;
+
+            const rates = DailyRatesService.getDailyRates();
+            if (dateBadge) {
+                dateBadge.innerText = `📅 ${rates.displayDate}`;
+            }
+
+            const keyItems = [
+                ...(rates.bullion || []).slice(0, 2),
+                ...(rates.mandi || []).slice(0, 2),
+                ...(rates.fuel || []).slice(0, 1)
+            ];
+
+            listEl.innerHTML = keyItems.map(item => `
+                <div class="flex items-center justify-between p-2 rounded-lg bg-white/80 border border-amber-100">
+                    <span class="font-bold text-slate-800">${item.name} (${item.unit}):</span>
+                    <div class="flex items-center gap-1.5 font-bold font-mono">
+                        <span class="text-slate-900">${item.price}</span>
+                        ${item.trend === 'up' ? '<span class="text-emerald-600 text-[10px]" title="बढ़त">▲</span>' : item.trend === 'down' ? '<span class="text-red-500 text-[10px]" title="गिरावट">▼</span>' : '<span class="text-slate-400 text-[10px]" title="स्थिर">•</span>'}
+                    </div>
                 </div>
             `).join("");
+        }
+
+        function refreshAdminRates() {
+            DailyRatesService.refreshDailyRates();
+            renderAdminRatesPreview();
+            alert("✅ दैनिक बाजार व मंडी भाव तुरंत ताज़ा कर दिए गए हैं!");
+        }
+
+        // Editorial Upload Ledger Management
+        let currentLedgerFilterRole = 'all';
+        let currentLedgerSearchQuery = '';
+
+        function renderUploadLedgerTable() {
+            const tbody = document.getElementById('audit-ledger-table-body');
+            const countEl = document.getElementById('ledger-total-count');
+            const sideCount = document.getElementById('sidebar-ledger-count');
+            if (!tbody) return;
+
+            let ledger = TrackingService.getUploadLedger();
+            if (sideCount) sideCount.innerText = ledger.length;
+            if (countEl) countEl.innerText = `${ledger.length} प्रविष्टियां`;
+
+            // Filter by role
+            if (currentLedgerFilterRole !== 'all') {
+                ledger = ledger.filter(item => item.authorRole === currentLedgerFilterRole);
+            }
+
+            // Filter by search query
+            if (currentLedgerSearchQuery.trim() !== '') {
+                const q = currentLedgerSearchQuery.toLowerCase();
+                ledger = ledger.filter(item => 
+                    (item.title && item.title.toLowerCase().includes(q)) || 
+                    (item.authorName && item.authorName.toLowerCase().includes(q)) ||
+                    (item.type && item.type.toLowerCase().includes(q))
+                );
+            }
+
+            if (ledger.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400">कोई लेजर प्रविष्टि उपलब्ध नहीं है।</td></tr>`;
+                return;
+            }
+
+            const session = getActiveSession();
+            const isDirector = session && session.role === 'chief_editor';
+
+            tbody.innerHTML = ledger.map(entry => {
+                let roleBadge = "bg-purple-100 text-purple-800 border-purple-200";
+                if (entry.authorRole === 'reporter') roleBadge = "bg-amber-100 text-amber-800 border-amber-200";
+                else if (entry.authorRole === 'sub_editor') roleBadge = "bg-blue-100 text-blue-800 border-blue-200";
+
+                let typeBadge = "bg-slate-100 text-slate-700";
+                if (entry.type.includes("Article") || entry.type.includes("खबर")) typeBadge = "bg-emerald-50 text-emerald-700 border border-emerald-200";
+                else if (entry.type.includes("Breaking") || entry.type.includes("लाल पट्टी")) typeBadge = "bg-red-50 text-red-700 border border-red-200";
+                else if (entry.type.includes("LiveBlog") || entry.type.includes("लाइव ब्लॉग")) typeBadge = "bg-blue-50 text-blue-700 border border-blue-200";
+                else if (entry.type.includes("पासवर्ड")) typeBadge = "bg-purple-50 text-purple-700 border border-purple-200";
+
+                return `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-3 text-slate-500 font-mono whitespace-nowrap">
+                            <div class="font-bold text-slate-700">${entry.dateStr}</div>
+                            <div class="text-[10px] text-slate-400">${entry.timeStr}</div>
+                        </td>
+                        <td class="p-3 whitespace-nowrap">
+                            <div class="font-bold text-slate-900">${entry.authorName}</div>
+                            <span class="inline-block text-[10px] px-2 py-0.2 font-extrabold rounded border ${roleBadge} mt-0.5">
+                                ${entry.authorRole === 'chief_editor' ? 'डायरेक्टर' : entry.authorRole === 'sub_editor' ? 'उप-संपादक' : 'फील्ड रिपोर्टर'}
+                            </span>
+                        </td>
+                        <td class="p-3 whitespace-nowrap">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${typeBadge}">
+                                ${entry.type}
+                            </span>
+                        </td>
+                        <td class="p-3 text-slate-800 font-bold max-w-xs md:max-w-md">
+                            <div class="line-clamp-2">${entry.title}</div>
+                        </td>
+                        <td class="p-3 whitespace-nowrap">
+                            <span class="inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                ${entry.status || 'प्रकाशित'}
+                            </span>
+                        </td>
+                        <td class="p-3 text-right whitespace-nowrap">
+                            ${isDirector ? `
+                                <button onclick="deleteLedgerItem('${entry.id}')" class="text-slate-400 hover:text-red-600 transition p-1 text-xs cursor-pointer" title="प्रविष्टि हटाएं">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            ` : `<span class="text-slate-300 text-xs">—</span>`}
+                        </td>
+                    </tr>
+                `;
+            }).join("");
+        }
+
+        function filterLedger(role, btn) {
+            currentLedgerFilterRole = role;
+            document.querySelectorAll('.ledger-filter-btn').forEach(b => {
+                b.classList.remove('bg-slate-900', 'text-white', 'active');
+                b.classList.add('text-slate-600', 'hover:bg-slate-100');
+            });
+            if (btn) {
+                btn.classList.remove('text-slate-600', 'hover:bg-slate-100');
+                btn.classList.add('bg-slate-900', 'text-white', 'active');
+            }
+            renderUploadLedgerTable();
+        }
+
+        function searchLedger(query) {
+            currentLedgerSearchQuery = query;
+            renderUploadLedgerTable();
+        }
+
+        function deleteLedgerItem(id) {
+            const session = getActiveSession();
+            if (!session || session.role !== 'chief_editor') {
+                alert("लेजर रिकॉर्ड केवल डायरेक्टर हटा सकते हैं।");
+                return;
+            }
+            if (confirm("क्या आप वाकई इस लेजर रिकॉर्ड को हटाना चाहते हैं?")) {
+                TrackingService.deleteLedgerEntry(id);
+                renderUploadLedgerTable();
+                refreshDashboard();
+            }
+        }
+
+        // Live Reader Heartbeat Simulation
+        function setupHeartbeat() {
+            setInterval(() => {
+                const liveEl = document.getElementById('stat-live');
+                if (liveEl && typeof TrackingService !== 'undefined') {
+                    liveEl.innerText = TrackingService.getLiveVisitors();
+                }
+            }, 4000);
         }
 
         // 5. Form Submission Handlers
@@ -1210,7 +1655,7 @@
                     categoryName: categoryMap[catKey] || "हमारा कानपुर",
                     subLocation: locality,
                     author: author,
-                    date: "6 सितंबर 2026",
+                    date: new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
                     time: new Date().toLocaleTimeString("hi-IN", { hour: '2-digit', minute: '2-digit' }),
                     views: 1,
                     shares: 0,
@@ -1222,8 +1667,14 @@
 
                 StorageService.addArticle(newArt);
 
+                // Record in internal upload audit ledger
+                const session = getActiveSession();
+                const activeRole = session ? session.role : StorageService.getCurrentRole();
+                TrackingService.recordUploadEvent("खबर (Article)", title, author || getRoleLabel(activeRole), activeRole, "प्रकाशित");
+
                 if (isBreaking) {
                     StorageService.addBreakingItem(`कानपुर (${locality}): ${title}`, "high");
+                    TrackingService.recordUploadEvent("लाल पट्टी (Breaking)", `कानपुर (${locality}): ${title}`, author || getRoleLabel(activeRole), activeRole, "सक्रिय");
                 }
 
                 alert("🎉 खबर सफलतापूर्वक तैयार होकर लाइव वेबसाइट पर प्रकाशित हो चुकी है!");
@@ -1231,6 +1682,7 @@
                 refreshDashboard();
                 renderPublishedStories();
                 renderBreakingTickerList();
+                renderUploadLedgerTable();
                 switchTab('dashboard');
             });
 
@@ -1243,8 +1695,16 @@
                 if (!text) return;
 
                 StorageService.addBreakingItem(text, priority);
+
+                // Record in internal upload audit ledger
+                const session = getActiveSession();
+                const activeRole = session ? session.role : StorageService.getCurrentRole();
+                const authorName = (session && session.role === 'chief_editor') ? "दीपक राजपूत (डायरेक्टर)" : getRoleLabel(activeRole);
+                TrackingService.recordUploadEvent("लाल पट्टी (Breaking)", text, authorName, activeRole, "सक्रिय");
+
                 document.getElementById('new-breaking-text').value = "";
                 renderBreakingTickerList();
+                renderUploadLedgerTable();
                 refreshDashboard();
                 alert("लाल पट्टी पर नई ब्रेकिंग न्यूज़ तुरंत जोड़ दी गई है!");
             });
@@ -1259,8 +1719,15 @@
                 const author = document.getElementById('role-name-display').innerText;
 
                 StorageService.addLiveBlogUpdate("lb-1", { headline, badge, text, author });
+
+                // Record in internal upload audit ledger
+                const session = getActiveSession();
+                const activeRole = session ? session.role : StorageService.getCurrentRole();
+                TrackingService.recordUploadEvent("लाइव ब्लॉग (LiveBlog)", headline, author || getRoleLabel(activeRole), activeRole, "अपडेट");
+
                 lbForm.reset();
                 renderLiveBlogTimeline();
+                renderUploadLedgerTable();
                 alert("लाइव ब्लॉग में नई अपडेट जोड़ दी गई है!");
             });
 
@@ -1275,6 +1742,13 @@
                 StorageService.saveAds({
                     headerBanner: { enabled, title, imageUrl: image, linkUrl: "#" }
                 });
+
+                // Record in internal upload audit ledger
+                const session = getActiveSession();
+                const activeRole = session ? session.role : StorageService.getCurrentRole();
+                TrackingService.recordUploadEvent("विज्ञापन (Ad)", title || "शीर्ष बैनर विज्ञापन", "दीपक राजपूत (डायरेक्टर)", activeRole, "अपडेट");
+
+                renderUploadLedgerTable();
                 alert("विज्ञापन सेटिंग्स सफलतापूर्वक अपडेट हो गई हैं!");
             });
         }
