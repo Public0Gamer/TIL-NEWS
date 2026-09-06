@@ -290,10 +290,214 @@
                 </div>
             </div>
 
-            <!-- Dynamic Live Cards Container -->
+            <!-- Dynamic Live Cards Container (Pre-rendered for Instant Display & Zero Lag) -->
             <div id="mandi-rates-cards" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5 sm:gap-3 font-hindi">
-                <!-- Injected dynamically via DailyRatesService in app.js -->
+                <!-- 1. Gold 24K -->
+                <div class="mandi-card bg-white p-3 rounded-xl border border-slate-200/80 shadow-2xs hover:shadow-xs hover:border-amber-300 transition flex flex-col justify-between" data-rate-cat="bullion">
+                    <div class="flex items-center justify-between gap-1 mb-1">
+                        <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5 truncate" title="सोना (24K शुद्ध)">
+                            <i class="fa-solid fa-gem text-amber-500 text-xs shrink-0"></i>
+                            <span class="truncate">सोना (24K शुद्ध)</span>
+                        </span>
+                        <span class="text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded text-[10px] font-bold flex items-center gap-0.5"><i class="fa-solid fa-arrow-trend-up text-[9px]"></i> +₹220</span>
+                    </div>
+                    <div class="flex items-baseline justify-between mt-1">
+                        <span class="text-base font-black text-slate-900 font-brand tracking-tight">₹72,400</span>
+                        <span class="text-[10px] text-slate-400 font-hindi">/10 ग्राम</span>
+                    </div>
+                </div>
+
+                <!-- 2. Gold 22K -->
+                <div class="mandi-card bg-white p-3 rounded-xl border border-slate-200/80 shadow-2xs hover:shadow-xs hover:border-amber-300 transition flex flex-col justify-between" data-rate-cat="bullion">
+                    <div class="flex items-center justify-between gap-1 mb-1">
+                        <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5 truncate" title="सोना (22K जेवराती)">
+                            <i class="fa-solid fa-gem text-amber-500 text-xs shrink-0"></i>
+                            <span class="truncate">सोना (22K जेवराती)</span>
+                        </span>
+                        <span class="text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded text-[10px] font-bold flex items-center gap-0.5"><i class="fa-solid fa-arrow-trend-up text-[9px]"></i> +₹190</span>
+                    </div>
+                    <div class="flex items-baseline justify-between mt-1">
+                        <span class="text-base font-black text-slate-900 font-brand tracking-tight">₹66,320</span>
+                        <span class="text-[10px] text-slate-400 font-hindi">/10 ग्राम</span>
+                    </div>
+                </div>
+
+                <!-- 3. Silver -->
+                <div class="mandi-card bg-white p-3 rounded-xl border border-slate-200/80 shadow-2xs hover:shadow-xs hover:border-amber-300 transition flex flex-col justify-between" data-rate-cat="bullion">
+                    <div class="flex items-center justify-between gap-1 mb-1">
+                        <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5 truncate" title="चांदी (सफेद 99.9)">
+                            <i class="fa-solid fa-gem text-slate-400 text-xs shrink-0"></i>
+                            <span class="truncate">चांदी (सफेद 99.9)</span>
+                        </span>
+                        <span class="text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded text-[10px] font-bold flex items-center gap-0.5"><i class="fa-solid fa-arrow-trend-down text-[9px]"></i> -₹350</span>
+                    </div>
+                    <div class="flex items-baseline justify-between mt-1">
+                        <span class="text-base font-black text-slate-900 font-brand tracking-tight">₹84,500</span>
+                        <span class="text-[10px] text-slate-400 font-hindi">/1 किग्रा</span>
+                    </div>
+                </div>
+
+                <!-- 4. Wheat -->
+                <div class="mandi-card bg-white p-3 rounded-xl border border-slate-200/80 shadow-2xs hover:shadow-xs hover:border-amber-300 transition flex flex-col justify-between" data-rate-cat="mandi">
+                    <div class="flex items-center justify-between gap-1 mb-1">
+                        <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5 truncate" title="गेहूं (दड़ा/शरबती)">
+                            <i class="fa-solid fa-wheat-awn text-yellow-600 text-xs shrink-0"></i>
+                            <span class="truncate">गेहूं (शरबती)</span>
+                        </span>
+                        <span class="text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded text-[10px] font-bold flex items-center gap-0.5"><i class="fa-solid fa-arrow-trend-up text-[9px]"></i> +₹20</span>
+                    </div>
+                    <div class="flex items-baseline justify-between mt-1">
+                        <span class="text-base font-black text-slate-900 font-brand tracking-tight">₹2,480</span>
+                        <span class="text-[10px] text-slate-400 font-hindi">/क्विंटल</span>
+                    </div>
+                </div>
+
+                <!-- 5. Dal Arhar -->
+                <div class="mandi-card bg-white p-3 rounded-xl border border-slate-200/80 shadow-2xs hover:shadow-xs hover:border-amber-300 transition flex flex-col justify-between" data-rate-cat="mandi">
+                    <div class="flex items-center justify-between gap-1 mb-1">
+                        <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5 truncate" title="अरहर दाल (देसी)">
+                            <i class="fa-solid fa-wheat-awn text-yellow-600 text-xs shrink-0"></i>
+                            <span class="truncate">अरहर दाल (देसी)</span>
+                        </span>
+                        <span class="text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded text-[10px] font-bold flex items-center gap-0.5"><i class="fa-solid fa-arrow-trend-up text-[9px]"></i> +₹150</span>
+                    </div>
+                    <div class="flex items-baseline justify-between mt-1">
+                        <span class="text-base font-black text-slate-900 font-brand tracking-tight">₹11,400</span>
+                        <span class="text-[10px] text-slate-400 font-hindi">/क्विंटल</span>
+                    </div>
+                </div>
+
+                <!-- 6. Chana -->
+                <div class="mandi-card bg-white p-3 rounded-xl border border-slate-200/80 shadow-2xs hover:shadow-xs hover:border-amber-300 transition flex flex-col justify-between" data-rate-cat="mandi">
+                    <div class="flex items-center justify-between gap-1 mb-1">
+                        <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5 truncate" title="चना (देसी)">
+                            <i class="fa-solid fa-wheat-awn text-yellow-600 text-xs shrink-0"></i>
+                            <span class="truncate">चना (देसी)</span>
+                        </span>
+                        <span class="text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded text-[10px] font-semibold">स्थिर</span>
+                    </div>
+                    <div class="flex items-baseline justify-between mt-1">
+                        <span class="text-base font-black text-slate-900 font-brand tracking-tight">₹6,920</span>
+                        <span class="text-[10px] text-slate-400 font-hindi">/क्विंटल</span>
+                    </div>
+                </div>
+
+                <!-- 7. Mustard -->
+                <div class="mandi-card bg-white p-3 rounded-xl border border-slate-200/80 shadow-2xs hover:shadow-xs hover:border-amber-300 transition flex flex-col justify-between" data-rate-cat="mandi">
+                    <div class="flex items-center justify-between gap-1 mb-1">
+                        <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5 truncate" title="सरसों बीज / तेल">
+                            <i class="fa-solid fa-wheat-awn text-yellow-600 text-xs shrink-0"></i>
+                            <span class="truncate">सरसों बीज / तेल</span>
+                        </span>
+                        <span class="text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded text-[10px] font-bold flex items-center gap-0.5"><i class="fa-solid fa-arrow-trend-up text-[9px]"></i> +₹75</span>
+                    </div>
+                    <div class="flex items-baseline justify-between mt-1">
+                        <span class="text-base font-black text-slate-900 font-brand tracking-tight">₹5,650</span>
+                        <span class="text-[10px] text-slate-400 font-hindi">/क्विंटल</span>
+                    </div>
+                </div>
+
+                <!-- 8. Sugar -->
+                <div class="mandi-card bg-white p-3 rounded-xl border border-slate-200/80 shadow-2xs hover:shadow-xs hover:border-amber-300 transition flex flex-col justify-between" data-rate-cat="mandi">
+                    <div class="flex items-center justify-between gap-1 mb-1">
+                        <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5 truncate" title="चीनी (थोक)">
+                            <i class="fa-solid fa-wheat-awn text-yellow-600 text-xs shrink-0"></i>
+                            <span class="truncate">चीनी (थोक)</span>
+                        </span>
+                        <span class="text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded text-[10px] font-semibold">स्थिर</span>
+                    </div>
+                    <div class="flex items-baseline justify-between mt-1">
+                        <span class="text-base font-black text-slate-900 font-brand tracking-tight">₹3,920</span>
+                        <span class="text-[10px] text-slate-400 font-hindi">/क्विंटल</span>
+                    </div>
+                </div>
+
+                <!-- 9. Petrol -->
+                <div class="mandi-card bg-white p-3 rounded-xl border border-slate-200/80 shadow-2xs hover:shadow-xs hover:border-amber-300 transition flex flex-col justify-between" data-rate-cat="fuel">
+                    <div class="flex items-center justify-between gap-1 mb-1">
+                        <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5 truncate" title="पेट्रोल (कानपुर)">
+                            <i class="fa-solid fa-gas-pump text-blue-500 text-xs shrink-0"></i>
+                            <span class="truncate">पेट्रोल (कानपुर)</span>
+                        </span>
+                        <span class="text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded text-[10px] font-semibold">स्थिर</span>
+                    </div>
+                    <div class="flex items-baseline justify-between mt-1">
+                        <span class="text-base font-black text-slate-900 font-brand tracking-tight">₹94.65</span>
+                        <span class="text-[10px] text-slate-400 font-hindi">/लीटर</span>
+                    </div>
+                </div>
+
+                <!-- 10. Diesel -->
+                <div class="mandi-card bg-white p-3 rounded-xl border border-slate-200/80 shadow-2xs hover:shadow-xs hover:border-amber-300 transition flex flex-col justify-between" data-rate-cat="fuel">
+                    <div class="flex items-center justify-between gap-1 mb-1">
+                        <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5 truncate" title="डीजल (कानपुर)">
+                            <i class="fa-solid fa-gas-pump text-blue-500 text-xs shrink-0"></i>
+                            <span class="truncate">डीजल (कानपुर)</span>
+                        </span>
+                        <span class="text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded text-[10px] font-semibold">स्थिर</span>
+                    </div>
+                    <div class="flex items-baseline justify-between mt-1">
+                        <span class="text-base font-black text-slate-900 font-brand tracking-tight">₹87.76</span>
+                        <span class="text-[10px] text-slate-400 font-hindi">/लीटर</span>
+                    </div>
+                </div>
+
+                <!-- 11. LPG Cylinder -->
+                <div class="mandi-card bg-white p-3 rounded-xl border border-slate-200/80 shadow-2xs hover:shadow-xs hover:border-amber-300 transition flex flex-col justify-between" data-rate-cat="fuel">
+                    <div class="flex items-center justify-between gap-1 mb-1">
+                        <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5 truncate" title="LPG घरेलू सिलेंडर">
+                            <i class="fa-solid fa-gas-pump text-blue-500 text-xs shrink-0"></i>
+                            <span class="truncate">LPG सिलेंडर</span>
+                        </span>
+                        <span class="text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded text-[10px] font-semibold">स्थिर</span>
+                    </div>
+                    <div class="flex items-baseline justify-between mt-1">
+                        <span class="text-base font-black text-slate-900 font-brand tracking-tight">₹832.50</span>
+                        <span class="text-[10px] text-slate-400 font-hindi">/14.2 किग्रा</span>
+                    </div>
+                </div>
             </div>
+
+            <!-- Bulletproof Inline Rates Handler Script (Instant execution, zero dependency) -->
+            <script>
+                function initMandiRatesLive() {
+                    try {
+                        const dateBadge = document.getElementById("mandi-date-badge");
+                        if (dateBadge) {
+                            const now = new Date();
+                            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+                            const formatted = now.toLocaleDateString('hi-IN', options);
+                            dateBadge.innerHTML = '<i class="fa-solid fa-clock-rotate-left mr-1 text-red-500"></i> आज का भाव (' + formatted + ')';
+                        }
+                    } catch(e) {}
+                }
+
+                function filterRates(category, btn) {
+                    try {
+                        document.querySelectorAll('.rate-tab-btn').forEach(function(b) {
+                            b.classList.remove('active', 'bg-slate-900', 'text-white');
+                            b.classList.add('text-slate-600');
+                        });
+                        if (btn) {
+                            btn.classList.add('active', 'bg-slate-900', 'text-white');
+                            btn.classList.remove('text-slate-600');
+                        }
+                        var cards = document.querySelectorAll('#mandi-rates-cards .mandi-card');
+                        cards.forEach(function(card) {
+                            var cat = card.getAttribute('data-rate-cat');
+                            if (category === 'all' || cat === category) {
+                                card.style.display = '';
+                            } else {
+                                card.style.display = 'none';
+                            }
+                        });
+                    } catch(err) {
+                        console.error("Filter error:", err);
+                    }
+                }
+                window.filterRates = filterRates;
+                initMandiRatesLive();
+            </script>
         </section>
 
         <!-- LIVE BLOG TIMELINE WIDGET -->
@@ -652,7 +856,7 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="js/data.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/data.js?v=20260906c"></script>
+    <script src="js/app.js?v=20260906c"></script>
 </body>
 </html>

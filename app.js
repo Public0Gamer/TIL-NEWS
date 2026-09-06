@@ -323,7 +323,15 @@ window.filterRates = function(category, btn) {
         btn.classList.add('active', 'bg-slate-900', 'text-white');
         btn.classList.remove('text-slate-600');
     }
-    renderDailyRatesBar();
+    const cards = document.querySelectorAll('#mandi-rates-cards .mandi-card');
+    cards.forEach(card => {
+        const cat = card.getAttribute('data-rate-cat');
+        if (category === 'all' || cat === category) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
 };
 
 function renderDailyRatesBar() {
@@ -338,13 +346,13 @@ function renderDailyRatesBar() {
 
     let items = [];
     if (currentRatesFilter === 'all' || currentRatesFilter === 'bullion') {
-        items = items.concat(data.bullion.map(i => ({ ...i, cat: 'सर्राफा', icon: 'fa-solid fa-gem text-amber-500' })));
+        items = items.concat(data.bullion.map(i => ({ ...i, cat: 'bullion', icon: 'fa-solid fa-gem text-amber-500' })));
     }
     if (currentRatesFilter === 'all' || currentRatesFilter === 'mandi') {
-        items = items.concat(data.mandi.map(i => ({ ...i, cat: 'गल्ला', icon: 'fa-solid fa-wheat-awn text-yellow-600' })));
+        items = items.concat(data.mandi.map(i => ({ ...i, cat: 'mandi', icon: 'fa-solid fa-wheat-awn text-yellow-600' })));
     }
     if (currentRatesFilter === 'all' || currentRatesFilter === 'fuel') {
-        items = items.concat(data.fuel.map(i => ({ ...i, cat: 'ईंधन', icon: 'fa-solid fa-gas-pump text-blue-500' })));
+        items = items.concat(data.fuel.map(i => ({ ...i, cat: 'fuel', icon: 'fa-solid fa-gas-pump text-blue-500' })));
     }
 
     container.innerHTML = items.map(item => {
@@ -357,7 +365,7 @@ function renderDailyRatesBar() {
             : `<span class="text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded text-[10px] font-semibold">स्थिर</span>`;
 
         return `
-            <div class="bg-white p-3 rounded-xl border border-slate-200/80 shadow-2xs hover:shadow-xs hover:border-amber-300 transition flex flex-col justify-between">
+            <div class="mandi-card bg-white p-3 rounded-xl border border-slate-200/80 shadow-2xs hover:shadow-xs hover:border-amber-300 transition flex flex-col justify-between" data-rate-cat="${item.cat}">
                 <div class="flex items-center justify-between gap-1 mb-1">
                     <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5 truncate" title="${item.name}">
                         <i class="${item.icon} text-xs shrink-0"></i>
