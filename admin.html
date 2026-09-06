@@ -32,6 +32,16 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+        .animate-shake {
+            animation: shake 0.4s ease-in-out both;
+        }
+    </style>
 </head>
 <body class="bg-slate-100 text-slate-800 flex flex-col min-h-screen">
 
@@ -51,8 +61,21 @@
                 <span class="text-xs text-slate-400 hidden md:inline font-hindi">कानपुर केंद्रीय संपादकीय प्रणाली</span>
             </div>
 
-            <!-- Role Selector & Status -->
-            <div class="flex items-center gap-3">
+            <!-- Unauthenticated Header Label -->
+            <div id="header-gate-label" class="flex items-center gap-2 sm:gap-3">
+                <span class="inline-flex items-center gap-1.5 bg-red-950/70 border border-red-800 text-red-300 text-xs font-semibold px-3 py-1.5 rounded-lg">
+                    <i class="fa-solid fa-shield-halved text-red-400"></i>
+                    <span class="font-hindi hidden sm:inline">संपादकीय सुरक्षा गेटवे</span>
+                    <span class="font-hindi sm:hidden">गेटवे</span>
+                </span>
+                <a href="index.html" class="bg-slate-900 hover:bg-slate-800 text-slate-200 text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                    <span class="font-hindi">मुख्य वेबसाइट</span>
+                </a>
+            </div>
+
+            <!-- Authenticated Role Selector & Status Controls -->
+            <div id="header-auth-controls" class="hidden flex flex-wrap items-center gap-2 sm:gap-3">
                 <!-- Role Switcher -->
                 <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg text-xs font-hindi">
                     <span class="text-slate-400">आपकी भूमिका:</span>
@@ -62,6 +85,12 @@
                         <option value="reporter">🎤 फील्ड रिपोर्टर (Reporter)</option>
                     </select>
                 </div>
+
+                <!-- Password Change Button -->
+                <button type="button" onclick="openChangePasswordModal()" class="bg-slate-900 hover:bg-slate-800 text-amber-300 hover:text-amber-200 text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-slate-700 transition flex items-center gap-1.5 cursor-pointer shadow-xs" title="सुरक्षा पासवर्ड या पिन बदलें">
+                    <i class="fa-solid fa-key text-[11px] text-amber-400"></i>
+                    <span class="hidden sm:inline font-hindi">पासवर्ड बदलें</span>
+                </button>
 
                 <!-- YouTube Channel Link -->
                 <a href="https://www.youtube.com/@TILNEWS" target="_blank" rel="noopener" class="bg-red-600/20 text-red-400 hover:text-white hover:bg-red-600 text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-red-800/50 transition flex items-center gap-1" title="YouTube चैनल">
@@ -76,16 +105,196 @@
                 </a>
 
                 <!-- Live Site Link -->
-                <a href="index.html" target="_blank" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-xs">
+                <a href="index.html" target="_blank" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 border border-slate-700">
                     <i class="fa-solid fa-arrow-up-right-from-square text-[11px]"></i>
                     <span class="hidden sm:inline">लाइव साइट देखें</span>
                 </a>
+
+                <!-- Logout Button -->
+                <button type="button" onclick="logoutAdmin()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-xs cursor-pointer">
+                    <i class="fa-solid fa-right-from-bracket text-[11px]"></i>
+                    <span class="font-hindi">लॉगआउट</span>
+                </button>
             </div>
         </div>
     </header>
 
-    <!-- 2. Main Workspace Layout -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- 1.5. Security Login Gate Screen (Shown when locked) -->
+    <div id="login-gate-screen" class="flex-1 flex items-center justify-center px-4 py-8 sm:py-14">
+        <div class="max-w-md w-full">
+            
+            <!-- Security Card Box -->
+            <div id="login-card-box" class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden font-hindi transition-all">
+                
+                <!-- Card Header -->
+                <div class="bg-gradient-to-r from-slate-950 via-slate-900 to-red-950 text-white p-6 text-center border-b-2 border-red-600 relative">
+                    <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-red-600/20 border border-red-500/40 text-red-500 mb-3 shadow-inner">
+                        <i class="fa-solid fa-shield-halved text-2xl"></i>
+                    </div>
+                    <div class="flex items-center justify-center gap-2 mb-1.5">
+                        <img src="logo.png" onerror="this.onerror=null;this.src='../logo.png';" alt="TIL NEWS" class="h-6 w-auto object-contain bg-white px-2 py-0.5 rounded">
+                        <span class="bg-red-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded tracking-wider">SECURE CMS</span>
+                    </div>
+                    <h2 class="text-xl font-black tracking-tight text-white">केंद्रीय संपादकीय नियंत्रण कक्ष</h2>
+                    <p class="text-xs text-slate-300 mt-1 font-normal">कानपुर ब्यूरो — केवल अधिकृत संपादकीय टीम हेतु</p>
+                </div>
+
+                <!-- Card Body Form -->
+                <form id="cms-login-form" onsubmit="handleLogin(event)" class="p-6 space-y-4">
+                    
+                    <!-- Error Alert Box -->
+                    <div id="login-error-alert" class="hidden bg-red-50 border border-red-300 text-red-700 text-xs px-3.5 py-2.5 rounded-xl flex items-start gap-2">
+                        <i class="fa-solid fa-triangle-exclamation text-red-600 mt-0.5 shrink-0"></i>
+                        <span id="login-error-text" class="font-semibold">दर्ज किया गया पासवर्ड या पिन अमान्य है!</span>
+                    </div>
+
+                    <!-- Role Select -->
+                    <div>
+                        <label for="login-role" class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center justify-between">
+                            <span>आपकी संपादकीय भूमिका चुनें:</span>
+                            <span class="text-[11px] text-red-600 font-semibold">*अनिवार्य</span>
+                        </label>
+                        <div class="relative">
+                            <select id="login-role" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-red-600 transition cursor-pointer appearance-none">
+                                <option value="chief_editor">👑 प्रधान संपादक (दीपक राजपूत / Chief Editor)</option>
+                                <option value="sub_editor">📝 उप-संपादक (डेस्क / Sub-Editor)</option>
+                                <option value="reporter">🎤 फील्ड रिपोर्टर (संवाददाता / Reporter)</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center px-3.5 pointer-events-none text-slate-500">
+                                <i class="fa-solid fa-chevron-down text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Password / PIN Input -->
+                    <div>
+                        <label for="login-password" class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center justify-between">
+                            <span>संपादकीय सुरक्षा पासवर्ड या 6-अंकीय पिन:</span>
+                            <span class="text-[11px] text-slate-400 font-normal">Security Key</span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-key text-xs"></i>
+                            </div>
+                            <input type="password" id="login-password" required placeholder="पासवर्ड अथवा पिन दर्ज करें..." autocomplete="current-password" class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-10 py-2.5 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-red-600 transition font-sans">
+                            <button type="button" onclick="togglePasswordVisibility('login-password', 'eye-login-icon')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-700 cursor-pointer" title="पासवर्ड दिखाएं / छुपाएं">
+                                <i id="eye-login-icon" class="fa-solid fa-eye text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Remember session checkbox -->
+                    <div class="flex items-center justify-between text-xs pt-1">
+                        <label class="flex items-center gap-2 cursor-pointer text-slate-600 select-none">
+                            <input type="checkbox" id="remember-session" class="w-4 h-4 text-red-600 rounded border-slate-300 focus:ring-red-500 cursor-pointer">
+                            <span>इस डिवाइस पर सत्र याद रखें (Keep Logged In)</span>
+                        </label>
+                    </div>
+
+                    <!-- Login Submit Button -->
+                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 active:scale-[0.99] text-white font-bold py-3 px-4 rounded-xl text-xs transition shadow-md shadow-red-600/30 flex items-center justify-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-lock-open text-xs"></i>
+                        <span>सुरक्षित न्यूज़ डेस्क अनलॉक करें (Enter Desk)</span>
+                    </button>
+                </form>
+
+                <!-- Credentials Info Reference Box -->
+                <div class="bg-slate-50 border-t border-slate-200 p-4">
+                    <div class="text-[11px] font-bold text-slate-700 mb-2 flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-info text-blue-600"></i>
+                        <span>अधिकृत टीम हेतु डिफ़ॉल्ट क्रेडेंशियल्स:</span>
+                    </div>
+                    <div class="space-y-1.5 text-[11px] text-slate-600 font-mono">
+                        <div class="flex items-center justify-between bg-white px-2.5 py-1.5 rounded-lg border border-slate-200 shadow-2xs">
+                            <span>👑 <b>प्रधान संपादक:</b></span>
+                            <span class="text-red-700 font-bold bg-red-50 px-2 py-0.5 rounded border border-red-100">Deepak@TIL2026</span>
+                            <span class="text-slate-400 text-[10px]">(पिन: 884002)</span>
+                        </div>
+                        <div class="flex items-center justify-between bg-white px-2.5 py-1.5 rounded-lg border border-slate-200 shadow-2xs">
+                            <span>📝 <b>उप-संपादक:</b></span>
+                            <span class="text-blue-700 font-bold bg-blue-50 px-2 py-0.5 rounded border border-blue-100">Sub@TIL2026</span>
+                            <span class="text-slate-400 text-[10px]">(पिन: 112233)</span>
+                        </div>
+                        <div class="flex items-center justify-between bg-white px-2.5 py-1.5 rounded-lg border border-slate-200 shadow-2xs">
+                            <span>🎤 <b>फील्ड रिपोर्टर:</b></span>
+                            <span class="text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded border border-amber-100">Rep@TIL2026</span>
+                            <span class="text-slate-400 text-[10px]">(पिन: 445566)</span>
+                        </div>
+                    </div>
+                    <p class="text-[10px] text-slate-500 mt-2.5 text-center font-hindi">
+                        <i class="fa-solid fa-shield-cat text-amber-500 mr-1"></i>
+                        लॉगिन के बाद आप कभी भी ऊपर <b>"पासवर्ड बदलें"</b> विकल्प से अपना नया गुप्त पासवर्ड सहेज सकते हैं।
+                    </p>
+                </div>
+            </div>
+
+            <!-- Footer Return Link -->
+            <div class="text-center mt-4">
+                <a href="index.html" class="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-red-600 transition font-hindi font-medium">
+                    <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                    <span>Today India Live News मुख्य पोर्टल पर वापस जाएं</span>
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 1.6. Change Password Modal (For Authenticated Desk) -->
+    <div id="change-pass-modal" class="hidden fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 font-hindi relative">
+            <button type="button" onclick="closeChangePasswordModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center transition cursor-pointer">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+
+            <div class="flex items-center gap-3 pb-3 border-b border-slate-100 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-lg">
+                    <i class="fa-solid fa-key"></i>
+                </div>
+                <div>
+                    <h3 class="font-black text-slate-900 text-base">संपादकीय पासवर्ड / पिन बदलें</h3>
+                    <p class="text-xs text-slate-500">भूमिका: <span id="modal-role-label" class="font-bold text-red-600">प्रधान संपादक</span></p>
+                </div>
+            </div>
+
+            <form id="change-password-form" onsubmit="saveNewPassword(event)" class="space-y-3">
+                <div id="modal-error-alert" class="hidden bg-red-50 border border-red-200 text-red-700 text-xs p-2.5 rounded-lg flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation text-red-600"></i>
+                    <span id="modal-error-text">वर्तमान पासवर्ड गलत है!</span>
+                </div>
+                <div id="modal-success-alert" class="hidden bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs p-2.5 rounded-lg flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                    <span id="modal-success-text">पासवर्ड सफलतापूर्वक बदल दिया गया है!</span>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">वर्तमान पासवर्ड या पिन दर्ज करें:</label>
+                    <input type="password" id="current-pass-input" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-red-600 font-sans">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">नया पासवर्ड या पिन दर्ज करें (कम से कम 4 अक्षर/अंक):</label>
+                    <input type="password" id="new-pass-input" required minlength="4" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-red-600 font-sans">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">नए पासवर्ड / पिन की पुष्टि करें:</label>
+                    <input type="password" id="confirm-pass-input" required minlength="4" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-red-600 font-sans">
+                </div>
+
+                <div class="pt-2 flex items-center justify-end gap-2">
+                    <button type="button" onclick="closeChangePasswordModal()" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition cursor-pointer">
+                        रद्द करें (Cancel)
+                    </button>
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg text-xs transition shadow-xs cursor-pointer">
+                        नया पासवर्ड सहेजें (Save)
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. Main Workspace Layout (Hidden until authenticated) -->
+    <div id="admin-workspace-content" class="hidden max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         <!-- Left Sidebar Navigation (3 Cols) -->
         <aside class="lg:col-span-3 space-y-4">
@@ -601,26 +810,267 @@
     <!-- Scripts -->
     <script src="js/data.js"></script>
     <script>
+        // ==========================================
+        // 0. Security Login Gate & Authentication Engine
+        // ==========================================
+        const DEFAULT_CREDENTIALS = {
+            chief_editor: { pass: "Deepak@TIL2026", pin: "884002", title: "प्रधान संपादक (दीपक राजपूत)" },
+            sub_editor: { pass: "Sub@TIL2026", pin: "112233", title: "उप-संपादक (डेस्क)" },
+            reporter: { pass: "Rep@TIL2026", pin: "445566", title: "फील्ड रिपोर्टर" }
+        };
+
+        function getStoredCredentials() {
+            try {
+                const stored = localStorage.getItem("til_newsroom_credentials");
+                if (stored) {
+                    return JSON.parse(stored);
+                }
+            } catch (e) {
+                console.error("Credentials storage error:", e);
+            }
+            return DEFAULT_CREDENTIALS;
+        }
+
+        function saveStoredCredentials(creds) {
+            localStorage.setItem("til_newsroom_credentials", JSON.stringify(creds));
+        }
+
+        function getActiveSession() {
+            try {
+                const session = sessionStorage.getItem("til_newsroom_active_session");
+                if (session) return JSON.parse(session);
+
+                const remembered = localStorage.getItem("til_newsroom_remembered_session");
+                if (remembered) {
+                    const parsed = JSON.parse(remembered);
+                    sessionStorage.setItem("til_newsroom_active_session", JSON.stringify(parsed));
+                    return parsed;
+                }
+            } catch (e) {
+                console.error("Session parse error:", e);
+            }
+            return null;
+        }
+
+        let isWorkspaceInitialized = false;
+
         document.addEventListener("DOMContentLoaded", () => {
-            initRole();
-            refreshDashboard();
-            renderBreakingTickerList();
-            renderLiveBlogTimeline();
-            renderCitizenTipsList();
-            renderPublishedStories();
-            initAdsForm();
-            setupFormHandlers();
+            checkAuth();
         });
+
+        function checkAuth() {
+            const session = getActiveSession();
+            const gateScreen = document.getElementById("login-gate-screen");
+            const workspace = document.getElementById("admin-workspace-content");
+            const headerGateLabel = document.getElementById("header-gate-label");
+            const headerAuthControls = document.getElementById("header-auth-controls");
+            const roleSelector = document.getElementById("role-selector");
+
+            if (session && session.role) {
+                // User is Authenticated
+                if (gateScreen) gateScreen.classList.add("hidden");
+                if (workspace) workspace.classList.remove("hidden");
+                if (headerGateLabel) headerGateLabel.classList.add("hidden");
+                if (headerAuthControls) headerAuthControls.classList.remove("hidden");
+
+                if (roleSelector) {
+                    roleSelector.value = session.role;
+                }
+                applyRolePermissions(session.role);
+
+                if (!isWorkspaceInitialized) {
+                    refreshDashboard();
+                    renderBreakingTickerList();
+                    renderLiveBlogTimeline();
+                    renderCitizenTipsList();
+                    renderPublishedStories();
+                    initAdsForm();
+                    setupFormHandlers();
+                    isWorkspaceInitialized = true;
+                }
+            } else {
+                // User is NOT Authenticated - Lock Workspace
+                if (gateScreen) gateScreen.classList.remove("hidden");
+                if (workspace) workspace.classList.add("hidden");
+                if (headerGateLabel) headerGateLabel.classList.remove("hidden");
+                if (headerAuthControls) headerAuthControls.classList.add("hidden");
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const role = document.getElementById("login-role").value;
+            const inputPass = (document.getElementById("login-password").value || "").trim();
+            const rememberMe = document.getElementById("remember-session").checked;
+            const errorAlert = document.getElementById("login-error-alert");
+            const errorText = document.getElementById("login-error-text");
+            const cardBox = document.getElementById("login-card-box");
+
+            const creds = getStoredCredentials();
+            const roleCreds = creds[role] || DEFAULT_CREDENTIALS[role];
+
+            // Verify against password or 6-digit pin
+            const isValid = (inputPass === roleCreds.pass || inputPass === roleCreds.pin);
+
+            if (!isValid) {
+                if (errorAlert) {
+                    errorAlert.classList.remove("hidden");
+                    errorText.innerText = "अमान्य पासवर्ड या पिन! कृपया सही क्रेडेंशियल्स दर्ज करें।";
+                }
+                if (cardBox) {
+                    cardBox.classList.add("animate-shake");
+                    setTimeout(() => cardBox.classList.remove("animate-shake"), 500);
+                }
+                return;
+            }
+
+            // Successful Login
+            if (errorAlert) errorAlert.classList.add("hidden");
+            const sessionData = {
+                role: role,
+                loginTime: new Date().toISOString()
+            };
+
+            sessionStorage.setItem("til_newsroom_active_session", JSON.stringify(sessionData));
+            StorageService.setCurrentRole(role);
+
+            if (rememberMe) {
+                localStorage.setItem("til_newsroom_remembered_session", JSON.stringify(sessionData));
+            } else {
+                localStorage.removeItem("til_newsroom_remembered_session");
+            }
+
+            // Clear password field
+            document.getElementById("login-password").value = "";
+
+            // Unlock and initialize workspace
+            checkAuth();
+        }
+
+        function logoutAdmin() {
+            if (!confirm("क्या आप वाकई संपादकीय डेस्क से लॉगआउट करना चाहते हैं?")) {
+                return;
+            }
+            sessionStorage.removeItem("til_newsroom_active_session");
+            localStorage.removeItem("til_newsroom_remembered_session");
+            window.location.reload();
+        }
+
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (!input) return;
+            if (input.type === "password") {
+                input.type = "text";
+                if (icon) {
+                    icon.classList.remove("fa-eye");
+                    icon.classList.add("fa-eye-slash");
+                }
+            } else {
+                input.type = "password";
+                if (icon) {
+                    icon.classList.remove("fa-eye-slash");
+                    icon.classList.add("fa-eye");
+                }
+            }
+        }
+
+        // Change Password Modal Controls
+        function openChangePasswordModal() {
+            const session = getActiveSession();
+            const role = (session && session.role) ? session.role : StorageService.getCurrentRole();
+            const modal = document.getElementById("change-pass-modal");
+            const modalRoleLabel = document.getElementById("modal-role-label");
+            const err = document.getElementById("modal-error-alert");
+            const succ = document.getElementById("modal-success-alert");
+
+            if (modalRoleLabel) {
+                modalRoleLabel.innerText = getRoleLabel(role);
+            }
+            if (err) err.classList.add("hidden");
+            if (succ) succ.classList.add("hidden");
+            document.getElementById("change-password-form").reset();
+            if (modal) modal.classList.remove("hidden");
+        }
+
+        function closeChangePasswordModal() {
+            const modal = document.getElementById("change-pass-modal");
+            if (modal) modal.classList.add("hidden");
+        }
+
+        function saveNewPassword(e) {
+            e.preventDefault();
+            const session = getActiveSession();
+            const role = (session && session.role) ? session.role : StorageService.getCurrentRole();
+            const currentPass = (document.getElementById("current-pass-input").value || "").trim();
+            const newPass = (document.getElementById("new-pass-input").value || "").trim();
+            const confirmPass = (document.getElementById("confirm-pass-input").value || "").trim();
+
+            const err = document.getElementById("modal-error-alert");
+            const errText = document.getElementById("modal-error-text");
+            const succ = document.getElementById("modal-success-alert");
+            const succText = document.getElementById("modal-success-text");
+
+            err.classList.add("hidden");
+            succ.classList.add("hidden");
+
+            const creds = getStoredCredentials();
+            const activeRoleCreds = creds[role] || DEFAULT_CREDENTIALS[role];
+
+            // Verify current password or pin
+            if (currentPass !== activeRoleCreds.pass && currentPass !== activeRoleCreds.pin) {
+                err.classList.remove("hidden");
+                errText.innerText = "वर्तमान पासवर्ड या पिन गलत है!";
+                return;
+            }
+
+            if (newPass.length < 4) {
+                err.classList.remove("hidden");
+                errText.innerText = "नया पासवर्ड कम से कम 4 अक्षरों का होना चाहिए!";
+                return;
+            }
+
+            if (newPass !== confirmPass) {
+                err.classList.remove("hidden");
+                errText.innerText = "नया पासवर्ड और पुष्टि पासवर्ड मेल नहीं खाते!";
+                return;
+            }
+
+            // Save new password
+            activeRoleCreds.pass = newPass;
+            if (/^\d{6}$/.test(newPass)) {
+                activeRoleCreds.pin = newPass;
+            }
+            creds[role] = activeRoleCreds;
+            saveStoredCredentials(creds);
+
+            succ.classList.remove("hidden");
+            succText.innerText = `नया पासवर्ड '${getRoleLabel(role)}' के लिए सफलतापूर्वक सहेजा गया!`;
+
+            setTimeout(() => {
+                closeChangePasswordModal();
+            }, 1500);
+        }
 
         // 1. Role-Based Access Control (RBAC) Logic
         function initRole() {
-            const currentRole = StorageService.getCurrentRole();
-            document.getElementById("role-selector").value = currentRole;
+            const session = getActiveSession();
+            const currentRole = session ? session.role : StorageService.getCurrentRole();
+            const roleEl = document.getElementById("role-selector");
+            if (roleEl) roleEl.value = currentRole;
             applyRolePermissions(currentRole);
         }
 
         function changeRole(role) {
             StorageService.setCurrentRole(role);
+            const session = getActiveSession();
+            if (session) {
+                session.role = role;
+                sessionStorage.setItem("til_newsroom_active_session", JSON.stringify(session));
+                if (localStorage.getItem("til_newsroom_remembered_session")) {
+                    localStorage.setItem("til_newsroom_remembered_session", JSON.stringify(session));
+                }
+            }
             applyRolePermissions(role);
             alert(`भूमिका बदलकर '${getRoleLabel(role)}' कर दी गई है।`);
         }
