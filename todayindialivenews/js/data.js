@@ -2,11 +2,12 @@
 // Specialized for Kanpur City & Uttar Pradesh Local News
 
 const INITIAL_BREAKING_NEWS = [
-    "कानपुर: कल्याणपुर-पनकी रूट पर नया फोरलेन ओवरब्रिज स्वीकृत, जाम से मिलेगी राहत",
-    "कानपुर कमिश्नरेट पुलिस का ऑपरेशन 'क्लीन' - शहर के 15 शातिर अपराधी गिरफ्तार",
-    "गंगा बैराज पर जलस्तर सामान्य, सिंचाई विभाग ने जारी किया अलर्ट बुलेटिन",
-    "कानपुर सेंट्रल से चलने वाली 4 मेमू ट्रेनों के समय में बदलाव, देखें पूरी लिस्ट",
-    "कानपुर सर्राफा बाजार: 24 कैरेट सोना ₹72,450 प्रति 10 ग्राम, चांदी ₹84,200 प्रति किलो"
+    { text: "कानपुर: चुन्नीगंज से ट्रांसपोर्ट नगर तक मेट्रो अंडरग्राउंड ट्रायल सफल, सीएम जल्द कर सकते हैं लोकार्पण", priority: "high" },
+    { text: "कानपुर: कल्याणपुर-पनकी रूट पर नया फोरलेन ओवरब्रिज स्वीकृत, भीषण जाम से मिलेगी राहत", priority: "normal" },
+    { text: "कानपुर कमिश्नरेट पुलिस का ऑपरेशन 'क्लीन' - शहर के 15 शातिर अपराधी गिरफ्तार", priority: "normal" },
+    { text: "गंगा बैराज पर जलस्तर सामान्य, सिंचाई विभाग ने जारी किया दैनिक अलर्ट बुलेटिन", priority: "normal" },
+    { text: "कानपुर सेंट्रल से चलने वाली 4 मेमू ट्रेनों के समय में बदलाव, देखें पूरी समय-सारणी", priority: "normal" },
+    { text: "कानपुर सर्राफा बाजार: 24 कैरेट सोना ₹72,450 प्रति 10 ग्राम, चांदी ₹84,200 प्रति किलो", priority: "normal" }
 ];
 
 const INITIAL_ARTICLES = [
@@ -26,7 +27,8 @@ const INITIAL_ARTICLES = [
         category: "kanpur",
         categoryName: "हमारा कानपुर",
         subLocation: "बड़ा चौराहा / चुन्नीगंज",
-        author: "अमित कुमार (ब्यूरो चीफ, कानपुर)",
+        author: "दीपक राजपूत (प्रधान संपादक)",
+        status: "published",
         date: "6 सितंबर 2026",
         time: "11:45 AM",
         views: 4520,
@@ -51,6 +53,7 @@ const INITIAL_ARTICLES = [
         categoryName: "अपराध",
         subLocation: "सिविल लाइंस",
         author: "राजेश वर्मा (क्राइम रिपोर्टर)",
+        status: "published",
         date: "6 सितंबर 2026",
         time: "10:15 AM",
         views: 3180,
@@ -79,6 +82,7 @@ const INITIAL_ARTICLES = [
         categoryName: "व्यापार / मंडी",
         subLocation: "चकरपुर मंडी",
         author: "संजय गुप्ता (व्यापार डेस्क)",
+        status: "published",
         date: "6 सितंबर 2026",
         time: "09:30 AM",
         views: 2840,
@@ -90,7 +94,7 @@ const INITIAL_ARTICLES = [
     },
     {
         id: "kanpur-ganga-ghat-cleanliness",
-        title: "सरसैया घाट और बिठूर में 'स्वच्छ गंगा अभियान': घाटों पर विशेष सेल्फी प्वाइंट और वाटर स्पोर्ट्स की शुरुआत",
+        title: "सरसैया घाट और बिठूर में 'स्वच्छ गंगा अभियान': घाटों पर विशेष सेल्फी प्वॉयंट और वाटर स्पोर्ट्स की शुरुआत",
         summary: "कानपुर नगर निगम और नमामि गंगे की संयुक्त पहल। ऐतिहासिक बिठूर और सरसैया घाट पर पर्यटकों के लिए ई-बोटिंग और लाइट शो शुरू।",
         content: `धार्मिक और ऐतिहासिक नगरी कानपुर में गंगा तटों को पर्यटन स्थल के रूप में विकसित करने की दिशा में नगर निगम ने बड़ा कदम उठाया है। ऐतिहासिक सरसैया घाट, अटल घाट और बिठूर में 'स्वच्छ निर्मल गंगा' परियोजना के तहत आधुनिक सुंदरीकरण कार्य पूरा हो गया है।
 
@@ -99,6 +103,7 @@ const INITIAL_ARTICLES = [
         categoryName: "हमारा कानपुर",
         subLocation: "बिठूर एवं अटल घाट",
         author: "पूजा बाजपेई (संस्कृति एवं पर्यटन डेस्क)",
+        status: "published",
         date: "6 सितंबर 2026",
         time: "08:45 AM",
         views: 1950,
@@ -119,6 +124,7 @@ const INITIAL_ARTICLES = [
         categoryName: "खेल",
         subLocation: "ग्रीन पार्क स्टेडियम",
         author: "विवेक अवस्थी (स्पोर्ट्स डेस्क)",
+        status: "published",
         date: "5 सितंबर 2026",
         time: "07:10 PM",
         views: 3900,
@@ -139,6 +145,7 @@ const INITIAL_ARTICLES = [
         categoryName: "राजनीति",
         subLocation: "मोतीझील / नगर निगम",
         author: "अमित कुमार (ब्यूरो चीफ)",
+        status: "published",
         date: "5 सितंबर 2026",
         time: "05:30 PM",
         views: 2420,
@@ -147,48 +154,61 @@ const INITIAL_ARTICLES = [
         isHero: false,
         imageUrl: "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=800&auto=format&fit=crop&q=80",
         tags: ["NagarNigam", "KanpurPolitics", "Motijheel"]
-    },
-    {
-        id: "up-politics-cabinet-decision",
-        title: "यूपी कैबिनेट का बड़ा फैसला: कानपुर-लखनऊ एक्सप्रेसवे को 8 लेन विस्तार की मंजूरी, 40 मिनट में तय होगा सफर",
-        summary: "मुख्यमंत्री योगी आदित्यनाथ की अध्यक्षता में हुई बैठक में कनेक्टिविटी बढ़ाने के लिए 3,200 करोड़ की अतिरिक्त परियोजना को हरी झंडी।",
-        content: `उत्तर प्रदेश सरकार ने प्रदेश के दो प्रमुख औद्योगिक व प्रशासनिक नगरों - कानपुर और लखनऊ के बीच की दूरी को न्यूनतम करने वाले 6-लेन ग्रीनफील्ड एक्सप्रेसवे को भविष्य की आवश्यकताओं को देखते हुए 8-लेन तक विस्तार योग्य बनाने का फैसला किया है।
-
-इस परियोजना के पूर्ण होते ही उन्नाव, कानपुर देहात और कानपुर नगर के उद्योगों को त्वरित लॉजिस्टिक सहायता मिलेगी और दोनों शहरों के बीच यात्रा का समय घटकर मात्र 35 से 40 मिनट रह जाएगा।`,
-        category: "up",
-        categoryName: "उत्तर प्रदेश",
-        subLocation: "लखनऊ-कानपुर कॉरिडोर",
-        author: "विशेष संवाददाता (राज्य ब्यूरो)",
-        date: "5 सितंबर 2026",
-        time: "03:15 PM",
-        views: 5100,
-        shares: 1240,
-        isBreaking: false,
-        isHero: false,
-        imageUrl: "https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=800&auto=format&fit=crop&q=80",
-        tags: ["UPNews", "KanpurLucknowExpressway", "Infrastructure"]
-    },
-    {
-        id: "kanpur-iit-ai-invention",
-        title: "आईआईटी कानपुर के वैज्ञानिकों का कमाल: किसानों के लिए तैयार किया AI 'फसल डॉक्टर', फोटो खींचते ही बताएगा रोग और इलाज",
-        summary: "आईआईटी कानपुर के इनक्यूबेशन सेंटर में तैयार इस मोबाइल ऐप को प्रदेश के 50 हजार किसानों के साथ ट्रायल किया जा रहा है।",
-        content: `भारतीय प्रौद्योगिकी संस्थान (IIT Kanpur) के कंप्यूटर साइंस और एग्रीकल्चरल इंजीनियरिंग विभाग के शोधकर्ताओं ने आर्टिफिशियल इंटेलिजेंस (AI) आधारित एक क्रांतिकारी समाधान विकसित किया है। यह टूल किसान के खेत में लगी पत्तियों की फोटो देखकर सेकंडों में फंगल, बैक्टीरियल या कीट संक्रमण की पहचान कर लेता है।
-
-आईआईटी कानपुर के निदेशक ने बताया कि यह टूल हिंदी, अवधी और भोजपुरी सहित 10 भारतीय भाषाओं में बोलकर किसानों को कीटनाशक की सही मात्रा और जैविक उपचार की जानकारी देता है।`,
-        category: "kanpur",
-        categoryName: "हमारा कानपुर",
-        subLocation: "कल्याणपुर (IITK)",
-        author: "डॉ. मनीष श्रीवास्तव (एजुकेशन डेस्क)",
-        date: "4 सितंबर 2026",
-        time: "02:00 PM",
-        views: 3340,
-        shares: 610,
-        isBreaking: false,
-        isHero: false,
-        imageUrl: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=800&auto=format&fit=crop&q=80",
-        tags: ["IITKanpur", "AI", "AgriTech", "Kalyanpur"]
     }
 ];
+
+// Initial Live Blog Timeline Data (Minute-to-Minute updates)
+const INITIAL_LIVE_BLOGS = [
+    {
+        id: "lb-1",
+        title: "कानपुर मेट्रो: अंडरग्राउंड सेक्शन ट्रायल रन लाइव अपडेट्स",
+        status: "active",
+        topic: "कानपुर विकास",
+        startedAt: "आज दोपहर 12:00 बजे",
+        updates: [
+            {
+                id: "upd-3",
+                time: "02:15 PM",
+                badge: "अंतिम रिपोर्ट",
+                headline: "बड़ा चौराहा स्टेशन पर ट्रेन का दूसरा ट्रायल सफलतापूर्वक संपन्न",
+                text: "इंजीनियरों के दल ने सिग्नलिंग और आपातकालीन ब्रेक प्रणाली की जांच पूरी की। सभी तकनीकी मानक सामान्य पाए गए हैं।",
+                author: "राजेश वर्मा (फील्ड रिपोर्टर)"
+            },
+            {
+                id: "upd-2",
+                time: "01:30 PM",
+                badge: "बड़ा अपडेट",
+                headline: "नवीन मार्केट स्टेशन पर यात्रियों की सुरक्षा जांच प्रणाली का मॉकड्रिल",
+                text: "मॉकड्रिल के दौरान सीआईएसएफ और स्थानीय पुलिस बल ने स्वचालित प्रवेश द्वारों और सीसीटीवी सर्विलांस रूम का निरीक्षण किया।",
+                author: "अमित कुमार (ब्यूरो चीफ)"
+            },
+            {
+                id: "upd-1",
+                time: "12:05 PM",
+                badge: "शुरुआत",
+                headline: "चुन्नीगंज स्टेशन से पहली ट्रायल मेट्रो ट्रेन रवाना हुई",
+                text: "एमडी यूपीएमआरसी की उपस्थिति में हरी झंडी दिखाकर ट्रायल ट्रेन को रवाना किया गया।",
+                author: "डेस्क रिपोर्ट"
+            }
+        ]
+    }
+];
+
+// Initial Advertisement Settings
+const INITIAL_ADS = {
+    headerBanner: {
+        enabled: true,
+        title: "कानपुर उद्योग एवं व्यापार मेला 2026",
+        imageUrl: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&auto=format&fit=crop&q=80",
+        linkUrl: "#"
+    },
+    sidebarBanner: {
+        enabled: true,
+        title: "कानपुर ज्वेलर्स महाकुंभ",
+        imageUrl: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&auto=format&fit=crop&q=80",
+        linkUrl: "#"
+    }
+};
 
 const INITIAL_VIDEOS = [
     {
@@ -216,6 +236,15 @@ const INITIAL_VIDEOS = [
 
 // Local Storage Helper Functions
 const StorageService = {
+    // Current Active Role: 'reporter', 'sub_editor', 'chief_editor'
+    getCurrentRole() {
+        return localStorage.getItem("todayindia_role") || "chief_editor";
+    },
+    setCurrentRole(role) {
+        localStorage.setItem("todayindia_role", role);
+    },
+
+    // Articles
     getArticles() {
         const stored = localStorage.getItem("todayindia_articles");
         if (!stored) {
@@ -247,6 +276,17 @@ const StorageService = {
         this.saveArticles(articles);
         return articles;
     },
+    updateArticle(id, updatedData) {
+        let articles = this.getArticles();
+        const index = articles.findIndex(a => a.id === id);
+        if (index !== -1) {
+            articles[index] = { ...articles[index], ...updatedData };
+            this.saveArticles(articles);
+        }
+        return articles;
+    },
+
+    // Breaking News
     getBreakingNews() {
         const stored = localStorage.getItem("todayindia_breaking");
         if (!stored) {
@@ -254,7 +294,9 @@ const StorageService = {
             return INITIAL_BREAKING_NEWS;
         }
         try {
-            return JSON.parse(stored);
+            const parsed = JSON.parse(stored);
+            // Support legacy string format gracefully
+            return parsed.map(item => typeof item === 'string' ? { text: item, priority: 'normal' } : item);
         } catch(e) {
             return INITIAL_BREAKING_NEWS;
         }
@@ -262,12 +304,50 @@ const StorageService = {
     saveBreakingNews(list) {
         localStorage.setItem("todayindia_breaking", JSON.stringify(list));
     },
-    addCitizenTip(tip) {
-        const tips = this.getCitizenTips();
-        tips.unshift(tip);
-        localStorage.setItem("todayindia_citizen_tips", JSON.stringify(tips));
-        return tips;
+    addBreakingItem(text, priority = "normal") {
+        const list = this.getBreakingNews();
+        list.unshift({ text, priority, id: "brk-" + Date.now() });
+        this.saveBreakingNews(list);
+        return list;
     },
+    removeBreakingItem(index) {
+        const list = this.getBreakingNews();
+        list.splice(index, 1);
+        this.saveBreakingNews(list);
+        return list;
+    },
+
+    // Live Blogs
+    getLiveBlogs() {
+        const stored = localStorage.getItem("todayindia_liveblogs");
+        if (!stored) {
+            localStorage.setItem("todayindia_liveblogs", JSON.stringify(INITIAL_LIVE_BLOGS));
+            return INITIAL_LIVE_BLOGS;
+        }
+        try {
+            return JSON.parse(stored);
+        } catch(e) {
+            return INITIAL_LIVE_BLOGS;
+        }
+    },
+    saveLiveBlogs(blogs) {
+        localStorage.setItem("todayindia_liveblogs", JSON.stringify(blogs));
+    },
+    addLiveBlogUpdate(blogId, update) {
+        const blogs = this.getLiveBlogs();
+        const blog = blogs.find(b => b.id === blogId) || blogs[0];
+        if (blog) {
+            blog.updates.unshift({
+                id: "upd-" + Date.now(),
+                time: new Date().toLocaleTimeString("hi-IN", { hour: '2-digit', minute: '2-digit' }),
+                ...update
+            });
+            this.saveLiveBlogs(blogs);
+        }
+        return blogs;
+    },
+
+    // Citizen Tips
     getCitizenTips() {
         const stored = localStorage.getItem("todayindia_citizen_tips");
         if (!stored) return [];
@@ -276,5 +356,46 @@ const StorageService = {
         } catch(e) {
             return [];
         }
+    },
+    addCitizenTip(tip) {
+        const tips = this.getCitizenTips();
+        tips.unshift(tip);
+        localStorage.setItem("todayindia_citizen_tips", JSON.stringify(tips));
+        return tips;
+    },
+    deleteCitizenTip(id) {
+        let tips = this.getCitizenTips();
+        tips = tips.filter(t => t.id !== id);
+        localStorage.setItem("todayindia_citizen_tips", JSON.stringify(tips));
+        return tips;
+    },
+
+    // Ads Settings
+    getAds() {
+        const stored = localStorage.getItem("todayindia_ads");
+        if (!stored) {
+            localStorage.setItem("todayindia_ads", JSON.stringify(INITIAL_ADS));
+            return INITIAL_ADS;
+        }
+        try {
+            return JSON.parse(stored);
+        } catch(e) {
+            return INITIAL_ADS;
+        }
+    },
+    saveAds(ads) {
+        localStorage.setItem("todayindia_ads", JSON.stringify(ads));
+    },
+
+    // Analytics Counter
+    getAnalytics() {
+        const articles = this.getArticles();
+        const totalViews = articles.reduce((sum, a) => sum + (a.views || 0), 18450);
+        return {
+            todayViews: totalViews,
+            liveVisitors: Math.floor(180 + Math.random() * 45),
+            totalStories: articles.length,
+            totalTips: this.getCitizenTips().length
+        };
     }
 };

@@ -98,8 +98,8 @@
                         </span>
                         <span class="live-dot" title="24x7 Broadcast Active"></span>
                     </div>
-                    <span class="text-[11px] sm:text-xs text-slate-500 font-hindi font-medium tracking-wide">
-                        सच की आवाज़ • कानपुर एवं उत्तर प्रदेश का नंबर-1 वेब चैनल
+                    <span class="text-[11px] sm:text-xs text-slate-500 font-hindi font-semibold tracking-wide">
+                        "जैसी हकीकत, वैसी खबर" • कानपुर, उत्तर प्रदेश
                     </span>
                 </div>
             </a>
@@ -146,6 +146,9 @@
                     <a href="category.html?cat=sports" class="px-4 py-2.5 hover:bg-slate-800 transition">
                         खेल
                     </a>
+                    <a href="about.html" class="px-4 py-2.5 hover:bg-slate-800 text-amber-300 font-bold transition">
+                        हमारे बारे में (About Us)
+                    </a>
                     <a href="#video-section" class="px-4 py-2.5 hover:bg-slate-800 transition flex items-center gap-1 text-red-400">
                         <i class="fa-solid fa-circle-play text-xs"></i> वीडियो बुलेटिन
                     </a>
@@ -180,6 +183,7 @@
                     <a href="category.html?cat=politics" class="block px-3 py-2 rounded-lg hover:bg-slate-100"><i class="fa-solid fa-landmark w-6 text-slate-500"></i> राजनीति</a>
                     <a href="category.html?cat=business" class="block px-3 py-2 rounded-lg hover:bg-slate-100"><i class="fa-solid fa-arrow-trend-up w-6 text-slate-500"></i> व्यापार / मंडी भाव</a>
                     <a href="category.html?cat=sports" class="block px-3 py-2 rounded-lg hover:bg-slate-100"><i class="fa-solid fa-baseball-bat-ball w-6 text-slate-500"></i> खेल (Sports)</a>
+                    <a href="about.html" class="block px-3 py-2 rounded-lg hover:bg-red-50 text-slate-900 font-bold"><i class="fa-solid fa-circle-info w-6 text-red-600"></i> हमारे बारे में (About Us)</a>
                     <a href="submit-news.html" class="block px-3 py-2 rounded-lg hover:bg-amber-50 text-amber-700 font-bold"><i class="fa-solid fa-camera w-6 text-amber-600"></i> खबर भेजें (Citizen Reporter)</a>
                     <a href="admin.html" class="block px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-600"><i class="fa-solid fa-gear w-6 text-slate-500"></i> न्यूज़ रूम CMS</a>
                 </div>
@@ -214,6 +218,9 @@
 
     <!-- 5. Main Content Container -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-1 w-full space-y-8">
+        
+        <!-- Header Sponsor Ad Banner Slot -->
+        <div id="header-ad-banner" class="hidden"></div>
         
         <!-- SECTION A: Hero Breaking & Trending News Grid -->
         <section>
@@ -271,6 +278,23 @@
                         <strong class="text-slate-700 font-bold ml-1">₹84,200/kg</strong>
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- LIVE BLOG TIMELINE WIDGET -->
+        <section class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-xs">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-4 border-b-2 border-red-600 gap-2">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-ping"></span>
+                    <span class="bg-red-600 text-white text-xs font-black px-2.5 py-0.5 rounded uppercase">LIVE BLOG</span>
+                    <h3 id="live-blog-title" class="text-base sm:text-lg font-black text-slate-900 font-hindi">
+                        कानपुर मेट्रो: अंडरग्राउंड सेक्शन ट्रायल रन लाइव अपडेट्स
+                    </h3>
+                </div>
+                <span class="text-xs text-slate-500 font-hindi">कवरेज: <strong id="live-blog-started" class="text-slate-800">आज दोपहर</strong></span>
+            </div>
+            <div id="live-blog-timeline-container" class="space-y-1 font-hindi">
+                <!-- Injected dynamically via app.js -->
             </div>
         </section>
 
@@ -340,8 +364,8 @@
                         <a href="submit-news.html" class="bg-white hover:bg-slate-100 text-red-700 font-extrabold px-5 py-2.5 rounded-xl text-sm transition shadow-md flex items-center gap-2">
                             <i class="fa-solid fa-upload"></i> अपनी खबर अभी भेजें
                         </a>
-                        <a href="https://api.whatsapp.com/send?phone=919876543210&text=Namaste%20Today%20India%20Live%20News%20Kanpur" target="_blank" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition flex items-center gap-2">
-                            <i class="fa-brands fa-whatsapp text-lg"></i> WhatsApp हेल्पलाइन
+                        <a href="https://api.whatsapp.com/send?phone=918840026359&text=Namaste%20Today%20India%20Live%20News%20Kanpur" target="_blank" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition flex items-center gap-2">
+                            <i class="fa-brands fa-whatsapp text-lg"></i> WhatsApp हेल्पलाइन (8840026359)
                         </a>
                     </div>
                 </div>
@@ -414,6 +438,41 @@
             </div>
         </section>
 
+        <!-- SECTION F: Editorial Desk & Leadership Spotlight (दीपक राजपूत) -->
+        <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                <div class="md:col-span-8 space-y-3 font-hindi">
+                    <span class="bg-red-100 text-red-700 text-xs font-bold px-3 py-1 rounded-full uppercase">
+                        संपादक की कलम से • हमारा मिशन
+                    </span>
+                    <h3 class="text-xl sm:text-2xl font-black text-slate-950 leading-tight">
+                        "जैसी हकीकत, वैसी खबर" — निर्भीक एवं निष्पक्ष पत्रकारिता
+                    </h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        TODAYINDIALIVENEWS देश और दुनिया की सच्ची, सटीक और ताज़ा ख़बरें सबसे पहले पहुँचाने के लिए प्रतिबद्ध है। समाज की हर सच्चाई को बिना किसी भेदभाव या दबाव के बेबाक और पारदर्शी तरीके से आपके सामने लाना ही हमारा लक्ष्य है।
+                    </p>
+                    <div class="flex flex-wrap items-center gap-4 text-xs pt-1">
+                        <span class="flex items-center gap-1.5 text-slate-900 font-bold">
+                            <i class="fa-solid fa-user-tie text-red-600"></i> दीपक राजपूत (संस्थापक व प्रधान संपादक, B.J. CSJMU)
+                        </span>
+                        <a href="about.html" class="text-red-600 font-bold hover:underline">
+                            विस्तृत संपादकीय नीति पढ़ें →
+                        </a>
+                    </div>
+                </div>
+                <div class="md:col-span-4 bg-slate-50 p-5 rounded-2xl border border-slate-200 text-center font-hindi space-y-2">
+                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-red-600 to-rose-800 text-white flex items-center justify-center font-black text-2xl mx-auto shadow-md">
+                        DR
+                    </div>
+                    <h4 class="font-black text-base text-slate-900">दीपक राजपूत</h4>
+                    <p class="text-xs text-slate-500">5 वर्ष का लंबा मीडिया एवं पत्रकारिता अनुभव</p>
+                    <a href="about.html" class="inline-block mt-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2 rounded-xl transition">
+                        हमारे बारे में जानें
+                    </a>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <!-- 6. LIVE TV MODAL -->
@@ -471,12 +530,13 @@
                         <span class="live-dot"></span>
                     </div>
                     <p class="text-slate-400 font-hindi leading-relaxed text-sm">
-                        TODAY INDIA LIVE NEWS कानपुर का विश्वसनीय एवं निष्पक्ष डिजिटल समाचार चैनल है। हम बिना किसी दबाव के जनता से जुड़े जमीनी मुद्दों, भ्रष्टाचार और शहर के विकास को प्रमुखता से उठाते हैं।
+                        <strong>TODAYINDIALIVENEWS</strong> एक विश्वसनीय और प्रमुख न्यूज़ प्लेटफ़ॉर्म है, जो आपको देश और दुनिया की सच्ची, सटीक और ताज़ा ख़बरें सबसे पहले पहुँचाने के लिए प्रतिबद्ध है। हमारा मूल मंत्र: <span class="text-amber-400 font-bold">"जैसी हकीकत, वैसी खबर"</span>
                     </p>
-                    <div class="pt-2 text-slate-400 space-y-1">
-                        <p><i class="fa-solid fa-location-dot text-red-500 mr-1.5"></i> <strong>ब्यूरो कार्यालय:</strong> 402, प्रेस कॉम्प्लेक्स, सिविल लाइंस, कानपुर, उ.प्र. - 208001</p>
-                        <p><i class="fa-solid fa-phone text-red-500 mr-1.5"></i> <strong>हेल्पलाइन / न्यूज़ डेस्क:</strong> +91 512 230XXXX, +91 98765 43210</p>
-                        <p><i class="fa-solid fa-envelope text-red-500 mr-1.5"></i> <strong>ईमेल:</strong> newsdesk@todayindialivenews.com</p>
+                    <div class="pt-2 text-slate-400 space-y-1.5 font-hindi text-xs">
+                        <p><i class="fa-solid fa-user-tie text-red-500 mr-1.5"></i> <strong>संस्थापक व प्रधान संपादक:</strong> दीपक राजपूत (B.J. CSJMU)</p>
+                        <p><i class="fa-solid fa-location-dot text-red-500 mr-1.5"></i> <strong>मुख्यालय पता:</strong> गुलमोहर विहार, नौबस्ता, कानपुर नगर, उत्तर प्रदेश</p>
+                        <p><i class="fa-solid fa-phone text-red-500 mr-1.5"></i> <strong>मोबाइल / हेल्पलाइन:</strong> <a href="tel:8840026359" class="text-white hover:text-red-400 font-bold font-brand">8840026359</a></p>
+                        <p><i class="fa-solid fa-envelope text-red-500 mr-1.5"></i> <strong>ईमेल:</strong> <a href="mailto:todayindialivenews24@gmail.com" class="text-white hover:text-red-400 break-all">todayindialivenews24@gmail.com</a></p>
                     </div>
                 </div>
 
@@ -497,9 +557,9 @@
                 <div>
                     <h4 class="text-sm font-bold uppercase tracking-wider text-amber-400 font-hindi mb-3">कानपुर इलाके</h4>
                     <ul class="space-y-2 font-hindi text-slate-300">
+                        <li><a href="category.html?cat=kanpur" class="hover:text-red-400 transition">नौबस्ता व बर्रा</a></li>
                         <li><a href="category.html?cat=kanpur" class="hover:text-red-400 transition">कल्याणपुर व पनकी</a></li>
-                        <li><a href="category.html?cat=kanpur" class="hover:text-red-400 transition">गोविंद नगर व बर्रा</a></li>
-                        <li><a href="category.html?cat=kanpur" class="hover:text-red-400 transition">किदवई नगर व नौबस्ता</a></li>
+                        <li><a href="category.html?cat=kanpur" class="hover:text-red-400 transition">गोविंद नगर व किदवई नगर</a></li>
                         <li><a href="category.html?cat=kanpur" class="hover:text-red-400 transition">नवीन मार्केट व बड़ा चौराहा</a></li>
                         <li><a href="category.html?cat=kanpur" class="hover:text-red-400 transition">बिठूर व गंगा बैराज</a></li>
                         <li><a href="category.html?cat=kanpur" class="hover:text-red-400 transition">कानपुर देहात / माती</a></li>
@@ -508,13 +568,13 @@
 
                 <!-- Citizen & Editorial -->
                 <div>
-                    <h4 class="text-sm font-bold uppercase tracking-wider text-amber-400 font-hindi mb-3">सहयोग व संपर्क</h4>
+                    <h4 class="text-sm font-bold uppercase tracking-wider text-amber-400 font-hindi mb-3">संस्थान एवं संपर्क</h4>
                     <ul class="space-y-2 font-hindi text-slate-300">
-                        <li><a href="submit-news.html" class="hover:text-amber-400 text-amber-300 font-bold transition"><i class="fa-solid fa-camera mr-1"></i> खबर भेजें</a></li>
+                        <li><a href="about.html" class="hover:text-amber-400 text-amber-300 font-bold transition"><i class="fa-solid fa-circle-info mr-1"></i> हमारे बारे में (About Us)</a></li>
+                        <li><a href="submit-news.html" class="hover:text-amber-400 text-amber-300 font-bold transition"><i class="fa-solid fa-camera mr-1"></i> खबर भेजें (Citizen Reporter)</a></li>
                         <li><a href="admin.html" class="hover:text-red-400 transition"><i class="fa-solid fa-lock mr-1"></i> एडमिन / डेस्क लॉगिन</a></li>
-                        <li><a href="index.html" class="hover:text-red-400 transition">विज्ञापन दरें (Ad Rates)</a></li>
-                        <li><a href="index.html" class="hover:text-red-400 transition">गोपनीयता नीति (Privacy)</a></li>
-                        <li><a href="index.html" class="hover:text-red-400 transition">नियम और शर्तें</a></li>
+                        <li><a href="about.html" class="hover:text-red-400 transition">संपादकीय नीति (Editorial Policy)</a></li>
+                        <li><a href="about.html" class="hover:text-red-400 transition">संपर्क सूत्र (Contact Us)</a></li>
                     </ul>
                 </div>
 

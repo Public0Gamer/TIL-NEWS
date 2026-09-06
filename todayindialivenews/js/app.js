@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
     initDateTime();
     initBreakingTicker();
     renderHomePageContent();
+    renderLiveBlogWidget();
+    renderAdBanners();
     setupLiveTVModal();
     setupPoll();
     setupMobileMenu();
@@ -34,14 +36,22 @@ function initBreakingTicker() {
     const breakingList = StorageService.getBreakingNews();
     if (!breakingList || breakingList.length === 0) return;
 
-    // Duplicate list for smooth seamless loop
-    const fullList = [...breakingList, ...breakingList];
-    tickerEl.innerHTML = fullList.map(item => `
-        <span class="inline-flex items-center mx-6 text-sm md:text-base font-semibold text-slate-800 hover:text-red-600 transition cursor-pointer">
-            <span class="w-2 h-2 rounded-full bg-red-600 mr-2.5 inline-block"></span>
-            ${item}
-        </span>
-    `).join("");
+    // Support both string items and object items
+    const normalized = breakingList.map(item => {
+        if (typeof item === 'string') return { text: item, priority: 'normal' };
+        return item;
+    });
+
+    const fullList = [...normalized, ...normalized];
+    tickerEl.innerHTML = fullList.map(item => {
+        const isFlash = item.priority === "high";
+        return `
+            <span class="inline-flex items-center mx-6 text-sm md:text-base font-semibold text-slate-800 hover:text-red-600 transition cursor-pointer">
+                ${isFlash ? '<span class="bg-amber-400 text-slate-900 text-[10px] font-black px-1.5 py-0.5 rounded mr-2 uppercase animate-pulse">FLASH</span>' : '<span class="w-2 h-2 rounded-full bg-red-600 mr-2.5 inline-block"></span>'}
+                ${item.text}
+            </span>
+        `;
+    }).join("");
 }
 
 // 3. Render Homepage Content
@@ -85,7 +95,7 @@ function renderHomePageContent() {
         `;
     }
 
-    // B. Hero Side Stories (Next 4 articles)
+    // B. Hero Side Stories
     const sideStoriesContainer = document.getElementById("hero-side-stories");
     if (sideStoriesContainer) {
         const sideArticles = articles.filter(a => a.id !== heroArticle.id).slice(0, 4);
@@ -180,7 +190,51 @@ function renderHomePageContent() {
     }
 }
 
-// 4. Live TV Modal
+// 4. Render Live Blog Timeline on Homepage
+function renderLiveBlogWidget() {
+    const liveBlogContainer = document.getElementById("live-blog-timeline-container");
+    if (!liveBlogContainer) return;
+
+    const blogs = StorageService.getLiveBlogs();
+    if (!blogs || blogs.length === 0) return;
+
+    const activeBlog = blogs.find(b => b.status === "active") || blogs[0];
+    
+    document.getElementById("live-blog-title").innerText = activeBlog.title;
+    document.getElementById("live-blog-started").innerText = activeBlog.startedAt;
+
+    liveBlogContainer.innerHTML = activeBlog.updates.map(u => `
+        <div class="relative pl-6 pb-5 border-l-2 border-red-500 last:border-transparent last:pb-0">
+            <span class="absolute -left-1.5 top-1 w-3 h-3 rounded-full bg-red-600 border-2 border-white"></span>
+            <div class="flex items-center gap-2 text-xs text-slate-500 mb-1">
+                <span class="font-mono font-bold text-red-700 bg-red-50 px-1.5 py-0.5 rounded">${u.time}</span>
+                <span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-bold">${u.badge || 'अपडेट'}</span>
+                <span>• ${u.author}</span>
+            </div>
+            <h4 class="font-bold text-slate-900 text-sm font-hindi leading-snug mb-1">${u.headline}</h4>
+            <p class="text-xs text-slate-600 font-hindi leading-relaxed">${u.text}</p>
+        </div>
+    `).join("");
+}
+
+// 5. Render Sponsor Ad Banners
+function renderAdBanners() {
+    const ads = StorageService.getAds();
+    if (!ads) return;
+
+    const headerAd = document.getElementById("header-ad-banner");
+    if (headerAd && ads.headerBanner && ads.headerBanner.enabled) {
+        headerAd.innerHTML = `
+            <a href="${ads.headerBanner.linkUrl}" target="_blank" class="block w-full max-h-24 overflow-hidden rounded-xl border border-slate-200 relative group">
+                <img src="${ads.headerBanner.imageUrl}" alt="${ads.headerBanner.title}" class="w-full h-20 sm:h-24 object-cover">
+                <span class="absolute top-1 right-1 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded uppercase font-bold">विज्ञापन (Ad)</span>
+            </a>
+        `;
+        headerAd.classList.remove("hidden");
+    }
+}
+
+// 6. Live TV Modal
 function setupLiveTVModal() {
     const modal = document.getElementById("live-tv-modal");
     if (!modal) return;
@@ -195,7 +249,6 @@ function setupLiveTVModal() {
         document.body.style.overflow = "auto";
     };
 
-    // Close on clicking backdrop
     modal.addEventListener("click", (e) => {
         if (e.target === modal) {
             window.closeLiveTVModal();
@@ -203,7 +256,7 @@ function setupLiveTVModal() {
     });
 }
 
-// 5. Interactive Citizen Poll
+// 7. Interactive Citizen Poll
 function setupPoll() {
     const pollForm = document.getElementById("citizen-poll-form");
     if (!pollForm) return;
@@ -222,7 +275,7 @@ function setupPoll() {
     });
 }
 
-// 6. Mobile Menu Toggle
+// 8. Mobile Menu Toggle
 function setupMobileMenu() {
     const menuBtn = document.getElementById("mobile-menu-btn");
     const mobileMenu = document.getElementById("mobile-nav-drawer");
@@ -241,7 +294,7 @@ function setupMobileMenu() {
     }
 }
 
-// 7. Global WhatsApp Share
+// 9. Global WhatsApp Share
 window.shareOnWhatsApp = function(title, path) {
     const fullUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/') + path;
     const text = encodeURIComponent(`*${title}*\n\nताज़ा खबर पढ़ें TODAY INDIA LIVE NEWS पर 👇\n${fullUrl}`);

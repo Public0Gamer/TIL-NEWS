@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>हमारे बारे में (About Us) | TODAY INDIA LIVE NEWS | जैसी हकीकत, वैसी खबर</title>
+    <meta name="description" content="TODAY INDIA LIVE NEWS - हमारे बारे में, मिशन, संस्थापक एवं प्रधान संपादक दीपक राजपूत (Deepak Rajput), संपादकीय नीति और संपर्क विवरण।">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'news-red': '#dc2626',
+                        'news-navy': '#0f172a',
+                    },
+                    fontFamily: {
+                        hindi: ['Mukta', 'sans-serif'],
+                        brand: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+
+    <!-- Top Utility Header -->
+    <header class="bg-white border-b border-slate-200 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex items-center justify-between">
+            <a href="index.html" class="text-red-600 font-bold hover:underline flex items-center gap-1">
+                <i class="fa-solid fa-arrow-left"></i> मुख्य पृष्ठ (Home)
+            </a>
+            <div class="flex items-center gap-3 text-slate-600">
+                <span><i class="fa-solid fa-phone text-red-600 mr-1"></i> <a href="tel:8840026359" class="hover:text-red-600 font-bold">8840026359</a></span>
+                <span>|</span>
+                <span><i class="fa-solid fa-envelope text-red-600 mr-1"></i> <a href="mailto:todayindialivenews24@gmail.com" class="hover:text-red-600">todayindialivenews24@gmail.com</a></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Branding Bar -->
+    <div class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-4">
+            <a href="index.html" class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-600 to-rose-900 text-white flex items-center justify-center shadow-md">
+                    <i class="fa-solid fa-satellite-dish text-xl"></i>
+                </div>
+                <div class="flex flex-col">
+                    <div class="flex items-center gap-1.5">
+                        <span class="font-brand font-black text-xl sm:text-2xl text-slate-900">
+                            TODAY<span class="text-red-600">INDIA</span><span class="text-slate-700">LIVE</span>
+                        </span>
+                        <span class="live-dot"></span>
+                    </div>
+                    <span class="text-[11px] text-slate-500 font-hindi font-semibold">
+                        "जैसी हकीकत, वैसी खबर" • कानपुर, उत्तर प्रदेश
+                    </span>
+                </div>
+            </a>
+            <div class="flex items-center gap-2">
+                <a href="submit-news.html" class="bg-amber-50 text-amber-800 border border-amber-300 px-3 py-1.5 rounded-lg text-xs font-bold">
+                    <i class="fa-solid fa-camera mr-1"></i> खबर भेजें
+                </a>
+                <a href="index.html" class="bg-red-600 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold">
+                    <i class="fa-solid fa-tv mr-1"></i> LIVE TV
+                </a>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="bg-slate-900 text-white text-xs font-semibold overflow-x-auto no-scrollbar hidden sm:block">
+            <div class="max-w-7xl mx-auto px-4 flex items-center">
+                <a href="index.html" class="px-4 py-2.5 hover:bg-slate-800 transition">होम</a>
+                <a href="category.html?cat=kanpur" class="px-4 py-2.5 hover:bg-slate-800 transition text-amber-400 font-bold">📍 हमारा कानपुर</a>
+                <a href="category.html?cat=up" class="px-4 py-2.5 hover:bg-slate-800 transition">उत्तर प्रदेश</a>
+                <a href="category.html?cat=crime" class="px-4 py-2.5 hover:bg-slate-800 transition">अपराध</a>
+                <a href="category.html?cat=politics" class="px-4 py-2.5 hover:bg-slate-800 transition">राजनीति</a>
+                <a href="about.html" class="px-4 py-2.5 bg-red-600 text-white font-bold transition">हमारे बारे में (About Us)</a>
+                <a href="submit-news.html" class="px-4 py-2.5 hover:bg-slate-800 transition text-amber-300">खबर भेजें</a>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full space-y-8">
+        
+        <!-- Hero Header -->
+        <div class="text-center py-6 bg-gradient-to-br from-slate-900 via-slate-800 to-red-950 text-white rounded-3xl p-6 sm:p-10 shadow-lg relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 text-white/5 text-9xl pointer-events-none">
+                <i class="fa-solid fa-newspaper"></i>
+            </div>
+            <span class="bg-red-600 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider font-hindi inline-block mb-3">
+                आधिकारिक परिचय एवं नीति (Official Profile)
+            </span>
+            <h1 class="text-3xl sm:text-5xl font-black font-hindi mb-3">
+                हमारे बारे में (About Us)
+            </h1>
+            <p class="text-amber-400 font-hindi font-bold text-lg sm:text-xl">
+                हमारा मूल मंत्र — "जैसी हकीकत, वैसी खबर"
+            </p>
+        </div>
+
+        <!-- Section 1: Introduction (Hamare Bare Mein) -->
+        <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-4 font-hindi">
+            <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                <div class="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-bullhorn"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-black text-slate-900">हमारा परिचय (Introduction)</h2>
+                    <p class="text-xs text-slate-500">TODAYINDIALIVENEWS डिजिटल मीडिया नेटवर्क</p>
+                </div>
+            </div>
+            <p class="text-slate-700 text-base sm:text-lg leading-relaxed">
+                <strong>TODAYINDIALIVENEWS</strong> एक विश्वसनीय और प्रमुख न्यूज़ प्लेटफ़ॉर्म है, जो आपको देश और दुनिया की सच्ची, सटीक और ताज़ा ख़बरें सबसे पहले पहुँचाने के लिए पूरी तरह प्रतिबद्ध है। हमारा मुख्य उद्देश्य समाज की हर सच्चाई को बिना किसी भेदभाव, दबाव या पक्षपात के जनता के सामने लाना है।
+            </p>
+        </section>
+
+        <!-- Section 2: Our Mission (Hamara Mission) -->
+        <section class="bg-gradient-to-r from-red-600 to-rose-700 text-white rounded-2xl p-6 sm:p-8 shadow-md font-hindi">
+            <div class="max-w-3xl">
+                <span class="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-3 inline-block">
+                    मिशन एवं सिद्धांत
+                </span>
+                <h3 class="text-2xl sm:text-3xl font-black mb-3">
+                    हमारा मिशन: "जैसी हकीकत, वैसी खबर"
+                </h3>
+                <p class="text-white/95 text-base sm:text-lg leading-relaxed">
+                    हमारा मूल मंत्र और मिशन है — <strong>"जैसी हकीकत, वैसी खबर"</strong>। हम बिना किसी पक्षपात के ग्राउंड-लेवल की सच्चाई को बेबाक, पारदर्शी और साहसी तरीके से आपके बीच रखने में विश्वास रखते हैं। हमारा प्रयास है कि कानपुर और देश के हर कोने की जनता की आवाज़ शासन-प्रशासन तक पहुँचे।
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 3: Founder & Editor-in-Chief Profile (दीपक राजपूत) -->
+        <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs font-hindi">
+            <div class="flex items-center gap-3 pb-4 mb-6 border-b border-slate-100">
+                <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-user-tie"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-black text-slate-900">संस्थापक एवं प्रधान संपादक परिचय (Leadership)</h2>
+                    <p class="text-xs text-slate-500">Founder & Editor-in-Chief Profile</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                <!-- Profile Avatar Badge (4 Cols) -->
+                <div class="md:col-span-4 flex flex-col items-center text-center p-6 rounded-2xl bg-slate-50 border border-slate-200">
+                    <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-red-600 via-rose-700 to-slate-900 text-white flex items-center justify-center text-4xl sm:text-5xl font-black shadow-lg mb-3 border-4 border-white">
+                        DR
+                    </div>
+                    <h3 class="text-xl font-black text-slate-900">दीपक राजपूत</h3>
+                    <p class="text-xs font-bold text-red-600 uppercase tracking-wide">Deepak Rajput</p>
+                    <span class="mt-2 bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded-full">
+                        संस्थापक एवं प्रधान संपादक
+                    </span>
+                    <p class="text-[11px] text-slate-500 mt-2">TODAY INDIA LIVE NEWS</p>
+                </div>
+
+                <!-- Profile Details & Experience (8 Cols) -->
+                <div class="md:col-span-8 space-y-4">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+                        <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2 mb-1">
+                            <i class="fa-solid fa-graduation-cap text-red-600"></i> शिक्षा एवं पृष्ठभूमि (Education & Background):
+                        </h4>
+                        <p class="text-slate-700 text-sm leading-relaxed">
+                            दीपक राजपूत ने प्रतिष्ठित <strong>छत्रपति शाहू जी महाराज विश्वविद्यालय (CSJMU), कानपुर</strong> से <strong>बैचलर ऑफ जर्नलिज्म (Bachelor of Journalism - B.J.)</strong> की पेशेवर डिग्री प्राप्त की है।
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+                        <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2 mb-1">
+                            <i class="fa-solid fa-award text-amber-600"></i> कार्यानुभव (Experience):
+                        </h4>
+                        <p class="text-slate-700 text-sm leading-relaxed">
+                            उन्हें पत्रकारिता और मीडिया इंडस्ट्री में <strong>5 साल का लंबा और समृद्ध अनुभव</strong> है। इस अनुभव के चलते उन्हें खबरों की गहराई, ज़मीनी पड़ताल और उनकी तथ्यात्मक सटीकता की गहरी समझ है। उनका मुख्य उद्देश्य <strong>निष्पक्ष पत्रकारिता (Unbiased Journalism)</strong> को बढ़ावा देना और समाज के अंतिम व्यक्ति तक सूचना पहुँचाना है।
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Editorial Policy & Control -->
+        <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-4 font-hindi">
+            <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-scale-balanced"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-black text-slate-900">संपादकीय नीति एवं नियंत्रण (Editorial Policy)</h2>
+                    <p class="text-xs text-slate-500">तथ्य-जांच एवं पत्रकारिता की आचार संहिता</p>
+                </div>
+            </div>
+            <div class="space-y-3 text-slate-700 text-sm sm:text-base leading-relaxed">
+                <p>
+                    <strong>TODAYINDIALIVENEWS</strong> पर प्रकाशित होने वाली हर एक खबर, वीडियो और लेख पर संपादकीय टीम की सख्त निगरानी होती है। हमारी संपादकीय नीति पूरी तरह से <strong>सत्य, निष्पक्षता और जन-हित</strong> पर आधारित है।
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-start gap-2">
+                        <i class="fa-solid fa-circle-check text-emerald-600 mt-1"></i>
+                        <span class="text-xs"><strong>अफवाहों पर रोक:</strong> हम किसी भी प्रकार की अफ़वाह, अप्रमाणित दावे या भ्रामक जानकारी को बढ़ावा नहीं देते।</span>
+                    </div>
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-start gap-2">
+                        <i class="fa-solid fa-circle-check text-emerald-600 mt-1"></i>
+                        <span class="text-xs"><strong>तथ्य परीक्षण (Fact-Checking):</strong> खबरों की सत्यता और प्रामाणिकता की त्रि-स्तरीय जांच के बाद ही उसे जनता के बीच लाया जाता है।</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Official Contact Information (Sampark Karein) -->
+        <section class="bg-white rounded-2xl p-6 sm:p-8 border-2 border-red-600/30 shadow-md font-hindi">
+            <div class="flex items-center gap-3 pb-3 mb-6 border-b border-slate-100">
+                <div class="w-10 h-10 rounded-xl bg-red-600 text-white flex items-center justify-center text-xl shadow-xs">
+                    <i class="fa-solid fa-address-book"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-black text-slate-900">संपर्क करें (Contact Us)</h2>
+                    <p class="text-xs text-slate-500">शिकायत, सुझाव अथवा विज्ञापन हेतु संपर्क सूत्र</p>
+                </div>
+            </div>
+
+            <p class="text-slate-600 text-sm mb-6 leading-relaxed">
+                अगर आपको हमारी किसी भी खबर या संपादकीय नीति से जुड़ी कोई शिकायत, सुझाव, सूचना या सवाल है, तो आप बेझिझक नीचे दिए गए माध्यमों से सीधे हमारे संपादकीय कार्यालय से संपर्क कर सकते हैं:
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-sm">
+                <!-- Mobile Card -->
+                <a href="tel:8840026359" class="p-5 rounded-2xl bg-red-50/60 border border-red-200 hover:border-red-400 transition group block">
+                    <div class="w-10 h-10 rounded-xl bg-red-600 text-white flex items-center justify-center text-lg mb-3 shadow-xs">
+                        <i class="fa-solid fa-phone"></i>
+                    </div>
+                    <span class="text-xs font-bold text-red-700 uppercase tracking-wide block mb-1">मोबाइल नंबर (Mobile No.)</span>
+                    <strong class="text-lg font-black text-slate-900 group-hover:text-red-600 transition block font-brand">
+                        8840026359
+                    </strong>
+                    <span class="text-[11px] text-slate-500 mt-1 block">कॉल करने के लिए टैप करें</span>
+                </a>
+
+                <!-- Email Card -->
+                <a href="mailto:todayindialivenews24@gmail.com" class="p-5 rounded-2xl bg-blue-50/60 border border-blue-200 hover:border-blue-400 transition group block">
+                    <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center text-lg mb-3 shadow-xs">
+                        <i class="fa-solid fa-envelope"></i>
+                    </div>
+                    <span class="text-xs font-bold text-blue-700 uppercase tracking-wide block mb-1">आधिकारिक ईमेल (Email)</span>
+                    <strong class="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition block break-all">
+                        todayindialivenews24@gmail.com
+                    </strong>
+                    <span class="text-[11px] text-slate-500 mt-1 block">ईमेल भेजने के लिए क्लिक करें</span>
+                </a>
+
+                <!-- WhatsApp Card -->
+                <a href="https://api.whatsapp.com/send?phone=918840026359&text=Namaste%20Today%20India%20Live%20News" target="_blank" class="p-5 rounded-2xl bg-emerald-50/60 border border-emerald-200 hover:border-emerald-400 transition group block">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-lg mb-3 shadow-xs">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </div>
+                    <span class="text-xs font-bold text-emerald-700 uppercase tracking-wide block mb-1">WhatsApp हेल्पलाइन</span>
+                    <strong class="text-lg font-black text-slate-900 group-hover:text-emerald-600 transition block font-brand">
+                        8840026359
+                    </strong>
+                    <span class="text-[11px] text-slate-500 mt-1 block">सीधे व्हाट्सएप पर चैट करें</span>
+                </a>
+            </div>
+
+            <!-- Head Office Address Full Card -->
+            <div class="mt-6 p-5 rounded-2xl bg-slate-100 border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-slate-900 text-white flex items-center justify-center text-2xl flex-shrink-0">
+                    <i class="fa-solid fa-location-dot text-red-500"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">मुख्यालय एवं संपादकीय पता (Head Office Address):</span>
+                    <h3 class="text-base sm:text-lg font-black text-slate-900 mt-0.5">
+                        गुलमोहर विहार, नौबस्ता, कानपुर नगर, उत्तर प्रदेश
+                    </h3>
+                    <p class="text-xs text-slate-600 font-hindi">Gulmohar Vihar, Naubasta, Kanpur Nagar, Uttar Pradesh</p>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-white border-t-4 border-red-600 mt-12 py-8 text-xs font-hindi">
+        <div class="max-w-5xl mx-auto px-4 text-center space-y-3 text-slate-400">
+            <div class="flex items-center justify-center gap-2 text-white font-brand font-black text-lg">
+                TODAY<span class="text-red-500">INDIA</span><span class="text-slate-300">LIVE</span>
+            </div>
+            <p class="text-amber-400 font-bold">"जैसी हकीकत, वैसी खबर"</p>
+            <p>गुलमोहर विहार, नौबस्ता, कानपुर नगर, उत्तर प्रदेश | संपर्क: 8840026359 | ईमेल: todayindialivenews24@gmail.com</p>
+            <p>© 2026 TODAY INDIA LIVE NEWS • संस्थापक एवं प्रधान संपादक: दीपक राजपूत</p>
+        </div>
+    </footer>
+
+</body>
+</html>
