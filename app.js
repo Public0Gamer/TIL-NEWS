@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupPoll();
     setupMobileMenu();
     trackVisitor();
+    setupSearchSystem();
 });
 
 // 1. Live Date & Panchang Display
@@ -425,3 +426,192 @@ function renderDailyRatesBar() {
         `;
     }).join("");
 }
+
+// 12. Universal Live Search System
+function setupSearchSystem() {
+    const modal = document.getElementById("search-modal");
+    const input = document.getElementById("global-search-input");
+    const clearBtn = document.getElementById("search-clear-btn");
+    const form = document.getElementById("search-form");
+
+    if (!modal) return;
+
+    window.openSearchModal = function(initialQuery = "") {
+        modal.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+        if (input) {
+            if (initialQuery) {
+                input.value = initialQuery;
+            }
+            setTimeout(() => {
+                input.focus();
+                performLiveSearch(input.value);
+            }, 80);
+        }
+    };
+
+    window.closeSearchModal = function() {
+        modal.classList.add("hidden");
+        document.body.style.overflow = "auto";
+    };
+
+    modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            window.closeSearchModal();
+        }
+    });
+
+    if (input) {
+        input.addEventListener("input", (e) => {
+            performLiveSearch(e.target.value);
+        });
+    }
+
+    if (clearBtn && input) {
+        clearBtn.addEventListener("click", () => {
+            input.value = "";
+            clearBtn.classList.add("hidden");
+            performLiveSearch("");
+            input.focus();
+        });
+    }
+
+    if (form) {
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const q = input ? input.value.trim() : "";
+            if (q) {
+                window.location.href = `category.html?search=${encodeURIComponent(q)}`;
+            }
+        });
+    }
+
+    // Keyboard Shortcuts (Ctrl+K or Cmd+K to open, Escape to close)
+    document.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")) {
+            e.preventDefault();
+            if (modal.classList.contains("hidden")) {
+                window.openSearchModal();
+            } else {
+                window.closeSearchModal();
+            }
+        } else if (e.key === "Escape" && !modal.classList.contains("hidden")) {
+            window.closeSearchModal();
+        }
+    });
+
+    // Initial state rendering
+    performLiveSearch("");
+}
+
+window.fillSearchTag = function(term) {
+    const input = document.getElementById("global-search-input");
+    if (input) {
+        input.value = term;
+        performLiveSearch(term);
+        input.focus();
+    }
+};
+
+window.performLiveSearch = function(query) {
+    const container = document.getElementById("search-results-container");
+    const countBadge = document.getElementById("search-result-count");
+    const clearBtn = document.getElementById("search-clear-btn");
+    const viewAllBtn = document.getElementById("search-view-all-btn");
+    if (!container) return;
+
+    const trimmed = (query || "").trim();
+
+    if (clearBtn) {
+        if (trimmed.length > 0) {
+            clearBtn.classList.remove("hidden");
+        } else {
+            clearBtn.classList.add("hidden");
+        }
+    }
+
+    // If query is empty, show recent recommended stories
+    if (trimmed.length === 0) {
+        if (countBadge) countBadge.innerText = "हालिया ताज़ा खबरें";
+        if (viewAllBtn) viewAllBtn.classList.add("hidden");
+
+        const recent = (typeof StorageService !== 'undefined') ? StorageService.getArticles().slice(0, 4) : [];
+        container.innerHTML = `
+            <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-1 flex items-center gap-1.5">
+                <i class="fa-solid fa-clock-rotate-left text-red-500"></i> ताज़ा सुर्खियां (Recent Headlines)
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                ${recent.map(art => `
+                    <a href="article.html?id=${art.id}" class="flex gap-2.5 p-2 rounded-xl border border-slate-100 hover:border-red-200 hover:bg-red-50/20 transition group bg-white shadow-2xs">
+                        <img src="${art.imageUrl}" alt="" class="w-16 h-14 object-cover rounded-lg flex-shrink-0 border border-slate-200">
+                        <div class="min-w-0 flex-1">
+                            <span class="text-[10px] font-bold text-red-600 uppercase">📍 ${art.subLocation || "कानपुर"}</span>
+                            <h4 class="text-xs font-bold text-slate-900 group-hover:text-red-600 transition font-hindi line-clamp-2 leading-snug mt-0.5">
+                                ${art.title}
+                            </h4>
+                        </div>
+                    </a>
+                `).join("")}
+            </div>
+        `;
+        return;
+    }
+
+    // Perform search
+    const results = (typeof StorageService !== 'undefined') ? StorageService.searchArticles(trimmed) : [];
+
+    if (countBadge) {
+        countBadge.innerText = `${results.length} खबरें मिलीं`;
+    }
+
+    if (viewAllBtn) {
+        viewAllBtn.href = `category.html?search=${encodeURIComponent(trimmed)}`;
+        viewAllBtn.classList.remove("hidden");
+        viewAllBtn.innerHTML = `<span>सभी ${results.length} परिणाम पेज पर देखें ➔</span>`;
+    }
+
+    if (results.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-10 px-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                <i class="fa-solid fa-magnifying-glass text-3xl text-slate-300 mb-2.5 block"></i>
+                <h4 class="font-bold text-slate-700 text-sm font-hindi">"${trimmed}" से संबंधित कोई खबर नहीं मिली</h4>
+                <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto font-hindi">कृपया वर्तनी जांचें या कोई अन्य कीवर्ड (जैसे: कानपुर, पुलिस, सोना, व्यापार) लिखकर खोजें।</p>
+                <div class="flex flex-wrap items-center justify-center gap-1.5 mt-3">
+                    <span class="text-[11px] text-slate-500 font-hindi">सुझाव:</span>
+                    <button type="button" onclick="fillSearchTag('कानपुर')" class="text-[11px] bg-white border border-slate-200 hover:border-red-300 px-2 py-0.5 rounded-full text-slate-700 hover:text-red-600 cursor-pointer">#कानपुर</button>
+                    <button type="button" onclick="fillSearchTag('अपराध')" class="text-[11px] bg-white border border-slate-200 hover:border-red-300 px-2 py-0.5 rounded-full text-slate-700 hover:text-red-600 cursor-pointer">#अपराध</button>
+                    <button type="button" onclick="fillSearchTag('सोना')" class="text-[11px] bg-white border border-slate-200 hover:border-red-300 px-2 py-0.5 rounded-full text-slate-700 hover:text-red-600 cursor-pointer">#सोना</button>
+                    <button type="button" onclick="fillSearchTag('दीपक राजपूत')" class="text-[11px] bg-white border border-slate-200 hover:border-red-300 px-2 py-0.5 rounded-full text-slate-700 hover:text-red-600 cursor-pointer">#दीपक राजपूत</button>
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="space-y-2 max-h-80 overflow-y-auto pr-1">
+            ${results.map(art => `
+                <a href="article.html?id=${art.id}" class="flex items-start gap-3 p-2.5 rounded-xl border border-slate-200/80 hover:border-red-300 hover:bg-slate-50 transition group bg-white shadow-2xs">
+                    <img src="${art.imageUrl}" alt="" class="w-20 h-16 sm:w-24 sm:h-16 object-cover rounded-lg flex-shrink-0 border border-slate-200">
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+                            <span class="text-[10px] font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded">📍 ${art.subLocation || "कानपुर"}</span>
+                            <span class="text-[10px] font-semibold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">${art.categoryName || "खबर"}</span>
+                            ${art.isBreaking ? '<span class="text-[9px] font-bold bg-red-600 text-white px-1.5 py-0.2 rounded animate-pulse">BREAKING</span>' : ''}
+                        </div>
+                        <h4 class="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-red-600 transition font-hindi line-clamp-2 leading-snug">
+                            ${art.title}
+                        </h4>
+                        <div class="flex items-center gap-3 text-[10px] text-slate-400 mt-1">
+                            <span><i class="fa-regular fa-user mr-1 text-slate-400"></i> ${art.author}</span>
+                            <span>•</span>
+                            <span><i class="fa-regular fa-calendar mr-1 text-slate-400"></i> ${art.date}</span>
+                            <span>•</span>
+                            <span><i class="fa-regular fa-eye mr-1 text-slate-400"></i> ${art.views || 1} व्यूज</span>
+                        </div>
+                    </div>
+                </a>
+            `).join("")}
+        </div>
+    `;
+};

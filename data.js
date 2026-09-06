@@ -270,6 +270,28 @@ const StorageService = {
         const articles = this.getArticles();
         return articles.find(a => a.id === id) || articles[0];
     },
+    searchArticles(query) {
+        if (!query || typeof query !== 'string') return [];
+        const q = query.trim().toLowerCase();
+        if (q === '') return [];
+
+        const terms = q.split(/\s+/).filter(t => t.length > 0);
+        const articles = this.getArticles();
+
+        return articles.filter(art => {
+            const title = (art.title || "").toLowerCase();
+            const summary = (art.summary || "").toLowerCase();
+            const content = (art.content || "").toLowerCase();
+            const author = (art.author || "").toLowerCase();
+            const categoryName = (art.categoryName || "").toLowerCase();
+            const category = (art.category || "").toLowerCase();
+            const subLocation = (art.subLocation || "").toLowerCase();
+            const tags = Array.isArray(art.tags) ? art.tags.join(" ").toLowerCase() : "";
+            const combined = `${title} ${summary} ${content} ${author} ${categoryName} ${category} ${subLocation} ${tags}`;
+
+            return terms.every(term => combined.includes(term));
+        });
+    },
     addArticle(newArticle) {
         const articles = this.getArticles();
         if (newArticle.isHero) {

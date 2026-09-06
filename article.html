@@ -74,6 +74,9 @@
                 </div>
             </a>
             <div class="flex items-center gap-2">
+                <button type="button" onclick="openSearchModal()" class="w-9 h-9 rounded-lg bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-600 flex items-center justify-center transition border border-slate-200 cursor-pointer" title="खबरें खोजें (Search / Ctrl+K)">
+                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                </button>
                 <a href="submit-news.html" class="bg-amber-50 text-amber-800 border border-amber-300 px-3 py-1.5 rounded-lg text-xs font-bold">
                     <i class="fa-solid fa-camera mr-1"></i> खबर भेजें
                 </a>
@@ -284,8 +287,61 @@
         </div>
     </footer>
 
+    <!-- Search Modal -->
+    <div id="search-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-start justify-center p-3 sm:p-6 overflow-y-auto">
+        <div class="bg-white rounded-2xl w-full max-w-2xl shadow-2xl border border-slate-200 overflow-hidden my-4 sm:my-8 transition-all">
+            
+            <!-- Search Input Header -->
+            <form id="search-form" class="p-4 sm:p-5 border-b border-slate-200 bg-slate-50/70">
+                <div class="relative flex items-center">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 text-red-600 text-lg"></i>
+                    <input type="text" id="global-search-input" placeholder="खबर का शीर्षक, कीवर्ड, रिपोर्टर या शहर खोजें..." autocomplete="off" class="w-full pl-12 pr-20 py-3.5 bg-white rounded-xl border border-slate-300 focus:border-red-600 focus:ring-2 focus:ring-red-100 text-sm sm:text-base text-slate-900 font-sans outline-none shadow-inner">
+                    
+                    <div class="absolute right-3 flex items-center gap-1.5">
+                        <button type="button" id="search-clear-btn" class="hidden w-7 h-7 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center text-xs cursor-pointer" title="साफ़ करें">
+                            <i class="fa-solid fa-circle-xmark text-base"></i>
+                        </button>
+                        <button type="button" onclick="closeSearchModal()" class="w-8 h-8 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 flex items-center justify-center text-base cursor-pointer" title="बंद करें (Esc)">
+                            <i class="fa-solid fa-xmark text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Trending Keyword Pills -->
+                <div class="flex items-center gap-1.5 mt-3 overflow-x-auto no-scrollbar pt-1">
+                    <span class="text-[11px] font-bold text-slate-400 uppercase shrink-0"><i class="fa-solid fa-fire-flame-curved text-amber-500 mr-1"></i>ट्रेंडिंग:</span>
+                    <button type="button" onclick="fillSearchTag('कानपुर')" class="text-xs bg-white hover:bg-red-50 text-slate-700 hover:text-red-600 border border-slate-200 hover:border-red-300 px-2.5 py-1 rounded-full font-medium shrink-0 transition cursor-pointer">#कानपुर</button>
+                    <button type="button" onclick="fillSearchTag('मेट्रो')" class="text-xs bg-white hover:bg-red-50 text-slate-700 hover:text-red-600 border border-slate-200 hover:border-red-300 px-2.5 py-1 rounded-full font-medium shrink-0 transition cursor-pointer">#मेट्रो</button>
+                    <button type="button" onclick="fillSearchTag('अपराध')" class="text-xs bg-white hover:bg-red-50 text-slate-700 hover:text-red-600 border border-slate-200 hover:border-red-300 px-2.5 py-1 rounded-full font-medium shrink-0 transition cursor-pointer">#अपराध</button>
+                    <button type="button" onclick="fillSearchTag('सोना')" class="text-xs bg-white hover:bg-red-50 text-slate-700 hover:text-red-600 border border-slate-200 hover:border-red-300 px-2.5 py-1 rounded-full font-medium shrink-0 transition cursor-pointer">#सोना भाव</button>
+                    <button type="button" onclick="fillSearchTag('राजनीति')" class="text-xs bg-white hover:bg-red-50 text-slate-700 hover:text-red-600 border border-slate-200 hover:border-red-300 px-2.5 py-1 rounded-full font-medium shrink-0 transition cursor-pointer">#राजनीति</button>
+                    <button type="button" onclick="fillSearchTag('दीपक राजपूत')" class="text-xs bg-white hover:bg-red-50 text-slate-700 hover:text-red-600 border border-slate-200 hover:border-red-300 px-2.5 py-1 rounded-full font-medium shrink-0 transition cursor-pointer">#दीपक राजपूत</button>
+                </div>
+            </form>
+
+            <!-- Results Header & Counter -->
+            <div class="px-5 py-2.5 bg-slate-100/70 border-b border-slate-200 flex items-center justify-between text-xs text-slate-500 font-hindi">
+                <span id="search-result-count" class="font-bold text-slate-700">खोजने के लिए टाइप करें...</span>
+                <span class="text-[11px] text-slate-400 hidden sm:inline"><kbd class="bg-white px-1.5 py-0.5 rounded border border-slate-300 font-mono text-[10px]">Esc</kbd> दबाकर बंद करें</span>
+            </div>
+
+            <!-- Live Results Container -->
+            <div id="search-results-container" class="p-4 sm:p-5 max-h-[60vh] overflow-y-auto">
+                <!-- Injected via JavaScript -->
+            </div>
+
+            <!-- Footer Action -->
+            <div class="p-3 bg-slate-50 border-t border-slate-200 text-center">
+                <a id="search-view-all-btn" href="category.html?cat=all" class="hidden inline-flex items-center gap-1.5 text-xs font-bold text-red-600 hover:text-red-700 transition">
+                    सभी परिणाम अलग पेज पर देखें ➔
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
     <script>
         let currentArticle = null;
         let baseFontSize = 18;
