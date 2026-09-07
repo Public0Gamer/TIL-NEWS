@@ -235,6 +235,7 @@ function renderHomePageContent() {
                 </div>
             </div>
         `).join("");
+        }
     }
 
     // D. Videos Section
@@ -308,14 +309,16 @@ const AdEngine = {
         const isAdmin = window.location.pathname.includes("admin.html");
         if (isAdmin && !forceAd) return;
 
-        // Retrieve a random active popup ad
-        const ad = forceAd || StorageService.getRandomActiveAd("popup");
+        // Retrieve a random active popup ad with universal fallback
+        const ad = forceAd || StorageService.getRandomActiveAd("popup") || StorageService.getRandomActiveAd("all") || StorageService.getRandomActiveAd();
         if (!ad) return;
 
-        // Prevent popup spam within the exact same session visit unless forced
+        // Use a reasonable cooldown (45 seconds) instead of permanently muting for the entire session
         if (!forceAd) {
-            const popupShown = sessionStorage.getItem("todayindia_popup_dismissed_" + ad.id);
-            if (popupShown) return;
+            const dismissedTime = sessionStorage.getItem("todayindia_popup_dismissed_time_" + ad.id);
+            if (dismissedTime && (Date.now() - parseInt(dismissedTime, 10)) < 45000) {
+                return;
+            }
         }
 
         // Delay popup appearance by 2.2 seconds for great user experience
@@ -389,7 +392,7 @@ const AdEngine = {
             setTimeout(() => modal.remove(), 250);
         }
         if (adId) {
-            sessionStorage.setItem("todayindia_popup_dismissed_" + adId, "true");
+            sessionStorage.setItem("todayindia_popup_dismissed_time_" + adId, Date.now().toString());
         }
     },
 
@@ -398,11 +401,13 @@ const AdEngine = {
         const isAdmin = window.location.pathname.includes("admin.html");
         if (isAdmin) return;
 
-        const ad = StorageService.getRandomActiveAd("bottom_bar");
+        const ad = StorageService.getRandomActiveAd("bottom_bar") || StorageService.getRandomActiveAd("all") || StorageService.getRandomActiveAd();
         if (!ad) return;
 
-        const isDismissed = sessionStorage.getItem("todayindia_bottom_dismissed_" + ad.id);
-        if (isDismissed) return;
+        const dismissedTime = sessionStorage.getItem("todayindia_bottom_dismissed_time_" + ad.id);
+        if (dismissedTime && (Date.now() - parseInt(dismissedTime, 10)) < 45000) {
+            return;
+        }
 
         setTimeout(() => {
             const existing = document.getElementById("universal-floating-bottom-bar");
@@ -437,7 +442,9 @@ const AdEngine = {
     closeBottomBar(adId) {
         const bar = document.getElementById("universal-floating-bottom-bar");
         if (bar) bar.remove();
-        if (adId) sessionStorage.setItem("todayindia_bottom_dismissed_" + adId, "true");
+        if (adId) {
+            sessionStorage.setItem("todayindia_bottom_dismissed_time_" + adId, Date.now().toString());
+        }
     },
 
     // C. Dynamic In-Page & Header Slots

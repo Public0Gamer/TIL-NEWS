@@ -583,6 +583,25 @@
                     </div>
                 </div>
 
+                <!-- Citizen Tips Realtime Stream on Dashboard (NEW) -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs font-hindi">
+                    <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-inbox text-purple-600 text-lg"></i>
+                            <h3 class="text-base sm:text-lg font-black text-slate-900">
+                                📬 जनता से प्राप्त हालिया सूचनाएं (Citizen Reporter Tips)
+                            </h3>
+                            <span id="dashboard-tips-badge" class="bg-purple-100 text-purple-800 text-[11px] font-bold px-2 py-0.5 rounded-full">0 सूचनाएं</span>
+                        </div>
+                        <button type="button" onclick="switchTab('inbox')" class="text-xs text-purple-700 hover:text-purple-900 font-bold hover:underline flex items-center gap-1 cursor-pointer">
+                            <span>पूरा इनबॉक्स खोलें</span> →
+                        </button>
+                    </div>
+                    <div id="dashboard-citizen-tips-container" class="space-y-3">
+                        <!-- Populated dynamically via renderDashboardCitizenTipsWidget() -->
+                    </div>
+                </div>
+
                 <!-- Quick Action Buttons -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 font-hindi">
                     <button onclick="switchTab('editor')" class="p-4 rounded-2xl bg-gradient-to-br from-red-600 to-rose-700 text-white font-bold text-sm text-left shadow-md shadow-red-200 flex flex-col justify-between h-28 hover:opacity-95 transition">
@@ -1001,7 +1020,13 @@
                             </p>
                         </div>
                         
-                        <div class="flex items-center gap-2">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <a href="index.html" target="_blank" class="bg-slate-900 hover:bg-black text-amber-300 font-bold px-3 py-2 rounded-xl text-xs transition flex items-center gap-1.5 shadow-2xs">
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[11px]"></i> मुख्य साइट पर लाइव देखें
+                            </a>
+                            <button type="button" onclick="testLivePopupAd()" class="bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-2 rounded-xl text-xs transition shadow-2xs flex items-center gap-1.5 cursor-pointer" title="टेस्ट करें कि पॉपअप कैसा दिखता है">
+                                <i class="fa-solid fa-bullhorn text-[11px]"></i> 🎯 टेस्ट पॉपअप विज्ञापन
+                            </button>
                             <button type="button" onclick="toggleAddAdForm()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition shadow-xs flex items-center gap-1.5 cursor-pointer">
                                 <i class="fa-solid fa-plus"></i> नया विज्ञापन जोड़ें
                             </button>
@@ -1071,6 +1096,16 @@
                             <span class="text-[11px] text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded font-bold">सभी पेजों पर रैंडम चलेगा</span>
                         </div>
 
+                        <!-- Quick 1-Click Samples -->
+                        <div class="p-3 bg-white rounded-xl border border-indigo-100 flex flex-wrap items-center gap-2 text-xs">
+                            <span class="text-indigo-900 font-bold text-[11px]"><i class="fa-solid fa-wand-magic-sparkles text-indigo-600 mr-1"></i> 1-क्लिक में सैंपल भरें:</span>
+                            <button type="button" onclick="applyAdPreset('jewellery')" class="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 font-bold text-[11px] cursor-pointer">💍 ज्वेलर्स</button>
+                            <button type="button" onclick="applyAdPreset('coaching')" class="px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200 font-bold text-[11px] cursor-pointer">🎓 कोचिंग / स्कूल</button>
+                            <button type="button" onclick="applyAdPreset('property')" class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200 font-bold text-[11px] cursor-pointer">🏢 रियल एस्टेट</button>
+                            <button type="button" onclick="applyAdPreset('electronics')" class="px-2.5 py-1 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-200 font-bold text-[11px] cursor-pointer">📱 इलेक्ट्रॉनिक्स</button>
+                            <button type="button" onclick="applyAdPreset('restaurant')" class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-900 border border-rose-200 font-bold text-[11px] cursor-pointer">🍽️ रेस्टोरेंट</button>
+                        </div>
+
                         <form id="campaign-form" onsubmit="handleSaveAdCampaign(event)" class="space-y-4">
                             <input type="hidden" id="campaign-id" value="">
                             
@@ -1098,7 +1133,7 @@
                                         <button type="button" onclick="document.getElementById('campaign-file-input').click()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-2 rounded-xl font-bold text-xs shrink-0 cursor-pointer flex items-center gap-1.5 shadow-2xs">
                                             <i class="fa-solid fa-folder-open"></i> फोन / लैपटॉप से फोटो चुनें
                                         </button>
-                                        <input type="url" id="campaign-image" placeholder="या इमेज URL: https://..." required class="flex-1 p-2 rounded-xl border border-slate-300 bg-white focus:border-indigo-500 focus:outline-hidden text-xs">
+                                        <input type="text" id="campaign-image" placeholder="या इमेज URL: https://..." required class="flex-1 p-2 rounded-xl border border-slate-300 bg-white focus:border-indigo-500 focus:outline-hidden text-xs font-sans">
                                         <button type="button" onclick="cycleSampleImages()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-3 py-2 rounded-xl font-bold text-xs shrink-0 cursor-pointer" title="डेमो सैंपल इमेज चुनें">
                                             🎨 सैंपल
                                         </button>
@@ -1246,8 +1281,8 @@
     </div>
 
     <!-- Scripts -->
-    <script src="js/data.js?v=20260906_v7_adengine"></script>
-    <script src="js/app.js?v=20260906_v7_adengine"></script>
+    <script src="js/data.js?v=20260907_v8_fixes"></script>
+    <script src="js/app.js?v=20260907_v8_fixes"></script>
     <script>
         // Floating Toast Notification System
         window.showToast = window.showToast || function(message, type = "success") {
@@ -1380,7 +1415,7 @@
                     renderPublishedStories();
                     renderUploadLedgerTable();
                     renderAdminRatesPreview();
-                    initAdsForm();
+                    renderAdCampaignsList();
                     setupFormHandlers();
                     setupHeartbeat();
                     isWorkspaceInitialized = true;
@@ -1656,6 +1691,14 @@
                 refreshDashboard();
             } else if (tabKey === 'ads') {
                 renderAdCampaignsList();
+            } else if (tabKey === 'inbox') {
+                renderCitizenTipsList();
+            } else if (tabKey === 'stories') {
+                renderPublishedStories();
+            } else if (tabKey === 'breaking') {
+                renderBreakingTickerList();
+            } else if (tabKey === 'liveblog') {
+                renderLiveBlogTimeline();
             }
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1744,6 +1787,9 @@
                     `).join("");
                 }
             }
+
+            // Render Citizen Reporter Stream on Dashboard
+            renderDashboardCitizenTipsWidget();
         }
 
         // Render Recent Login Activity Trail
@@ -2271,47 +2317,177 @@
             `).join("");
         }
 
-        // 8. Citizen Tips List
+        // 8. Citizen Tips List (Full Inbox)
         function renderCitizenTipsList() {
             const tips = StorageService.getCitizenTips();
             const container = document.getElementById('admin-citizen-tips-list');
-            document.getElementById('inbox-count-badge').innerText = `${tips.length} सूचनाएं`;
+            const badge = document.getElementById('inbox-count-badge');
+            if (badge) badge.innerText = `${tips.length} सूचनाएं`;
+
+            if (!container) return;
 
             if (tips.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center py-12 text-slate-400">
-                        <i class="fa-regular fa-folder-open text-4xl mb-2 block"></i>
-                        अभी कोई नई नागरिक रिपोर्ट प्राप्त नहीं हुई है।
+                    <div class="text-center py-12 text-slate-400 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                        <i class="fa-regular fa-folder-open text-4xl mb-2 block text-slate-300"></i>
+                        <p class="font-bold text-sm text-slate-600">अभी कोई नई नागरिक रिपोर्ट प्राप्त नहीं हुई है।</p>
+                        <p class="text-xs text-slate-400 mt-1">जब भी कोई नागरिक 'खबर भेजें' पोर्टल से खबर भेजेगा, वह तुरंत यहाँ दिखाई देगी।</p>
                     </div>
                 `;
                 return;
             }
 
             container.innerHTML = tips.map(tip => `
-                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex flex-col md:flex-row gap-4 justify-between items-start font-hindi">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-2 mb-1 text-xs">
-                            <span class="bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">रेफरेंस: ${tip.id}</span>
-                            <span class="text-slate-600 font-bold">📍 ${tip.locality}</span>
-                            <span class="text-slate-400">• ${tip.submittedAt}</span>
+                <div class="p-4 sm:p-5 rounded-2xl border border-slate-200 bg-white hover:border-purple-300 hover:shadow-xs transition flex flex-col md:flex-row gap-4 justify-between items-start font-hindi">
+                    <!-- Attached Photo -->
+                    ${tip.imageUrl ? `
+                        <div class="shrink-0 w-full md:w-40">
+                            <img src="${tip.imageUrl}" alt="${tip.title}" class="w-full h-32 md:h-28 object-cover rounded-xl border border-slate-200 shadow-2xs bg-slate-100">
+                            <span class="text-[10px] text-slate-500 block text-center mt-1"><i class="fa-solid fa-camera text-purple-600"></i> नागरिक की फोटो</span>
                         </div>
-                        <h3 class="font-black text-base text-slate-900 mb-1">${tip.title}</h3>
-                        <p class="text-xs text-slate-600 leading-relaxed mb-2">${tip.details}</p>
-                        <div class="text-xs text-slate-500">
-                            <strong>भेजने वाले नागरिक:</strong> ${tip.name} (${tip.phone})
+                    ` : ''}
+
+                    <div class="flex-1 min-w-0">
+                        <div class="flex flex-wrap items-center gap-2 mb-1.5 text-xs">
+                            <span class="bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded text-[11px]">📍 ${tip.locality}</span>
+                            <span class="bg-purple-100 text-purple-800 font-bold px-2 py-0.5 rounded text-[11px]">श्रेणी: ${tip.category || 'स्थानीय'}</span>
+                            <span class="bg-slate-100 text-slate-700 font-mono text-[11px] px-2 py-0.5 rounded">रेफरेंस: ${tip.id}</span>
+                            <span class="text-slate-400 text-[11px]">• 🕒 ${tip.submittedAt}</span>
+                        </div>
+                        <h3 class="font-black text-base text-slate-900 mb-1 leading-snug">${tip.title}</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100 mb-2.5 whitespace-pre-line">${tip.details}</p>
+                        
+                        <!-- Citizen Contact Details with Direct Actions -->
+                        <div class="flex flex-wrap items-center gap-2 sm:gap-3 text-xs text-slate-600 pt-1 border-t border-slate-100">
+                            <span class="font-bold text-slate-800"><i class="fa-solid fa-user-check text-purple-600 mr-1"></i> ${tip.name}</span>
+                            <span class="text-slate-300">|</span>
+                            <a href="tel:${tip.phone}" class="inline-flex items-center gap-1 font-mono font-bold text-slate-700 hover:text-blue-600 transition bg-slate-100 px-2 py-0.5 rounded">
+                                <i class="fa-solid fa-phone text-blue-600 text-[10px]"></i> ${tip.phone}
+                            </a>
+                            <a href="https://wa.me/91${tip.phone.replace(/[^0-9]/g, '')}?text=नमस्ते%20${encodeURIComponent(tip.name)},%20TODAY%20INDIA%20LIVE%20NEWS%20डेस्क%20से%20आपकी%20भेजी%20गई%20खबर%20के%20संबंध%20में..." target="_blank" rel="noopener" class="inline-flex items-center gap-1 font-bold text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-0.5 rounded-lg transition text-[11px]">
+                                <i class="fa-brands fa-whatsapp text-emerald-600"></i> WhatsApp संपर्क
+                            </a>
                         </div>
                     </div>
-                    <div class="flex flex-col gap-2">
-                        <button onclick="approveCitizenTip('${tip.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow-2xs">
-                            <i class="fa-solid fa-check"></i> एडिटर में लोड करें
+
+                    <!-- Actions Column -->
+                    <div class="flex flex-row md:flex-col gap-2 shrink-0 w-full md:w-auto justify-end">
+                        <button type="button" onclick="publishCitizenTipDirectly('${tip.id}')" class="flex-1 md:flex-initial bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-black px-4 py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/20 cursor-pointer" title="इस नागरिक खबर को तुरंत मुख्य पोर्टल पर लाइव छापें">
+                            <i class="fa-solid fa-rocket text-amber-300"></i> सीधे लाइव प्रकाशित करें
                         </button>
-                        <button onclick="rejectCitizenTip('${tip.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold px-3 py-1.5 rounded-lg transition">
-                            खारिज करें
+                        <button type="button" onclick="approveCitizenTip('${tip.id}')" class="flex-1 md:flex-initial bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold px-3 py-2 rounded-xl transition flex items-center justify-center gap-1 cursor-pointer">
+                            <i class="fa-solid fa-pen-to-square text-indigo-600"></i> एडिटर में सुधार करें
+                        </button>
+                        <button type="button" onclick="rejectCitizenTip('${tip.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold px-3 py-2 rounded-xl transition flex items-center justify-center gap-1 cursor-pointer">
+                            <i class="fa-solid fa-trash-can text-red-500"></i> खारिज करें
                         </button>
                     </div>
                 </div>
             `).join("");
         }
+
+        // 8.5 Dashboard Citizen Tips Stream Widget
+        function renderDashboardCitizenTipsWidget() {
+            const tips = StorageService.getCitizenTips();
+            const container = document.getElementById('dashboard-citizen-tips-container');
+            const badge = document.getElementById('dashboard-tips-badge');
+            if (badge) badge.innerText = `${tips.length} सूचनाएं`;
+            if (!container) return;
+
+            if (tips.length === 0) {
+                container.innerHTML = `
+                    <p class="text-xs text-slate-400 py-3 text-center">अभी कोई नई नागरिक सूचना लंबित नहीं है।</p>
+                `;
+                return;
+            }
+
+            // Show top 3 recent citizen tips on the dashboard
+            container.innerHTML = tips.slice(0, 3).map(tip => `
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex flex-col sm:flex-row items-start justify-between gap-3 font-hindi hover:bg-purple-50/30 transition">
+                    <div class="flex items-start gap-3 min-w-0 flex-1">
+                        ${tip.imageUrl ? `
+                            <img src="${tip.imageUrl}" alt="" class="w-16 h-14 object-cover rounded-lg border border-slate-200 shrink-0 bg-slate-100">
+                        ` : `
+                            <div class="w-14 h-14 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center shrink-0 text-lg">
+                                <i class="fa-solid fa-newspaper"></i>
+                            </div>
+                        `}
+                        <div class="min-w-0 flex-1 text-xs">
+                            <div class="flex items-center gap-2 mb-0.5">
+                                <span class="bg-amber-100 text-amber-900 font-bold px-1.5 py-0.2 rounded text-[10px]">📍 ${tip.locality}</span>
+                                <span class="text-slate-400 text-[10px]">• ${tip.submittedAt}</span>
+                            </div>
+                            <h4 class="font-bold text-slate-900 text-xs truncate leading-snug" title="${tip.title}">${tip.title}</h4>
+                            <p class="text-[11px] text-slate-500 truncate mt-0.5">नागरिक: <strong>${tip.name}</strong> (${tip.phone})</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
+                        <button type="button" onclick="publishCitizenTipDirectly('${tip.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg transition shadow-2xs cursor-pointer flex items-center gap-1">
+                            <i class="fa-solid fa-rocket text-[10px] text-amber-300"></i> लाइव छापें
+                        </button>
+                        <button type="button" onclick="approveCitizenTip('${tip.id}')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-[11px] font-bold px-2.5 py-1.5 rounded-lg transition cursor-pointer">
+                            एडिटर
+                        </button>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        // Direct 1-Click Publishing of Citizen Tips onto Live Portal
+        window.publishCitizenTipDirectly = function(tipId) {
+            const tips = StorageService.getCitizenTips();
+            const tip = tips.find(t => t.id === tipId);
+            if (!tip) return;
+
+            if (!confirm(`क्या आप नागरिक रिपोर्ट:\n\n"${tip.title}"\n\nको मुख्य वेबसाइट पर तुरंत लाइव प्रकाशित करना चाहते हैं?`)) {
+                return;
+            }
+
+            const session = getActiveSession();
+            const activeRole = session ? session.role : StorageService.getCurrentRole();
+            const authorName = `${tip.name} (नागरिक रिपोर्टर / ${tip.locality})`;
+
+            const newArticle = {
+                id: "citizen-" + Date.now(),
+                title: tip.title,
+                category: tip.category || "kanpur",
+                categoryName: "नागरिक समस्या व कानपुर",
+                subLocation: tip.locality || "कानपुर",
+                author: authorName,
+                imageUrl: tip.imageUrl || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&auto=format&fit=crop&q=80",
+                summary: tip.details ? (tip.details.substring(0, 140) + (tip.details.length > 140 ? '...' : '')) : tip.title,
+                content: `${tip.details}\n\n[यह विशेष नागरिक रिपोर्ट कानपुर के सजग नागरिक श्री/सुश्री ${tip.name} (इलाका: ${tip.locality}, मोबाइल: ${tip.phone}) द्वारा TODAY INDIA LIVE NEWS डेस्क को भेजी गई है। संपादकीय टीम द्वारा जनहित में इसे प्रसारित किया जा रहा है।]`,
+                publishedAt: "अभी-अभी (नागरिक रिपोर्ट)",
+                status: "published",
+                date: new Date().toLocaleDateString('hi-IN'),
+                time: new Date().toLocaleTimeString('hi-IN', { hour: '2-digit', minute: '2-digit' }),
+                views: 1,
+                shares: 0,
+                isBreaking: false,
+                isHero: false,
+                isDemo: false,
+                tags: ["नागरिक_रिपोर्ट", "कानपुर", tip.locality]
+            };
+
+            StorageService.addArticle(newArticle);
+            StorageService.deleteCitizenTip(tipId);
+
+            if (typeof TrackingService !== 'undefined' && TrackingService.recordUploadEvent) {
+                TrackingService.recordUploadEvent(
+                    "खबर (नागरिक रिपोर्ट)",
+                    tip.title,
+                    "दीपक राजपूत (डायरेक्टर)",
+                    activeRole,
+                    "सीधा प्रकाशन"
+                );
+            }
+
+            window.showToast("🚀 नागरिक खबर मुख्य वेबसाइट पर सफलतापूर्वक लाइव प्रकाशित हो गई!", "success");
+            renderCitizenTipsList();
+            renderDashboardCitizenTipsWidget();
+            renderPublishedStories();
+            refreshDashboard();
+        };
 
         window.approveCitizenTip = function(tipId) {
             const tips = StorageService.getCitizenTips();
@@ -2321,21 +2497,23 @@
             switchTab('editor');
             document.getElementById('ed-title').value = tip.title;
             document.getElementById('ed-locality').value = tip.locality;
-            document.getElementById('ed-author').value = `${tip.name} (सिटीजन रिपोर्टर)`;
-            document.getElementById('ed-summary').value = tip.details.substring(0, 100) + "...";
-            document.getElementById('ed-content').value = `${tip.details}\n\n[यह खबर कानपुर के सजग नागरिक ${tip.name} द्वारा TODAY INDIA LIVE NEWS डेस्क को भेजी गई है।]`;
+            document.getElementById('ed-author').value = `${tip.name} (नागरिक रिपोर्टर)`;
+            document.getElementById('ed-summary').value = tip.details.substring(0, 120) + "...";
+            document.getElementById('ed-content').value = `${tip.details}\n\n[यह खबर कानपुर के सजग नागरिक ${tip.name} (क्षेत्र: ${tip.locality}, मोबाइल: ${tip.phone}) द्वारा TODAY INDIA LIVE NEWS डेस्क को भेजी गई है।]`;
             if (tip.imageUrl) {
                 document.getElementById('ed-image').value = tip.imageUrl;
             }
             updateLivePreview();
-            alert("नागरिक रिपोर्ट एडिटर में लोड हो गई है। समीक्षा करके 'सीधे प्रकाशित करें' पर क्लिक करें।");
+            window.showToast("नागरिक रिपोर्ट एडिटर में लोड हो गई है। समीक्षा करके 'सीधे प्रकाशित करें' दबाएं।", "info");
         };
 
         window.rejectCitizenTip = function(tipId) {
             if (confirm("क्या आप वाकई इस रिपोर्ट को खारिज करना चाहते हैं?")) {
                 StorageService.deleteCitizenTip(tipId);
                 renderCitizenTipsList();
+                renderDashboardCitizenTipsWidget();
                 refreshDashboard();
+                window.showToast("नागरिक रिपोर्ट खारिज कर दी गई।", "info");
             }
         };
 
@@ -2613,20 +2791,27 @@
         ];
         let currentSampleImgIdx = 0;
 
-        function handleAdImageFileUpload(event) {
+        async function handleAdImageFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
             if (!file.type.startsWith('image/')) {
                 window.showToast("कृपया केवल फोटो (JPG, PNG, WebP) फाइल चुनें!", "error");
                 return;
             }
-            if (file.size > 2.5 * 1024 * 1024) {
-                window.showToast("फोटो का साइज 2.5 MB से कम होना चाहिए!", "error");
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const base64 = e.target.result;
+
+            try {
+                window.showToast("⏳ फोटो कंप्रेस व तैयार की जा रही है...", "info");
+                let base64;
+                if (typeof ImageCompressor !== 'undefined') {
+                    base64 = await ImageCompressor.compress(file, 800, 500, 0.75);
+                } else {
+                    const reader = new FileReader();
+                    base64 = await new Promise((res) => {
+                        reader.onload = ev => res(ev.target.result);
+                        reader.readAsDataURL(file);
+                    });
+                }
+
                 const imgInput = document.getElementById('campaign-image');
                 if (imgInput) imgInput.value = base64;
 
@@ -2635,13 +2820,102 @@
                 const prevName = document.getElementById('campaign-image-preview-name');
                 if (prevBox && prevImg) {
                     prevImg.src = base64;
-                    if (prevName) prevName.innerText = `📁 ${file.name} (${Math.round(file.size/1024)} KB)`;
+                    if (prevName) prevName.innerText = `📁 ${file.name} (ऑप्टिमाइज़्ड)`;
                     prevBox.classList.remove('hidden');
                 }
-                window.showToast("✅ फोटो सफलतापूर्वक लोड हो गई!", "success");
-            };
-            reader.readAsDataURL(file);
+                window.showToast("✅ फोटो सफलतापूर्वक लोड व कंप्रेस हो गई!", "success");
+            } catch(err) {
+                console.error("Ad photo upload error:", err);
+                window.showToast("फोटो प्रोसेस करने में समस्या आई!", "error");
+            }
         }
+
+        // 1-Click Ad Presets for Instant Testing
+        function applyAdPreset(presetType) {
+            const presets = {
+                jewellery: {
+                    advertiser: "श्री श्याम ज्वेलर्स, माल रोड, कानपुर",
+                    title: "कानपुर धनतेरस व विवाह महासेल - 25% मेकिंग छूट",
+                    desc: "100% बीआईएस हॉलमार्क शुद्ध सोने व हीरे के आभूषणों पर विशेष छूट। सीमित समय का ऑफर!",
+                    image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&auto=format&fit=crop&q=80",
+                    link: "https://wa.me/918840026359?text=नमस्ते,%20ज्वेलरी%20ऑफर%20की%20जानकारी%20चाहिए",
+                    cta: "ऑफर देखें व संपर्क करें",
+                    placement: "all"
+                },
+                coaching: {
+                    advertiser: "कानपुर ग्लोबल एकेडमी, कल्याणपुर",
+                    title: "सत्र 2026-27 सीधा प्रवेश प्रारंभ - सीमित सीटें",
+                    desc: "स्मार्ट क्लास, रोबोटिक्स लैब और उच्च योग्य संकाय। नर्सरी से 12वीं तक दाखिले के लिए फॉर्म भरें।",
+                    image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&auto=format&fit=crop&q=80",
+                    link: "https://wa.me/918840026359?text=नमस्ते,%20एडमिशन%20फॉर्म%20चाहिए",
+                    cta: "दाखिला फॉर्म भरें",
+                    placement: "popup"
+                },
+                property: {
+                    advertiser: "ग्रीन इंफ्रा डेवलपर्स, गंगा बैराज, कानपुर",
+                    title: "गंगा बैराज रोड पर KDA एप्रूव्ड प्लॉट्स मात्र ₹21 लाख से",
+                    desc: "पार्क, क्लब हाउस, 24 घंटे सुरक्षा और आसान बैंक लोन सुविधा। आज ही साइट विजिट बुक करें।",
+                    image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&auto=format&fit=crop&q=80",
+                    link: "https://wa.me/918840026359?text=नमस्ते,%20प्लॉट%20विजिट%20बुक%20करनी%20है",
+                    cta: "मुफ्त साइट विजिट बुक करें",
+                    placement: "bottom_bar"
+                },
+                electronics: {
+                    advertiser: "कानपुर डिजिटल मॉल, नवीन मार्केट",
+                    title: "स्मार्ट टीवी व 5G स्मार्टफोन पर 30% तक की भारी छूट",
+                    desc: "पुराने फोन पर एक्सचेंज बोनस और नो-कॉस्ट ईएमआई सुविधा। सभी प्रमुख ब्रांड्स उपलब्ध।",
+                    image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&auto=format&fit=crop&q=80",
+                    link: "https://wa.me/918840026359?text=नमस्ते,%20इलेक्ट्रॉनिक्स%20ऑफर%20देखना%20है",
+                    cta: "ऑफर रेट लिस्ट देखें",
+                    placement: "inpage"
+                },
+                restaurant: {
+                    advertiser: "द कानपुर दरबार रेस्टोरेंट, स्वरूप नगर",
+                    title: "वीकेंड फैमिली बुफे स्पेशल - 20% डिस्काउंट कूपन",
+                    desc: "स्वादिष्ट अवधी व मुगलई व्यंजन लाइव म्यूजिक के साथ। आज ही अपनी टेबल बुक करें।",
+                    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&auto=format&fit=crop&q=80",
+                    link: "https://wa.me/918840026359?text=नमस्ते,%20टेबल%20रिजर्वेशन%20चाहिए",
+                    cta: "टेबल बुक करें",
+                    placement: "all"
+                }
+            };
+
+            const p = presets[presetType];
+            if (!p) return;
+
+            toggleAddAdForm(true);
+            document.getElementById('campaign-advertiser').value = p.advertiser;
+            document.getElementById('campaign-title').value = p.title;
+            document.getElementById('campaign-desc').value = p.desc;
+            document.getElementById('campaign-image').value = p.image;
+            document.getElementById('campaign-link').value = p.link;
+            document.getElementById('campaign-cta').value = p.cta;
+            document.getElementById('campaign-placement').value = p.placement;
+
+            const prevBox = document.getElementById('campaign-image-preview-container');
+            const prevImg = document.getElementById('campaign-image-preview');
+            const prevName = document.getElementById('campaign-image-preview-name');
+            if (prevBox && prevImg) {
+                prevImg.src = p.image;
+                if (prevName) prevName.innerText = `🎨 ${p.advertiser}`;
+                prevBox.classList.remove('hidden');
+            }
+
+            window.showToast(`✨ ${p.advertiser} का सैंपल लोड हो गया!`, "success");
+        }
+
+        window.testLivePopupAd = function() {
+            const ad = StorageService.getRandomActiveAd();
+            if (!ad) {
+                window.showToast("कोई सक्रिय विज्ञापन उपलब्ध नहीं है! पहले एक विज्ञापन सक्रिय करें।", "warning");
+                return;
+            }
+            if (typeof AdEngine !== 'undefined' && AdEngine.renderRandomPopup) {
+                AdEngine.renderRandomPopup(ad);
+            } else {
+                alert(`लाइव विज्ञापन:\n\nशीर्षक: ${ad.title}\nप्रायोजक: ${ad.advertiser}\nलिंक: ${ad.linkUrl}`);
+            }
+        };
 
         function cycleSampleImages() {
             currentSampleImgIdx = (currentSampleImgIdx + 1) % SAMPLE_AD_IMAGES.length;

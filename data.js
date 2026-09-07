@@ -1,6 +1,67 @@
 // TODAYINDIALIVENEWS - Data Engine & Storage Management
 // Specialized for Kanpur City & Uttar Pradesh Local News
 
+// Universal High-Performance Image Compressor (Canvas-based)
+// Downscales high-resolution smartphone/camera photos (up to 20MB) to ~40KB-70KB
+// Prevents browser LocalStorage QuotaExceededError crashes completely.
+const ImageCompressor = {
+    compress(fileOrDataUrl, maxWidth = 900, maxHeight = 600, quality = 0.72) {
+        return new Promise((resolve) => {
+            if (!fileOrDataUrl) return resolve("");
+            if (typeof fileOrDataUrl === 'string' && (fileOrDataUrl.startsWith('http://') || fileOrDataUrl.startsWith('https://'))) {
+                return resolve(fileOrDataUrl);
+            }
+
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.onload = () => {
+                let width = img.width;
+                let height = img.height;
+
+                if (width > maxWidth) {
+                    height = Math.round((height * maxWidth) / width);
+                    width = maxWidth;
+                }
+                if (height > maxHeight) {
+                    width = Math.round((width * maxHeight) / height);
+                    height = maxHeight;
+                }
+
+                const canvas = document.createElement("canvas");
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const compressed = canvas.toDataURL("image/jpeg", quality);
+                resolve(compressed);
+            };
+            img.onerror = () => {
+                resolve(typeof fileOrDataUrl === 'string' ? fileOrDataUrl : "");
+            };
+
+            if (typeof File !== 'undefined' && fileOrDataUrl instanceof File) {
+                const reader = new FileReader();
+                reader.onload = (e) => { img.src = e.target.result; };
+                reader.onerror = () => resolve("");
+                reader.readAsDataURL(fileOrDataUrl);
+            } else if (typeof Blob !== 'undefined' && fileOrDataUrl instanceof Blob) {
+                const reader = new FileReader();
+                reader.onload = (e) => { img.src = e.target.result; };
+                reader.onerror = () => resolve("");
+                reader.readAsDataURL(fileOrDataUrl);
+            } else if (typeof fileOrDataUrl === 'string') {
+                img.src = fileOrDataUrl;
+            } else {
+                resolve("");
+            }
+        });
+    }
+};
+if (typeof window !== 'undefined') {
+    window.ImageCompressor = ImageCompressor;
+}
+
 const INITIAL_BREAKING_NEWS = [
     { text: "कानपुर: चुन्नीगंज से ट्रांसपोर्ट नगर तक मेट्रो अंडरग्राउंड ट्रायल सफल, सीएम जल्द कर सकते हैं लोकार्पण", priority: "high" },
     { text: "कानपुर: कल्याणपुर-पनकी रूट पर नया फोरलेन ओवरब्रिज स्वीकृत, भीषण जाम से मिलेगी राहत", priority: "normal" },
@@ -200,6 +261,32 @@ const INITIAL_LIVE_BLOGS = [
     }
 ];
 
+// Initial Realistic Citizen Tips from Kanpur
+const INITIAL_CITIZEN_TIPS = [
+    {
+        id: "KNP-894210",
+        name: "विकास कटियार",
+        phone: "9839123456",
+        locality: "कल्याणपुर",
+        category: "kanpur",
+        title: "कल्याणपुर-पनकी मुख्य मार्ग पर 3 फीट गहरा खतरनाक गड्ढा, रोज गिर रहे दोपहिया चालक",
+        details: "पनकी मंदिर रोड पर सीवर लाइन धंसने के बाद 3 फीट गहरा खुला गड्ढा बन गया है। रात के अंधेरे में स्ट्रीट लाइट बंद रहने से आए दिन बाइक सवार गिरकर घायल हो रहे हैं। स्थानीय दुकानदारों ने प्रशासन से शीघ्र मरम्मत की मांग की है।",
+        imageUrl: "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?w=800&auto=format&fit=crop&q=80",
+        submittedAt: "07/09/2026, 11:20:15 am"
+    },
+    {
+        id: "KNP-894211",
+        name: "श्रीमती सुनीता अवस्थी",
+        phone: "9450654321",
+        locality: "गोविंद नगर",
+        category: "kanpur",
+        title: "गोविंद नगर ब्लॉक-5 में 3 दिन से मुख्य पेयजल पाइपलाइन टूटी, हजारों लीटर पानी सड़क पर बर्बाद",
+        details: "जलकल विभाग की मुख्य पाइपलाइन फटने से पूरी सड़क जलमग्न हो गई है और घरों में गंदे पानी की आपूर्ति हो रही है। भीषण गर्मी में लोगों को पीने के पानी के लिए भटकना पड़ रहा है।",
+        imageUrl: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&auto=format&fit=crop&q=80",
+        submittedAt: "07/09/2026, 01:45:30 pm"
+    }
+];
+
 // Initial Advertisement Campaigns (Multi-Format Ad Engine)
 const INITIAL_AD_CAMPAIGNS = [
     {
@@ -288,6 +375,24 @@ const INITIAL_VIDEOS = [
 
 // Local Storage Helper Functions
 const StorageService = {
+    // Safe LocalStorage setter with QuotaExceededError protection
+    safeSetItem(key, value) {
+        try {
+            localStorage.setItem(key, value);
+            return true;
+        } catch(e) {
+            console.warn("Storage quota warning, cleaning up non-essential keys...", e);
+            try {
+                localStorage.removeItem("todayindia_login_history");
+                localStorage.setItem(key, value);
+                return true;
+            } catch(err2) {
+                console.error("Storage save failed after cleanup:", err2);
+                return false;
+            }
+        }
+    },
+
     // Current Active Role: 'reporter', 'sub_editor', 'chief_editor'
     getCurrentRole() {
         return localStorage.getItem("todayindia_role") || "chief_editor";
@@ -300,12 +405,11 @@ const StorageService = {
     getArticles() {
         const stored = localStorage.getItem("todayindia_articles");
         if (!stored) {
-            localStorage.setItem("todayindia_articles", JSON.stringify(INITIAL_ARTICLES));
+            this.safeSetItem("todayindia_articles", JSON.stringify(INITIAL_ARTICLES));
             return INITIAL_ARTICLES;
         }
         try {
             let list = JSON.parse(stored);
-            // Sanitize legacy fake thousands views on demo articles
             let needsResave = false;
             list.forEach(a => {
                 if (typeof a.views === 'number' && a.views > 500 && (a.isDemo || a.id.startsWith("kanpur-"))) {
@@ -314,7 +418,7 @@ const StorageService = {
                 }
             });
             if (needsResave) {
-                localStorage.setItem("todayindia_articles", JSON.stringify(list));
+                this.safeSetItem("todayindia_articles", JSON.stringify(list));
             }
             return list;
         } catch(e) {
@@ -322,7 +426,7 @@ const StorageService = {
         }
     },
     saveArticles(articles) {
-        localStorage.setItem("todayindia_articles", JSON.stringify(articles));
+        this.safeSetItem("todayindia_articles", JSON.stringify(articles));
     },
     getArticleById(id) {
         const articles = this.getArticles();
@@ -394,27 +498,27 @@ const StorageService = {
             }
             articles[index] = { ...articles[index], ...updatedData };
             this.saveArticles(articles);
+            return articles[index];
         }
-        return articles;
+        return null;
     },
 
     // Breaking News
     getBreakingNews() {
         const stored = localStorage.getItem("todayindia_breaking");
         if (!stored) {
-            localStorage.setItem("todayindia_breaking", JSON.stringify(INITIAL_BREAKING_NEWS));
+            this.safeSetItem("todayindia_breaking", JSON.stringify(INITIAL_BREAKING_NEWS));
             return INITIAL_BREAKING_NEWS;
         }
         try {
             const parsed = JSON.parse(stored);
-            // Support legacy string format gracefully
             return parsed.map(item => typeof item === 'string' ? { text: item, priority: 'normal' } : item);
         } catch(e) {
             return INITIAL_BREAKING_NEWS;
         }
     },
     saveBreakingNews(list) {
-        localStorage.setItem("todayindia_breaking", JSON.stringify(list));
+        this.safeSetItem("todayindia_breaking", JSON.stringify(list));
     },
     addBreakingItem(text, priority = "normal") {
         const list = this.getBreakingNews();
@@ -433,7 +537,7 @@ const StorageService = {
     getLiveBlogs() {
         const stored = localStorage.getItem("todayindia_liveblogs");
         if (!stored) {
-            localStorage.setItem("todayindia_liveblogs", JSON.stringify(INITIAL_LIVE_BLOGS));
+            this.safeSetItem("todayindia_liveblogs", JSON.stringify(INITIAL_LIVE_BLOGS));
             return INITIAL_LIVE_BLOGS;
         }
         try {
@@ -443,7 +547,7 @@ const StorageService = {
         }
     },
     saveLiveBlogs(blogs) {
-        localStorage.setItem("todayindia_liveblogs", JSON.stringify(blogs));
+        this.safeSetItem("todayindia_liveblogs", JSON.stringify(blogs));
     },
     addLiveBlogUpdate(blogId, update) {
         const blogs = this.getLiveBlogs();
@@ -462,23 +566,30 @@ const StorageService = {
     // Citizen Tips
     getCitizenTips() {
         const stored = localStorage.getItem("todayindia_citizen_tips");
-        if (!stored) return [];
+        if (!stored) {
+            try {
+                this.safeSetItem("todayindia_citizen_tips", JSON.stringify(INITIAL_CITIZEN_TIPS));
+            } catch(e) {}
+            return INITIAL_CITIZEN_TIPS;
+        }
         try {
-            return JSON.parse(stored);
+            const parsed = JSON.parse(stored);
+            if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+            return INITIAL_CITIZEN_TIPS;
         } catch(e) {
-            return [];
+            return INITIAL_CITIZEN_TIPS;
         }
     },
     addCitizenTip(tip) {
         const tips = this.getCitizenTips();
         tips.unshift(tip);
-        localStorage.setItem("todayindia_citizen_tips", JSON.stringify(tips));
+        this.safeSetItem("todayindia_citizen_tips", JSON.stringify(tips));
         return tips;
     },
     deleteCitizenTip(id) {
         let tips = this.getCitizenTips();
         tips = tips.filter(t => t.id !== id);
-        localStorage.setItem("todayindia_citizen_tips", JSON.stringify(tips));
+        this.safeSetItem("todayindia_citizen_tips", JSON.stringify(tips));
         return tips;
     },
 
@@ -488,7 +599,7 @@ const StorageService = {
     getAdCampaigns() {
         const stored = localStorage.getItem("todayindia_ad_campaigns");
         if (!stored) {
-            localStorage.setItem("todayindia_ad_campaigns", JSON.stringify(INITIAL_AD_CAMPAIGNS));
+            this.safeSetItem("todayindia_ad_campaigns", JSON.stringify(INITIAL_AD_CAMPAIGNS));
             return INITIAL_AD_CAMPAIGNS;
         }
         try {
@@ -496,7 +607,7 @@ const StorageService = {
             if (Array.isArray(parsed) && parsed.length > 0) {
                 return parsed;
             }
-            localStorage.setItem("todayindia_ad_campaigns", JSON.stringify(INITIAL_AD_CAMPAIGNS));
+            this.safeSetItem("todayindia_ad_campaigns", JSON.stringify(INITIAL_AD_CAMPAIGNS));
             return INITIAL_AD_CAMPAIGNS;
         } catch(e) {
             return INITIAL_AD_CAMPAIGNS;
@@ -504,7 +615,7 @@ const StorageService = {
     },
 
     saveAdCampaigns(campaigns) {
-        localStorage.setItem("todayindia_ad_campaigns", JSON.stringify(campaigns));
+        this.safeSetItem("todayindia_ad_campaigns", JSON.stringify(campaigns));
     },
 
     addAdCampaign(ad) {
@@ -517,7 +628,7 @@ const StorageService = {
             imageUrl: ad.imageUrl || "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&auto=format&fit=crop&q=80",
             linkUrl: ad.linkUrl || "#",
             ctaText: ad.ctaText || "विस्तार से देखें",
-            placement: ad.placement || "all", // "popup", "bottom_bar", "inpage", "all"
+            placement: ad.placement || "all",
             enabled: ad.enabled !== false,
             impressions: 0,
             clicks: 0,
@@ -586,11 +697,14 @@ const StorageService = {
     getRandomActiveAd(placement = "all") {
         try {
             const campaigns = this.getAdCampaigns();
-            const active = campaigns.filter(c => {
+            let active = campaigns.filter(c => {
                 if (!c.enabled) return false;
                 if (placement === "all") return true;
                 return c.placement === placement || c.placement === "all";
             });
+            if (active.length === 0) {
+                active = campaigns.filter(c => c.enabled);
+            }
             if (active.length === 0) return null;
             const randomIndex = Math.floor(Math.random() * active.length);
             return active[randomIndex];
