@@ -379,94 +379,159 @@ function renderLiveBlogWidget() {
     `).join("");
 }
 
-// 5. Universal Ad & Promotional Campaigns Engine
+// 5. Universal Professional News Ad & Sponsorship Engine
 const AdEngine = {
+    _popupShownThisSession: false,
+    _bottomBarShownThisSession: false,
+    _smartTriggersAttached: false,
+
     init() {
-        this.renderRandomPopup();
-        this.renderFloatingBottomBar();
+        // 1. Natural In-Page Banners (Always integrated seamlessly without disruption)
         this.renderInPageSlots();
+
+        // 2. Setup Professional Reader-Engagement Triggers (Scroll & Time-based)
+        this.setupSmartTriggers();
+    },
+
+    setupSmartTriggers() {
+        if (this._smartTriggersAttached) return;
+        this._smartTriggersAttached = true;
+
+        const isAdmin = window.location.pathname.includes("admin.html");
+        if (isAdmin) return;
+
+        // Check session storage to respect reader experience across page navigation
+        const popupDismissed = sessionStorage.getItem("todayindia_popup_dismissed_session");
+        const bottomDismissed = sessionStorage.getItem("todayindia_bottom_dismissed_session");
+
+        let scrollEngaged = false;
+        let readingSeconds = 0;
+
+        // A. Subtle Bottom Bar on Scroll Engagement (after passing top fold / 350px)
+        const onScroll = () => {
+            const scrollY = window.scrollY || window.pageYOffset || 0;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
+
+            if (scrollY > 350 || scrollPercent > 20) {
+                scrollEngaged = true;
+
+                // Trigger Bottom Floating Bar smoothly after scrolling (if not previously dismissed)
+                if (!this._bottomBarShownThisSession && !bottomDismissed && !document.getElementById("universal-floating-bottom-bar") && !document.getElementById("universal-ad-popup")) {
+                    this._bottomBarShownThisSession = true;
+                    setTimeout(() => {
+                        // Don't show bottom bar if center popup is already open
+                        if (!document.getElementById("universal-ad-popup")) {
+                            this.renderFloatingBottomBar();
+                        }
+                    }, 1000);
+                }
+
+                // High-Engagement Deep Scroll Trigger for Popup:
+                // Only if reader scrolled past 50% AND has spent at least 12 seconds reading
+                if (scrollPercent >= 50 && readingSeconds >= 12 && !this._popupShownThisSession && !popupDismissed && !document.getElementById("universal-ad-popup")) {
+                    this._popupShownThisSession = true;
+                    const bBar = document.getElementById("universal-floating-bottom-bar");
+                    if (bBar) bBar.remove();
+                    this.renderRandomPopup();
+                }
+            }
+        };
+
+        window.addEventListener("scroll", onScroll, { passive: true });
+
+        // B. Time Engagement Check: If reader has been actively reading for 20+ seconds and scrolled
+        const timer = setInterval(() => {
+            readingSeconds += 1;
+
+            if (readingSeconds >= 20 && scrollEngaged && !this._popupShownThisSession && !popupDismissed && !document.getElementById("universal-ad-popup")) {
+                this._popupShownThisSession = true;
+                clearInterval(timer);
+                const bBar = document.getElementById("universal-floating-bottom-bar");
+                if (bBar) bBar.remove();
+                this.renderRandomPopup();
+            }
+
+            if (readingSeconds > 60) {
+                clearInterval(timer);
+            }
+        }, 1000);
     },
 
     // A. High-Impact Random Promotional Center Popup Modal
     renderRandomPopup(forceAd = null) {
-        // Do not auto-display on admin page unless previewing
         const isAdmin = window.location.pathname.includes("admin.html");
         if (isAdmin && !forceAd) return;
 
-        // Retrieve a random active popup ad with universal fallback
+        // Retrieve a random active popup ad
         const ad = forceAd || StorageService.getRandomActiveAd("popup") || StorageService.getRandomActiveAd("all") || StorageService.getRandomActiveAd();
         if (!ad) return;
 
-        // Use a reasonable cooldown (45 seconds) instead of permanently muting for the entire session
+        // If not forced preview, check session dismiss
         if (!forceAd) {
-            const dismissedTime = sessionStorage.getItem("todayindia_popup_dismissed_time_" + ad.id);
-            if (dismissedTime && (Date.now() - parseInt(dismissedTime, 10)) < 45000) {
-                return;
-            }
+            const isDismissed = sessionStorage.getItem("todayindia_popup_dismissed_session");
+            if (isDismissed) return;
         }
 
-        // Delay popup appearance by 2.2 seconds for great user experience
-        setTimeout(() => {
-            const existing = document.getElementById("universal-ad-popup");
-            if (existing) existing.remove();
+        const existing = document.getElementById("universal-ad-popup");
+        if (existing) existing.remove();
 
-            const popupModal = document.createElement("div");
-            popupModal.id = "universal-ad-popup";
-            popupModal.className = "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs transition-opacity duration-300 font-hindi";
-            popupModal.innerHTML = `
-                <div class="bg-white rounded-3xl overflow-hidden shadow-2xl max-w-lg w-full border border-slate-200 transform scale-100 transition-all relative flex flex-col max-h-[90vh]">
-                    <!-- Header Bar with Sponsored Badge & Close Button -->
-                    <div class="flex items-center justify-between px-5 py-3 bg-gradient-to-r from-slate-900 to-slate-800 text-white shrink-0">
-                        <div class="flex items-center gap-2">
-                            <span class="bg-amber-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider">
-                                प्रायोजित विज्ञापन (SPONSORED)
-                            </span>
-                            <span class="text-xs text-slate-300 truncate max-w-[200px]">${ad.advertiser || "विशेष घोषणा"}</span>
-                        </div>
-                        <button type="button" onclick="AdEngine.closePopup('${ad.id}')" class="w-8 h-8 rounded-full bg-white/15 hover:bg-red-600 flex items-center justify-center text-white transition cursor-pointer text-sm font-bold" title="बंद करें">
-                            ✕
-                        </button>
+        const popupModal = document.createElement("div");
+        popupModal.id = "universal-ad-popup";
+        popupModal.className = "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity duration-300 font-hindi";
+        popupModal.innerHTML = `
+            <div class="bg-white rounded-3xl overflow-hidden shadow-2xl max-w-lg w-full border border-slate-200 transform scale-100 transition-all relative flex flex-col max-h-[90vh]">
+                <!-- Header Bar with Sponsored Badge & Close Button -->
+                <div class="flex items-center justify-between px-5 py-3 bg-gradient-to-r from-slate-900 to-slate-800 text-white shrink-0">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-amber-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider">
+                            प्रायोजित विज्ञापन (SPONSORED)
+                        </span>
+                        <span class="text-xs text-slate-300 truncate max-w-[200px]">${ad.advertiser || "विशेष घोषणा"}</span>
                     </div>
+                    <button type="button" onclick="AdEngine.closePopup('${ad.id}')" class="w-8 h-8 rounded-full bg-white/15 hover:bg-red-600 flex items-center justify-center text-white transition cursor-pointer text-sm font-bold" title="बंद करें">
+                        ✕
+                    </button>
+                </div>
 
-                    <!-- Scrollable Ad Body -->
-                    <div class="p-5 overflow-y-auto space-y-4">
-                        <!-- Promotional Image -->
-                        <div class="relative rounded-2xl overflow-hidden border border-slate-100 shadow-xs bg-slate-50 group">
-                            <img src="${ad.imageUrl}" alt="${ad.title}" class="w-full h-48 sm:h-56 object-cover transition duration-300 group-hover:scale-102">
-                            <div class="absolute bottom-2 right-2 bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-0.5 rounded">
-                                <i class="fa-solid fa-bullhorn text-amber-400 mr-1"></i> विशेष प्रमोशन
-                            </div>
-                        </div>
-
-                        <!-- Content -->
-                        <div>
-                            <h3 class="text-lg sm:text-xl font-black text-slate-900 leading-snug">
-                                ${ad.title}
-                            </h3>
-                            ${ad.description ? `
-                                <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
-                                    ${ad.description}
-                                </p>
-                            ` : ''}
+                <!-- Scrollable Ad Body -->
+                <div class="p-5 overflow-y-auto space-y-4">
+                    <!-- Promotional Image -->
+                    <div class="relative rounded-2xl overflow-hidden border border-slate-100 shadow-xs bg-slate-50 group">
+                        <img src="${ad.imageUrl}" alt="${ad.title}" class="w-full h-48 sm:h-56 object-cover transition duration-300 group-hover:scale-102">
+                        <div class="absolute bottom-2 right-2 bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-0.5 rounded">
+                            <i class="fa-solid fa-bullhorn text-amber-400 mr-1"></i> विशेष प्रमोशन
                         </div>
                     </div>
 
-                    <!-- Action Footer with CTA & Close Buttons -->
-                    <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-3 shrink-0">
-                        <button type="button" onclick="AdEngine.closePopup('${ad.id}')" class="text-xs text-slate-500 hover:text-slate-800 font-semibold px-4 py-2 rounded-xl transition cursor-pointer">
-                            बाद में देखें (Skip)
-                        </button>
-                        <a href="${ad.linkUrl}" target="_blank" onclick="AdEngine.handleAdClick('${ad.id}')" class="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold text-xs sm:text-sm px-6 py-2.5 rounded-xl shadow-md transition transform active:scale-98">
-                            <span>${ad.ctaText || "ऑफर देखें व संपर्क करें"}</span>
-                            <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
-                        </a>
+                    <!-- Content -->
+                    <div>
+                        <h3 class="text-lg sm:text-xl font-black text-slate-900 leading-snug">
+                            ${ad.title}
+                        </h3>
+                        ${ad.description ? `
+                            <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+                                ${ad.description}
+                            </p>
+                        ` : ''}
                     </div>
                 </div>
-            `;
 
-            document.body.appendChild(popupModal);
-            StorageService.recordAdImpression(ad.id);
-        }, forceAd ? 100 : 2200);
+                <!-- Action Footer with CTA & Close Buttons -->
+                <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-3 shrink-0">
+                    <button type="button" onclick="AdEngine.closePopup('${ad.id}')" class="text-xs text-slate-500 hover:text-slate-800 font-semibold px-4 py-2 rounded-xl transition cursor-pointer">
+                        बाद में देखें (Skip)
+                    </button>
+                    <a href="${ad.linkUrl}" target="_blank" onclick="AdEngine.handleAdClick('${ad.id}')" class="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold text-xs sm:text-sm px-6 py-2.5 rounded-xl shadow-md transition transform active:scale-98">
+                        <span>${ad.ctaText || "ऑफर देखें व संपर्क करें"}</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                    </a>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(popupModal);
+        StorageService.recordAdImpression(ad.id);
     },
 
     closePopup(adId) {
@@ -475,6 +540,7 @@ const AdEngine = {
             modal.style.opacity = "0";
             setTimeout(() => modal.remove(), 250);
         }
+        sessionStorage.setItem("todayindia_popup_dismissed_session", "true");
         if (adId) {
             sessionStorage.setItem("todayindia_popup_dismissed_time_" + adId, Date.now().toString());
         }
@@ -485,47 +551,48 @@ const AdEngine = {
         const isAdmin = window.location.pathname.includes("admin.html");
         if (isAdmin) return;
 
+        const isDismissed = sessionStorage.getItem("todayindia_bottom_dismissed_session");
+        if (isDismissed) return;
+
         const ad = StorageService.getRandomActiveAd("bottom_bar") || StorageService.getRandomActiveAd("all") || StorageService.getRandomActiveAd();
         if (!ad) return;
 
-        const dismissedTime = sessionStorage.getItem("todayindia_bottom_dismissed_time_" + ad.id);
-        if (dismissedTime && (Date.now() - parseInt(dismissedTime, 10)) < 45000) {
-            return;
-        }
+        const existing = document.getElementById("universal-floating-bottom-bar");
+        if (existing) existing.remove();
 
-        setTimeout(() => {
-            const existing = document.getElementById("universal-floating-bottom-bar");
-            if (existing) existing.remove();
-
-            const bar = document.createElement("div");
-            bar.id = "universal-floating-bottom-bar";
-            bar.className = "fixed bottom-3 left-3 right-3 sm:left-auto sm:right-6 sm:max-w-md z-40 bg-white/95 backdrop-blur-md rounded-2xl p-3 shadow-2xl border border-slate-200 font-hindi transition-all duration-300 transform translate-y-0";
-            bar.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <img src="${ad.imageUrl}" alt="${ad.title}" class="w-14 h-14 object-cover rounded-xl shrink-0 border border-slate-100">
-                    <div class="min-w-0 flex-1">
-                        <div class="flex items-center justify-between">
-                            <span class="text-[9px] bg-red-100 text-red-700 font-black px-1.5 py-0.2 rounded uppercase">प्रायोजित</span>
-                            <button type="button" onclick="AdEngine.closeBottomBar('${ad.id}')" class="text-slate-400 hover:text-red-600 text-xs px-1 cursor-pointer font-bold">✕</button>
-                        </div>
-                        <h4 class="text-xs font-bold text-slate-900 truncate leading-snug mt-0.5">${ad.title}</h4>
-                        <div class="flex items-center justify-between mt-1">
-                            <span class="text-[10px] text-slate-500 truncate max-w-[150px]">${ad.advertiser || ""}</span>
-                            <a href="${ad.linkUrl}" target="_blank" onclick="AdEngine.handleAdClick('${ad.id}')" class="text-[11px] bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-1 rounded-lg transition inline-flex items-center gap-1 shrink-0">
-                                <span>${ad.ctaText || "देखें"}</span> ➔
-                            </a>
-                        </div>
+        const bar = document.createElement("div");
+        bar.id = "universal-floating-bottom-bar";
+        bar.className = "fixed bottom-3 left-3 right-3 sm:left-auto sm:right-6 sm:max-w-md z-40 bg-white/95 backdrop-blur-md rounded-2xl p-3 shadow-2xl border border-slate-200 font-hindi transition-all duration-500 transform translate-y-0";
+        bar.innerHTML = `
+            <div class="flex items-center gap-3">
+                <img src="${ad.imageUrl}" alt="${ad.title}" class="w-14 h-14 object-cover rounded-xl shrink-0 border border-slate-100">
+                <div class="min-w-0 flex-1">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[9px] bg-red-100 text-red-700 font-black px-1.5 py-0.2 rounded uppercase">प्रायोजित</span>
+                        <button type="button" onclick="AdEngine.closeBottomBar('${ad.id}')" class="text-slate-400 hover:text-red-600 text-xs px-1 cursor-pointer font-bold" title="बंद करें">✕</button>
+                    </div>
+                    <h4 class="text-xs font-bold text-slate-900 truncate leading-snug mt-0.5">${ad.title}</h4>
+                    <div class="flex items-center justify-between mt-1">
+                        <span class="text-[10px] text-slate-500 truncate max-w-[150px]">${ad.advertiser || ""}</span>
+                        <a href="${ad.linkUrl}" target="_blank" onclick="AdEngine.handleAdClick('${ad.id}')" class="text-[11px] bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-1 rounded-lg transition inline-flex items-center gap-1 shrink-0">
+                            <span>${ad.ctaText || "देखें"}</span> ➔
+                        </a>
                     </div>
                 </div>
-            `;
-            document.body.appendChild(bar);
-            StorageService.recordAdImpression(ad.id);
-        }, 1500);
+            </div>
+        `;
+        document.body.appendChild(bar);
+        StorageService.recordAdImpression(ad.id);
     },
 
     closeBottomBar(adId) {
         const bar = document.getElementById("universal-floating-bottom-bar");
-        if (bar) bar.remove();
+        if (bar) {
+            bar.style.opacity = "0";
+            bar.style.transform = "translateY(20px)";
+            setTimeout(() => bar.remove(), 300);
+        }
+        sessionStorage.setItem("todayindia_bottom_dismissed_session", "true");
         if (adId) {
             sessionStorage.setItem("todayindia_bottom_dismissed_time_" + adId, Date.now().toString());
         }
