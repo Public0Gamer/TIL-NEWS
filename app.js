@@ -61,7 +61,7 @@ function initDateTime() {
     dateEl.innerHTML = `<i class="fa-regular fa-calendar-days text-red-600 mr-1.5"></i> ${dayName}, ${dateNum} ${monthName} ${year}`;
 }
 
-// 2. Breaking News Ticker
+// 2. Breaking News Ticker (Aaj Tak / ABP News Standard)
 function initBreakingTicker() {
     const tickerEl = document.getElementById("breaking-ticker-content");
     if (!tickerEl) return;
@@ -78,17 +78,20 @@ function initBreakingTicker() {
     const fullList = [...normalized, ...normalized];
     tickerEl.innerHTML = fullList.map(item => {
         const isFlash = item.priority === "high";
+        const cleanQuery = (item.text || '').replace(/"/g, '&quot;').replace(/'/g, "\\'");
         return `
-            <span class="inline-flex items-center mx-6 text-sm md:text-base font-semibold text-slate-800 hover:text-red-600 transition cursor-pointer">
-                ${isFlash ? '<span class="bg-amber-400 text-slate-900 text-[10px] font-black px-1.5 py-0.5 rounded mr-2 uppercase animate-pulse">FLASH</span>' : '<span class="w-2 h-2 rounded-full bg-red-600 mr-2.5 inline-block"></span>'}
-                ${item.text}
+            <span class="ticker-news-item inline-flex items-center mx-5 text-sm sm:text-base font-bold text-white transition-colors duration-150 cursor-pointer select-none group" onclick="if(typeof openSearchModal==='function') openSearchModal('${cleanQuery.substring(0, 20)}')">
+                ${isFlash 
+                    ? '<span class="bg-amber-400 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded shadow mr-2.5 uppercase tracking-wide animate-pulse shrink-0">⚡ बड़ी खबर</span>' 
+                    : '<span class="w-2 h-2 rotate-45 bg-amber-300 mr-2.5 inline-block shrink-0 shadow-xs group-hover:scale-125 transition-transform"></span>'}
+                <span class="ticker-text group-hover:text-amber-300 group-hover:underline underline-offset-4 decoration-amber-300 transition-colors">${item.text}</span>
             </span>
         `;
     }).join("");
 }
 
-// 3. Render Homepage Content
-function renderHomePageContent() {
+// 3. Render Homepage Content (Lead Story, Numbered Trending Top 5, Kanpur City Desk & Videos)
+function renderHomePageContent(filterZone = 'all') {
     const articles = StorageService.getArticles();
     const heroContainer = document.getElementById("hero-main-story");
     const sideStoriesContainer = document.getElementById("hero-side-stories");
@@ -97,7 +100,7 @@ function renderHomePageContent() {
     if (!articles || articles.length === 0) {
         if (heroContainer) {
             heroContainer.innerHTML = `
-                <div class="p-12 text-center bg-white rounded-xl border border-dashed border-slate-300 shadow-2xs">
+                <div class="p-12 text-center bg-white rounded-2xl border border-dashed border-slate-300 shadow-2xs">
                     <i class="fa-solid fa-newspaper text-slate-300 text-5xl mb-3"></i>
                     <h3 class="text-xl font-bold text-slate-700 font-hindi">कोई खबर अभी उपलब्ध नहीं है</h3>
                     <p class="text-sm text-slate-500 font-hindi mt-1">एडमिन रूम (Admin Room) से ताज़ा खबरें प्रकाशित करें।</p>
@@ -124,34 +127,51 @@ function renderHomePageContent() {
         return;
     }
 
-    // A. Lead Hero Story
+    // A. Lead Hero Story (Aaj Tak / ABP News Broadcast Format)
     const heroArticle = articles.find(a => a.isHero) || articles[0];
     if (heroContainer) {
         heroContainer.innerHTML = `
-            <a href="article.html?id=${heroArticle.id}" class="group block relative overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition">
-                <div class="relative h-64 sm:h-80 md:h-96 w-full overflow-hidden">
-                    <img src="${heroArticle.imageUrl}" alt="${heroArticle.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent"></div>
-                    <div class="absolute top-4 left-4 flex gap-2">
-                        <span class="bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1.5">
-                            <span class="w-2 h-2 bg-white rounded-full animate-ping"></span>
-                            ${heroArticle.categoryName}
+            <a href="article.html?id=${heroArticle.id}" class="group block relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-md hover:shadow-xl transition-all duration-300">
+                <div class="relative h-72 sm:h-88 md:h-[440px] w-full overflow-hidden">
+                    <img src="${heroArticle.imageUrl}" alt="${heroArticle.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-700 ease-out">
+                    <!-- Broadcast Gradient Overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent"></div>
+                    
+                    <!-- Top Broadcast Badges -->
+                    <div class="absolute top-4 left-4 flex flex-wrap gap-2">
+                        <span class="bg-red-600 text-white text-xs font-black px-3.5 py-1 rounded-md uppercase tracking-wider shadow-lg flex items-center gap-1.5 animate-pulse">
+                            <span class="w-2 h-2 bg-white rounded-full"></span>
+                            🔴 एक्सक्लूसिव कवरेज
                         </span>
-                        <span class="bg-slate-900/80 backdrop-blur text-white text-xs font-semibold px-2.5 py-1 rounded-full">
-                            📍 ${heroArticle.subLocation}
+                        <span class="bg-slate-900/85 backdrop-blur text-amber-300 text-xs font-bold px-3 py-1 rounded-md border border-slate-700/60 shadow-sm">
+                            📍 ${heroArticle.subLocation || "कानपुर"}
                         </span>
                     </div>
-                    <div class="absolute bottom-4 left-4 right-4 text-white">
-                        <h2 class="text-xl sm:text-2xl md:text-3xl font-extrabold leading-tight mb-2 group-hover:text-red-400 transition font-hindi">
+
+                    <!-- Bottom Story Info -->
+                    <div class="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6 text-white space-y-2">
+                        <div class="flex items-center gap-2 text-xs font-bold text-amber-400 font-hindi">
+                            <span class="bg-amber-400/20 backdrop-blur px-2 py-0.5 rounded border border-amber-400/30">
+                                <i class="fa-solid fa-bolt mr-1"></i> ग्राउंड रिपोर्ट
+                            </span>
+                            <span>•</span>
+                            <span>${heroArticle.categoryName}</span>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black leading-tight group-hover:text-amber-300 transition-colors font-hindi drop-shadow-md">
                             ${heroArticle.title}
                         </h2>
-                        <p class="text-slate-200 text-sm hidden sm:block clamp-2 font-hindi mb-3">
+                        <p class="text-slate-200 text-xs sm:text-sm hidden sm:block clamp-2 font-hindi leading-relaxed">
                             ${heroArticle.summary}
                         </p>
-                        <div class="flex items-center text-xs text-slate-300 gap-4">
-                            <span><i class="fa-regular fa-user mr-1 text-red-400"></i> ${heroArticle.author}</span>
-                            <span><i class="fa-regular fa-clock mr-1 text-red-400"></i> ${heroArticle.time}</span>
-                            <span><i class="fa-regular fa-eye mr-1 text-red-400"></i> ${heroArticle.views} देखा गया</span>
+                        <div class="flex flex-wrap items-center justify-between text-xs text-slate-300 pt-2 border-t border-white/15 gap-2">
+                            <div class="flex items-center gap-3 sm:gap-4">
+                                <span class="font-semibold text-white"><i class="fa-solid fa-microphone-lines text-red-500 mr-1.5"></i> ${heroArticle.author || "दीपक राजपूत"}</span>
+                                <span><i class="fa-regular fa-clock text-amber-400 mr-1"></i> ${heroArticle.time || "ताज़ा"}</span>
+                                <span class="hidden sm:inline"><i class="fa-regular fa-eye text-emerald-400 mr-1"></i> ${heroArticle.views} देखा गया</span>
+                            </div>
+                            <span class="inline-flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-1 rounded-md text-xs transition shadow-sm">
+                                विस्तार से पढ़ें <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -159,7 +179,7 @@ function renderHomePageContent() {
         `;
     }
 
-    // B. Hero Side Stories
+    // B. Hero Side Stories: Aaj Tak / ABP News Style Numbered Trending List (#1, #2, #3, #4)
     if (sideStoriesContainer) {
         const sideArticles = articles.filter(a => a.id !== heroArticle.id).slice(0, 4);
         if (sideArticles.length === 0) {
@@ -169,25 +189,30 @@ function renderHomePageContent() {
                 </div>
             `;
         } else {
-            sideStoriesContainer.innerHTML = sideArticles.map(art => `
-                <a href="article.html?id=${art.id}" class="news-card flex gap-3 p-3 rounded-xl bg-white border border-slate-200/80 shadow-xs hover:border-red-200 transition group">
-                    <div class="w-28 h-24 flex-shrink-0 overflow-hidden rounded-lg relative">
-                        <img src="${art.imageUrl}" alt="${art.title}" class="w-full h-full object-cover">
-                        <span class="absolute bottom-1 left-1 bg-black/75 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+            sideStoriesContainer.innerHTML = sideArticles.map((art, idx) => `
+                <a href="article.html?id=${art.id}" class="news-card flex gap-3 p-3 rounded-xl bg-white border border-slate-200 shadow-xs hover:border-red-400 transition group relative">
+                    <!-- Thumbnail with Aaj Tak style numbered ranking badge -->
+                    <div class="w-28 h-24 sm:w-32 sm:h-24 flex-shrink-0 overflow-hidden rounded-lg relative">
+                        <img src="${art.imageUrl}" alt="${art.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                        <span class="rank-badge ${idx === 0 ? 'rank-badge-1' : 'rank-badge-other'}">
+                            <i class="fa-solid fa-fire text-[9px]"></i> #${idx + 1}
+                        </span>
+                        <span class="absolute bottom-1 left-1 bg-black/80 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
                             ${art.categoryName}
                         </span>
                     </div>
-                    <div class="flex flex-col justify-between">
+                    <!-- Details -->
+                    <div class="flex flex-col justify-between flex-1 min-w-0">
                         <div>
-                            <span class="text-[11px] font-bold text-red-600 uppercase tracking-wide">📍 ${art.subLocation || "कानपुर"}</span>
-                            <h3 class="text-sm font-bold text-slate-900 group-hover:text-red-600 transition clamp-2 font-hindi leading-snug mt-0.5">
+                            <span class="text-[10px] font-bold text-red-600 uppercase tracking-wide">📍 ${art.subLocation || "कानपुर"}</span>
+                            <h3 class="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-red-600 transition clamp-2 font-hindi leading-snug mt-0.5">
                                 ${art.title}
                             </h3>
                         </div>
-                        <div class="flex items-center text-[11px] text-slate-500 gap-2 mt-1">
+                        <div class="flex items-center text-[10px] sm:text-[11px] text-slate-500 gap-2 mt-1">
                             <span><i class="fa-regular fa-clock mr-0.5 text-slate-400"></i> ${art.time}</span>
                             <span>•</span>
-                            <span><i class="fa-regular fa-eye mr-0.5 text-slate-400"></i> ${art.views}</span>
+                            <span><i class="fa-regular fa-eye mr-0.5 text-slate-400"></i> ${art.views} व्यूज</span>
                         </div>
                     </div>
                 </a>
@@ -195,78 +220,111 @@ function renderHomePageContent() {
         }
     }
 
-    // C. Kanpur Special Grid ("हमारा कानपुर")
+    // C. Kanpur Special Grid ("हमारा कानपुर" - Hyperlocal Hub with filter support)
     if (kanpurGrid) {
-        const kanpurArticles = articles.filter(a => a.category === "kanpur" || a.subLocation).slice(0, 6);
+        let kanpurArticles = articles.filter(a => a.category === "kanpur" || a.subLocation);
+        if (filterZone && filterZone !== 'all') {
+            kanpurArticles = kanpurArticles.filter(a => 
+                (a.subLocation && a.subLocation.toLowerCase().includes(filterZone.toLowerCase())) ||
+                (a.title && a.title.toLowerCase().includes(filterZone.toLowerCase())) ||
+                (a.summary && a.summary.toLowerCase().includes(filterZone.toLowerCase()))
+            );
+        }
+        
         if (kanpurArticles.length === 0) {
             kanpurGrid.innerHTML = `
-                <div class="col-span-full p-8 text-center text-slate-400 font-hindi text-sm bg-white rounded-xl border border-slate-100">
-                    इस अनुभाग में अभी कोई खबर उपलब्ध नहीं है।
+                <div class="col-span-full p-8 text-center text-slate-500 font-hindi text-sm bg-white rounded-2xl border border-slate-200">
+                    <i class="fa-solid fa-location-dot text-red-500 text-2xl mb-2 block"></i>
+                    इस क्षेत्र (${filterZone}) में अभी कोई ताज़ा खबर उपलब्ध नहीं है। 
+                    <button type="button" onclick="filterKanpurByZone('all')" class="ml-2 text-red-600 font-bold hover:underline">सभी खबरें देखें</button>
                 </div>
             `;
         } else {
-            kanpurGrid.innerHTML = kanpurArticles.map(art => `
-                <div class="news-card bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col justify-between shadow-xs">
-                    <a href="article.html?id=${art.id}" class="block relative h-44 overflow-hidden group">
-                        <img src="${art.imageUrl}" alt="${art.title}" class="w-full h-full object-cover">
-                        <span class="absolute top-3 left-3 bg-red-600 text-white text-[11px] font-bold px-2 py-0.5 rounded shadow-sm">
-                            📍 ${art.subLocation}
+            kanpurGrid.innerHTML = kanpurArticles.slice(0, 6).map(art => `
+                <div class="news-card bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col justify-between shadow-xs hover:border-red-300">
+                    <a href="article.html?id=${art.id}" class="block relative h-44 sm:h-48 overflow-hidden group">
+                        <img src="${art.imageUrl}" alt="${art.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <span class="absolute top-3 left-3 bg-red-600 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-md shadow-md">
+                            📍 ${art.subLocation || "कानपुर नगर"}
+                        </span>
+                        <span class="absolute bottom-2 right-2 bg-black/75 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded">
+                            ${art.time || "आज"}
                         </span>
                     </a>
-                <div class="p-4 flex-1 flex flex-col justify-between">
-                    <div>
-                        <a href="article.html?id=${art.id}">
-                            <h3 class="font-bold text-base text-slate-900 hover:text-red-600 transition font-hindi clamp-2 leading-snug mb-2">
-                                ${art.title}
-                            </h3>
-                        </a>
-                        <p class="text-slate-600 text-xs font-hindi clamp-2 mb-3">
-                            ${art.summary}
-                        </p>
-                    </div>
-                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                        <span>${art.date}</span>
-                        <div class="flex items-center gap-2">
-                            <button onclick="shareOnWhatsApp('${art.title}', 'article.html?id=${art.id}')" title="WhatsApp पर शेयर करें" class="text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded transition flex items-center gap-1 font-semibold text-[11px]">
-                                <i class="fa-brands fa-whatsapp text-sm"></i> शेयर
-                            </button>
+                    <div class="p-4 flex-1 flex flex-col justify-between">
+                        <div>
+                            <a href="article.html?id=${art.id}">
+                                <h3 class="font-bold text-base text-slate-900 hover:text-red-600 transition font-hindi clamp-2 leading-snug mb-2">
+                                    ${art.title}
+                                </h3>
+                            </a>
+                            <p class="text-slate-600 text-xs font-hindi clamp-2 mb-3 leading-relaxed">
+                                ${art.summary}
+                            </p>
+                        </div>
+                        <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                            <span class="font-medium text-slate-600"><i class="fa-regular fa-user mr-1 text-slate-400"></i>${art.author || "ब्यूरो"}</span>
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="shareOnWhatsApp('${(art.title||'').replace(/'/g, "\\'")}', 'article.html?id=${art.id}')" title="WhatsApp पर शेयर करें" class="text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 rounded-lg transition flex items-center gap-1 font-bold text-[11px]">
+                                    <i class="fa-brands fa-whatsapp text-sm text-emerald-600"></i> शेयर
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        `).join("");
+            `).join("");
         }
     }
 
-    // D. Videos Section
+    // D. Videos Section (Studio Live Broadcast Design)
     const videoContainer = document.getElementById("video-bulletins-grid");
     if (videoContainer && typeof INITIAL_VIDEOS !== 'undefined') {
         videoContainer.innerHTML = INITIAL_VIDEOS.map(v => `
-            <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs news-card cursor-pointer" onclick="openLiveTVModal()">
-                <div class="relative h-44 overflow-hidden group">
-                    <img src="${v.thumbnail}" alt="${v.title}" class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition flex items-center justify-center">
-                        <div class="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition">
-                            <i class="fa-solid fa-play ml-1"></i>
+            <div class="bg-slate-800/90 rounded-xl border border-slate-700 overflow-hidden shadow-md news-card cursor-pointer group" onclick="openLiveTVModal()">
+                <div class="relative h-44 overflow-hidden">
+                    <img src="${v.thumbnail}" alt="${v.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition flex items-center justify-center">
+                        <div class="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl group-hover:scale-115 transition">
+                            <i class="fa-solid fa-play ml-1 text-base"></i>
                         </div>
                     </div>
-                    <span class="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-0.5 rounded font-mono font-semibold">
+                    <span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded tracking-wide uppercase flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span> VIDEO
+                    </span>
+                    <span class="absolute bottom-2 right-2 bg-black/85 text-white text-xs px-2 py-0.5 rounded font-mono font-semibold">
                         ${v.duration}
                     </span>
                 </div>
-                <div class="p-3">
-                    <h4 class="font-bold text-sm text-slate-900 clamp-2 font-hindi leading-snug">
+                <div class="p-3.5">
+                    <h4 class="font-bold text-sm text-white group-hover:text-amber-300 transition clamp-2 font-hindi leading-snug">
                         ${v.title}
                     </h4>
-                    <div class="flex items-center justify-between text-xs text-slate-500 mt-2">
-                        <span><i class="fa-solid fa-play text-[10px] text-red-500 mr-1"></i> ${v.views} व्यूज</span>
-                        <span class="text-red-600 font-semibold flex items-center gap-1"><i class="fa-regular fa-circle-play"></i> अभी देखें</span>
+                    <div class="flex items-center justify-between text-xs text-slate-400 mt-2.5 pt-2 border-t border-slate-700/60">
+                        <span><i class="fa-solid fa-eye text-[10px] text-red-500 mr-1"></i> ${v.views} व्यूज</span>
+                        <span class="text-red-400 font-bold flex items-center gap-1"><i class="fa-regular fa-circle-play"></i> अभी देखें</span>
                     </div>
                 </div>
             </div>
         `).join("");
     }
 }
+
+// 3.1 Interactive Zone Filter for "हमारा कानपुर"
+window.filterKanpurByZone = function(zone, btn) {
+    try {
+        document.querySelectorAll('.kanpur-chip').forEach(c => {
+            c.classList.remove('active', 'bg-red-600', 'text-white');
+            c.classList.add('bg-slate-100', 'text-slate-700');
+        });
+        if (btn) {
+            btn.classList.add('active', 'bg-red-600', 'text-white');
+            btn.classList.remove('bg-slate-100', 'text-slate-700');
+        }
+        renderHomePageContent(zone);
+    } catch(e) {
+        console.error("Filter zone error:", e);
+    }
+};
 
 // 4. Render Live Blog Timeline on Homepage
 function renderLiveBlogWidget() {

@@ -40,7 +40,7 @@
     <link rel="icon" type="image/png" href="logo.png">
     
     <!-- Custom Stylesheet -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=20260907_v9_broadcast">
 </head>
 <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
 
@@ -548,12 +548,14 @@
                     </h2>
                 </div>
                 <!-- Zone Filters -->
-                <div class="flex items-center gap-2 overflow-x-auto no-scrollbar text-xs font-semibold">
-                    <a href="category.html?cat=kanpur" class="px-2.5 py-1 bg-red-100 text-red-700 rounded-full hover:bg-red-200 transition">कल्याणपुर</a>
-                    <a href="category.html?cat=kanpur" class="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-full hover:bg-slate-200 transition">गोविंद नगर</a>
-                    <a href="category.html?cat=kanpur" class="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-full hover:bg-slate-200 transition">किदवई नगर</a>
-                    <a href="category.html?cat=kanpur" class="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-full hover:bg-slate-200 transition">सिविल लाइंस</a>
-                    <a href="category.html?cat=kanpur" class="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-full hover:bg-slate-200 transition">बिठूर / अटल घाट</a>
+                <div id="kanpur-zone-chips" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs font-semibold py-1">
+                    <button type="button" onclick="filterKanpurByZone('all', this)" class="kanpur-chip active px-3 py-1 bg-red-600 text-white rounded-full transition shadow-2xs cursor-pointer">सभी क्षेत्र</button>
+                    <button type="button" onclick="filterKanpurByZone('बड़ा चौराहा', this)" class="kanpur-chip px-3 py-1 bg-slate-100 text-slate-700 rounded-full hover:bg-red-50 hover:text-red-700 transition cursor-pointer">बड़ा चौराहा</button>
+                    <button type="button" onclick="filterKanpurByZone('कल्याणपुर', this)" class="kanpur-chip px-3 py-1 bg-slate-100 text-slate-700 rounded-full hover:bg-red-50 hover:text-red-700 transition cursor-pointer">कल्याणपुर</button>
+                    <button type="button" onclick="filterKanpurByZone('गोविंद नगर', this)" class="kanpur-chip px-3 py-1 bg-slate-100 text-slate-700 rounded-full hover:bg-red-50 hover:text-red-700 transition cursor-pointer">गोविंद नगर</button>
+                    <button type="button" onclick="filterKanpurByZone('किदवई नगर', this)" class="kanpur-chip px-3 py-1 bg-slate-100 text-slate-700 rounded-full hover:bg-red-50 hover:text-red-700 transition cursor-pointer">किदवई नगर</button>
+                    <button type="button" onclick="filterKanpurByZone('सिविल लाइंस', this)" class="kanpur-chip px-3 py-1 bg-slate-100 text-slate-700 rounded-full hover:bg-red-50 hover:text-red-700 transition cursor-pointer">सिविल लाइंस</button>
+                    <button type="button" onclick="filterKanpurByZone('बिठूर', this)" class="kanpur-chip px-3 py-1 bg-slate-100 text-slate-700 rounded-full hover:bg-red-50 hover:text-red-700 transition cursor-pointer">बिठूर / अटल घाट</button>
                 </div>
             </div>
 
@@ -957,7 +959,7 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="js/data.js?v=20260907_v8_fixes"></script>
-    <script src="js/app.js?v=20260907_v8_fixes"></script>
+    <script src="js/data.js?v=20260907_v9_broadcast"></script>
+    <script src="js/app.js?v=20260907_v9_broadcast"></script>
 </body>
 </html>
