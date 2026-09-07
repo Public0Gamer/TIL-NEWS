@@ -2425,8 +2425,24 @@
             }
         }
 
-        // Live Reader Heartbeat Simulation & Views Counter Pulse
+        // Real-Time Cross-Device Views & Active Readers Monitor (Firestore Synced)
         function setupHeartbeat() {
+            // A. Attach Firestore Real-Time Listener to analytics/portal (Cross-Device Sync)
+            if (typeof CloudStorageService !== 'undefined' && CloudStorageService.isCloudReady()) {
+                CloudStorageService.listenToPortalViews((stats) => {
+                    const viewsEl = document.getElementById('stat-views');
+                    if (viewsEl && typeof stats.totalViews === 'number') {
+                        const formatted = stats.totalViews.toLocaleString('en-IN');
+                        if (viewsEl.innerText !== formatted) {
+                            viewsEl.innerText = formatted;
+                            viewsEl.classList.add('animate-pulse');
+                            setTimeout(() => viewsEl.classList.remove('animate-pulse'), 1000);
+                        }
+                    }
+                });
+            }
+
+            // B. Periodic monitor for active readers & local views
             setInterval(() => {
                 if (typeof TrackingService === 'undefined') return;
 
@@ -2435,8 +2451,6 @@
                     const currentLive = TrackingService.getLiveVisitors();
                     if (liveEl.innerText != currentLive) {
                         liveEl.innerText = currentLive;
-                        liveEl.classList.add('animate-pulse');
-                        setTimeout(() => liveEl.classList.remove('animate-pulse'), 1000);
                     }
                 }
 
@@ -2445,11 +2459,9 @@
                     const currentViews = TrackingService.getTotalViews().toLocaleString('en-IN');
                     if (viewsEl.innerText !== currentViews) {
                         viewsEl.innerText = currentViews;
-                        viewsEl.classList.add('animate-pulse');
-                        setTimeout(() => viewsEl.classList.remove('animate-pulse'), 1000);
                     }
                 }
-            }, 2500);
+            }, 3000);
         }
 
         // 5. Form Submission Handlers

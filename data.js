@@ -262,30 +262,8 @@ const INITIAL_LIVE_BLOGS = [
 ];
 
 // Initial Realistic Citizen Tips from Kanpur
-const INITIAL_CITIZEN_TIPS = [
-    {
-        id: "KNP-894210",
-        name: "विकास कटियार",
-        phone: "9839123456",
-        locality: "कल्याणपुर",
-        category: "kanpur",
-        title: "कल्याणपुर-पनकी मुख्य मार्ग पर 3 फीट गहरा खतरनाक गड्ढा, रोज गिर रहे दोपहिया चालक",
-        details: "पनकी मंदिर रोड पर सीवर लाइन धंसने के बाद 3 फीट गहरा खुला गड्ढा बन गया है। रात के अंधेरे में स्ट्रीट लाइट बंद रहने से आए दिन बाइक सवार गिरकर घायल हो रहे हैं। स्थानीय दुकानदारों ने प्रशासन से शीघ्र मरम्मत की मांग की है।",
-        imageUrl: "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?w=800&auto=format&fit=crop&q=80",
-        submittedAt: "07/09/2026, 11:20:15 am"
-    },
-    {
-        id: "KNP-894211",
-        name: "श्रीमती सुनीता अवस्थी",
-        phone: "9450654321",
-        locality: "गोविंद नगर",
-        category: "kanpur",
-        title: "गोविंद नगर ब्लॉक-5 में 3 दिन से मुख्य पेयजल पाइपलाइन टूटी, हजारों लीटर पानी सड़क पर बर्बाद",
-        details: "जलकल विभाग की मुख्य पाइपलाइन फटने से पूरी सड़क जलमग्न हो गई है और घरों में गंदे पानी की आपूर्ति हो रही है। भीषण गर्मी में लोगों को पीने के पानी के लिए भटकना पड़ रहा है।",
-        imageUrl: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&auto=format&fit=crop&q=80",
-        submittedAt: "07/09/2026, 01:45:30 pm"
-    }
-];
+// Real-Only Citizen News Pipeline (Pure authentic citizen submissions - empty by default)
+const INITIAL_CITIZEN_TIPS = [];
 
 // Initial Advertisement Campaigns (Multi-Format Ad Engine)
 const INITIAL_AD_CAMPAIGNS = [
@@ -411,12 +389,8 @@ const StorageService = {
         try {
             let list = JSON.parse(stored);
             let needsResave = false;
-            list.forEach(a => {
-                if (typeof a.views === 'number' && a.views > 500 && (a.isDemo || a.id.startsWith("kanpur-"))) {
-                    a.views = Math.floor(Math.random() * 8) + 5;
-                    needsResave = true;
-                }
-            });
+            // Authentic Real Views - No Random alteration
+            list.forEach(a => { if (typeof a.views !== "number") a.views = 1; });
             if (needsResave) {
                 this.safeSetItem("todayindia_articles", JSON.stringify(list));
             }
@@ -581,19 +555,29 @@ const StorageService = {
 
     // Citizen Tips
     getCitizenTips() {
+        const isDemo = (t) => {
+            if (!t) return true;
+            if (t.isDemo) return true;
+            if (t.id === "KNP-894210" || t.id === "KNP-894211") return true;
+            if (t.name === "विकास कटियार" || t.name === "श्रीमती सुनीता अवस्थी") return true;
+            return false;
+        };
         const stored = localStorage.getItem("todayindia_citizen_tips");
         if (!stored) {
-            try {
-                this.safeSetItem("todayindia_citizen_tips", JSON.stringify(INITIAL_CITIZEN_TIPS));
-            } catch(e) {}
-            return INITIAL_CITIZEN_TIPS;
+            return [];
         }
         try {
             const parsed = JSON.parse(stored);
-            if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-            return INITIAL_CITIZEN_TIPS;
+            if (Array.isArray(parsed)) {
+                const realOnly = parsed.filter(t => !isDemo(t));
+                if (realOnly.length !== parsed.length) {
+                    this.safeSetItem("todayindia_citizen_tips", JSON.stringify(realOnly));
+                }
+                return realOnly;
+            }
+            return [];
         } catch(e) {
-            return INITIAL_CITIZEN_TIPS;
+            return [];
         }
     },
     addCitizenTip(tip) {
@@ -948,36 +932,53 @@ const TrackingService = {
         } catch(e) {}
     },
 
-    // 1. Live Page & Story Views Tracking (Authentic & Real-Time)
+    // 1. Live Page & Story Views Tracking (Authentic Real-Time Across Devices)
     recordPageView(articleOrPageId = "home", title = "") {
         try {
             this.cleanLegacyFakeData();
             const todayStr = new Date().toISOString().split('T')[0];
             let viewsData = JSON.parse(localStorage.getItem("todayindia_tracking_views") || "{}");
             
-            if (typeof viewsData.totalViews !== 'number') {
-                viewsData.totalViews = 1;
-            } else {
-                viewsData.totalViews += 1;
-            }
-            
-            if (!viewsData.byDate) viewsData.byDate = {};
-            viewsData.byDate[todayStr] = (viewsData.byDate[todayStr] || 0) + 1;
+            // Session deduplication: 1 real reader session = 1 view per page/article (prevents spam refresh)
+            const sessionKey = "til_viewed_" + (articleOrPageId || "home");
+            const alreadyViewed = sessionStorage.getItem(sessionKey);
 
-            if (!viewsData.byPage) viewsData.byPage = {};
-            const pageKey = articleOrPageId || "home";
-            viewsData.byPage[pageKey] = (viewsData.byPage[pageKey] || 0) + 1;
+            if (!alreadyViewed) {
+                sessionStorage.setItem(sessionKey, "1");
 
-            if (articleOrPageId && articleOrPageId !== "home" && !articleOrPageId.startsWith("cat-")) {
-                if (!viewsData.byArticle) viewsData.byArticle = {};
-                viewsData.byArticle[articleOrPageId] = (viewsData.byArticle[articleOrPageId] || 0) + 1;
+                // A. Local Counter increment
+                if (typeof viewsData.totalViews !== 'number') {
+                    viewsData.totalViews = 1;
+                } else {
+                    viewsData.totalViews += 1;
+                }
                 
-                // Also update article views in storage
-                const articles = StorageService.getArticles();
-                const art = articles.find(a => a.id === articleOrPageId);
-                if (art) {
-                    art.views = (parseInt(art.views) || 0) + 1;
-                    StorageService.saveArticles(articles);
+                if (!viewsData.byDate) viewsData.byDate = {};
+                viewsData.byDate[todayStr] = (viewsData.byDate[todayStr] || 0) + 1;
+
+                if (!viewsData.byPage) viewsData.byPage = {};
+                const pageKey = articleOrPageId || "home";
+                viewsData.byPage[pageKey] = (viewsData.byPage[pageKey] || 0) + 1;
+
+                // B. Article view increment
+                if (articleOrPageId && articleOrPageId !== "home" && !articleOrPageId.startsWith("cat-") && !articleOrPageId.startsWith("about")) {
+                    if (!viewsData.byArticle) viewsData.byArticle = {};
+                    viewsData.byArticle[articleOrPageId] = (viewsData.byArticle[articleOrPageId] || 0) + 1;
+                    
+                    const articles = StorageService.getArticles();
+                    const art = articles.find(a => a.id === articleOrPageId);
+                    if (art) {
+                        art.views = (parseInt(art.views) || 0) + 1;
+                        StorageService.saveArticles(articles);
+                    }
+                }
+
+                // C. Genuine Cloud Increment: Sync to Google Firebase Firestore!
+                if (typeof CloudStorageService !== 'undefined' && CloudStorageService.isCloudReady()) {
+                    CloudStorageService.incrementPortalView();
+                    if (articleOrPageId && articleOrPageId !== "home" && !articleOrPageId.startsWith("cat-") && !articleOrPageId.startsWith("about")) {
+                        CloudStorageService.incrementArticleView(articleOrPageId);
+                    }
                 }
             }
 
@@ -1019,6 +1020,13 @@ const TrackingService = {
 
     getTotalViews() {
         try {
+            const cloudStatsStr = localStorage.getItem("todayindia_cloud_portal_views");
+            if (cloudStatsStr) {
+                const cloudStats = JSON.parse(cloudStatsStr);
+                if (typeof cloudStats.totalViews === 'number' && cloudStats.totalViews > 0) {
+                    return cloudStats.totalViews;
+                }
+            }
             this.cleanLegacyFakeData();
             const viewsData = JSON.parse(localStorage.getItem("todayindia_tracking_views") || "{}");
             return (typeof viewsData.totalViews === 'number') ? viewsData.totalViews : 1;
@@ -1070,6 +1078,10 @@ const TrackingService = {
         localStorage.setItem("todayindia_tracking_views", JSON.stringify(viewsData));
         localStorage.setItem("todayindia_views_baseline", n.toString());
         localStorage.setItem("todayindia_views_customized", "true");
+        localStorage.setItem("todayindia_cloud_portal_views", JSON.stringify({ totalViews: n, todayViews: n }));
+        if (typeof CloudStorageService !== 'undefined' && CloudStorageService.isCloudReady()) {
+            CloudStorageService.setPortalViewsBaseline(n);
+        }
         return n;
     },
 
@@ -1428,24 +1440,112 @@ const CloudStorageService = {
             console.warn("Could not attach ads listener:", e);
         }
 
-        // D. Listen to Citizen Tips
+        // D. Listen to Citizen Tips (Pure Real Submissions - Auto-purge demo)
         try {
+            // Purge legacy demo tips from Firestore if present
+            ["KNP-894210", "KNP-894211"].forEach(dId => {
+                this.db.collection("citizen_tips").doc(dId).delete().catch(() => {});
+            });
+
             const unsubTips = this.db.collection("citizen_tips").onSnapshot((snapshot) => {
+                const isDemo = (t) => {
+                    if (!t) return true;
+                    if (t.isDemo) return true;
+                    if (t.id === "KNP-894210" || t.id === "KNP-894211") return true;
+                    if (t.name === "विकास कटियार" || t.name === "श्रीमती सुनीता अवस्थी") return true;
+                    return false;
+                };
+
+                const tips = [];
                 if (snapshot && !snapshot.empty) {
-                    const tips = [];
-                    snapshot.forEach(doc => tips.push({ id: doc.id, ...doc.data() }));
-                    if (tips.length > 0) {
-                        tips.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-                        localStorage.setItem("todayindia_citizen_tips", JSON.stringify(tips));
-                        window.dispatchEvent(new CustomEvent('todayindia:cloud_updated', {
-                            detail: { type: 'tips', count: tips.length }
-                        }));
-                    }
+                    snapshot.forEach(doc => {
+                        const data = { id: doc.id, ...doc.data() };
+                        if (!isDemo(data)) {
+                            tips.push(data);
+                        } else {
+                            doc.ref.delete().catch(() => {});
+                        }
+                    });
+                    tips.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                 }
+                localStorage.setItem("todayindia_citizen_tips", JSON.stringify(tips));
+                window.dispatchEvent(new CustomEvent('todayindia:cloud_updated', {
+                    detail: { type: 'tips', count: tips.length }
+                }));
             }, (err) => console.warn("Firestore citizen_tips listener warning:", err));
             this._activeListeners.push(unsubTips);
         } catch (e) {
             console.warn("Could not attach tips listener:", e);
+        }
+    },
+
+    // 3.5 Real-Time Cross-Device Views Engine (Authentic Cloud Counters)
+    async incrementArticleView(articleId) {
+        if (!this.isCloudReady() || !articleId) return;
+        try {
+            if (typeof firebase === 'undefined' || !firebase.firestore || !firebase.firestore.FieldValue) return;
+            await this.db.collection("articles").doc(articleId).update({
+                views: firebase.firestore.FieldValue.increment(1)
+            });
+        } catch(e) {
+            // Document might need initial set if update fails
+            try {
+                await this.db.collection("articles").doc(articleId).set({
+                    views: firebase.firestore.FieldValue.increment(1)
+                }, { merge: true });
+            } catch(err) {}
+        }
+    },
+
+    async incrementPortalView() {
+        if (!this.isCloudReady()) return;
+        try {
+            if (typeof firebase === 'undefined' || !firebase.firestore || !firebase.firestore.FieldValue) return;
+            const today = new Date().toISOString().split('T')[0];
+            const portalRef = this.db.collection("analytics").doc("portal");
+            const updateData = {
+                totalViews: firebase.firestore.FieldValue.increment(1),
+                lastActiveTimestamp: Date.now()
+            };
+            updateData[`daily_${today}`] = firebase.firestore.FieldValue.increment(1);
+            await portalRef.set(updateData, { merge: true });
+        } catch(e) {
+            console.warn("Could not increment cloud portal view:", e);
+        }
+    },
+
+    listenToPortalViews(callback) {
+        if (!this.isCloudReady() || typeof callback !== 'function') return null;
+        try {
+            const unsub = this.db.collection("analytics").doc("portal").onSnapshot((doc) => {
+                if (doc && doc.exists) {
+                    const data = doc.data() || {};
+                    const today = new Date().toISOString().split('T')[0];
+                    const stats = {
+                        totalViews: (typeof data.totalViews === 'number') ? data.totalViews : 1,
+                        todayViews: (typeof data[`daily_${today}`] === 'number') ? data[`daily_${today}`] : (data.totalViews || 1)
+                    };
+                    localStorage.setItem("todayindia_cloud_portal_views", JSON.stringify(stats));
+                    callback(stats);
+                }
+            }, (err) => console.warn("Firestore portal views listener warning:", err));
+            this._activeListeners.push(unsub);
+            return unsub;
+        } catch(e) {
+            console.warn("Could not attach portal views listener:", e);
+            return null;
+        }
+    },
+
+    async setPortalViewsBaseline(num) {
+        if (!this.isCloudReady()) return;
+        try {
+            const today = new Date().toISOString().split('T')[0];
+            const updateData = { totalViews: num, lastActiveTimestamp: Date.now() };
+            updateData[`daily_${today}`] = num;
+            await this.db.collection("analytics").doc("portal").set(updateData, { merge: true });
+        } catch(e) {
+            console.warn("Could not set portal views baseline in cloud:", e);
         }
     },
 

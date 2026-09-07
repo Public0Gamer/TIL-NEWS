@@ -441,12 +441,27 @@
 
             if (typeof TrackingService !== 'undefined' && currentArticle) {
                 TrackingService.recordPageView(currentArticle.id, currentArticle.title);
-                currentArticle.views = (currentArticle.views || 0) + 1;
+                const freshArt = StorageService.getArticleById(currentArticle.id);
+                if (freshArt && typeof freshArt.views === 'number') {
+                    currentArticle.views = freshArt.views;
+                }
             }
 
             renderArticleDetail(currentArticle);
             renderSidebarNews(articles, currentArticle.id);
             setupComments(currentArticle.id);
+
+            // Live Cross-Device View Updates from Google Firestore
+            window.addEventListener('todayindia:cloud_updated', (e) => {
+                if (e.detail && (e.detail.type === 'articles' || e.detail.type === 'article') && currentArticle) {
+                    const freshArt = StorageService.getArticleById(currentArticle.id);
+                    if (freshArt && typeof freshArt.views === 'number') {
+                        currentArticle.views = freshArt.views;
+                        const vEl = document.getElementById("article-views");
+                        if (vEl) vEl.innerHTML = `<i class="fa-regular fa-eye text-red-500 mr-1"></i> ${freshArt.views} व्यूज`;
+                    }
+                }
+            });
         });
 
         function renderArticleDetail(art) {
