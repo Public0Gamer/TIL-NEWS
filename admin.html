@@ -83,12 +83,12 @@
 
             <!-- Authenticated Role Selector & Status Controls -->
             <div id="header-auth-controls" class="hidden flex flex-wrap items-center gap-2 sm:gap-3">
-                <!-- Director Profile Pill (Top Side) -->
+                <!-- Director / User Profile Pill (Top Side) -->
                 <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 pl-1.5 pr-3 py-1 rounded-full shadow-xs">
-                    <img src="director.jpg" alt="दीपक राजपूत" class="w-8 h-8 rounded-full object-cover border-2 border-amber-400 shrink-0 shadow-xs">
+                    <img id="header-pill-avatar" src="director.jpg" alt="दीपक राजपूत" class="w-8 h-8 rounded-full object-cover border-2 border-amber-400 shrink-0 shadow-xs">
                     <div class="flex flex-col text-left">
-                        <span class="text-white font-bold text-xs font-hindi leading-tight">दीपक राजपूत</span>
-                        <span class="text-[9px] text-amber-400 font-black uppercase tracking-wider leading-none">डायरेक्टर</span>
+                        <span id="header-pill-name" class="text-white font-bold text-xs font-hindi leading-tight">दीपक राजपूत</span>
+                        <span id="header-pill-role" class="text-[9px] text-amber-400 font-black uppercase tracking-wider leading-none">डायरेक्टर</span>
                     </div>
                 </div>
                 <!-- Role Switcher (Visible to Director only) -->
@@ -584,7 +584,7 @@
                             </div>
                         </div>
                         <div class="pt-3 mt-3 border-t border-amber-200/60 flex items-center justify-between gap-2">
-                            <button type="button" onclick="openEditRatesModal()" class="bg-slate-900 hover:bg-black text-amber-300 text-xs font-bold px-2.5 py-1.5 rounded-lg transition shadow-2xs flex items-center gap-1 cursor-pointer" title="आज के कानपुर बाजार भाव खुद दर्ज करें">
+                            <button type="button" id="btn-edit-rates" onclick="openEditRatesModal()" class="bg-slate-900 hover:bg-black text-amber-300 text-xs font-bold px-2.5 py-1.5 rounded-lg transition shadow-2xs flex items-center gap-1 cursor-pointer" title="आज के कानपुर बाजार भाव खुद दर्ज करें">
                                 <i class="fa-solid fa-pen-to-square text-[10px]"></i>
                                 <span>भाव बदलें</span>
                             </button>
@@ -1649,16 +1649,19 @@
                 const headerRoleLockedBadge = document.getElementById("header-role-locked-badge");
                 const headerLockedRoleText = document.getElementById("header-locked-role-text");
 
+                const headerCloudPill = document.getElementById("header-cloud-pill");
                 if (isDirector) {
-                    // Director can manage all passwords and switch roles
+                    // Director can manage all passwords, switch roles, and view cloud engine
                     if (btnChangePass) btnChangePass.classList.remove("hidden");
                     if (headerRoleContainer) headerRoleContainer.classList.remove("hidden");
                     if (headerRoleLockedBadge) headerRoleLockedBadge.classList.add("hidden");
+                    if (headerCloudPill) headerCloudPill.classList.remove("hidden");
                     if (roleSelector) roleSelector.value = session.role;
                 } else {
-                    // Non-directors: Cannot change passwords, cannot switch role!
+                    // Non-directors: Cannot change passwords, cannot switch role, cannot access cloud!
                     if (btnChangePass) btnChangePass.classList.add("hidden");
                     if (headerRoleContainer) headerRoleContainer.classList.add("hidden");
+                    if (headerCloudPill) headerCloudPill.classList.add("hidden");
                     if (headerRoleLockedBadge) {
                         headerRoleLockedBadge.classList.remove("hidden");
                         if (headerLockedRoleText) {
@@ -1747,6 +1750,13 @@
 
             // Unlock and initialize workspace
             checkAuth();
+
+            // Appropriate initial workspace tab
+            if (role === 'chief_editor') {
+                switchTab('dashboard');
+            } else {
+                switchTab('editor'); // Sub-Editor & Reporter directly land on News Editor
+            }
         }
 
         function logoutAdmin() {
@@ -1897,41 +1907,87 @@
         }
 
         function applyRolePermissions(role) {
+            const isDirector = (role === 'chief_editor');
             const avatar = document.getElementById("role-avatar");
             const nameEl = document.getElementById("role-name-display");
             const badgeEl = document.getElementById("role-badge-display");
             const submitBtnLabel = document.getElementById("btn-submit-label");
             const roleNotice = document.getElementById("editor-role-notice");
 
+            // 1. Strict Sidebar Privacy: Hide Cloud, Ads, and Audit from Non-Directors
+            const navCloud = document.getElementById("nav-btn-cloud");
+            const navAds = document.getElementById("nav-btn-ads");
+            const navAudit = document.getElementById("nav-btn-audit");
+
+            if (navCloud) navCloud.classList.toggle("hidden", !isDirector);
+            if (navAds) navAds.classList.toggle("hidden", !isDirector);
+            if (navAudit) navAudit.classList.toggle("hidden", !isDirector);
+
+            // 2. Sensitive Dashboard Controls (Mandi Rate Manual Edit, Reset, etc.)
+            const btnEditRates = document.getElementById("btn-edit-rates");
+            if (btnEditRates) btnEditRates.classList.toggle("hidden", !isDirector);
+
+            // 3. Header Profile Pill
+            const headerPillImg = document.getElementById("header-pill-avatar");
+            const headerPillName = document.getElementById("header-pill-name");
+            const headerPillRole = document.getElementById("header-pill-role");
+            if (headerPillName && headerPillRole) {
+                if (isDirector) {
+                    headerPillName.innerText = "दीपक राजपूत";
+                    headerPillRole.innerText = "डायरेक्टर";
+                    if (headerPillImg) headerPillImg.src = "director.jpg";
+                } else if (role === 'sub_editor') {
+                    headerPillName.innerText = "उप-संपादक";
+                    headerPillRole.innerText = "डेस्क";
+                    if (headerPillImg) headerPillImg.src = "logo.png";
+                } else {
+                    headerPillName.innerText = "संवाददाता";
+                    headerPillRole.innerText = "रिपोर्टर";
+                    if (headerPillImg) headerPillImg.src = "logo.png";
+                }
+            }
+
+            // 4. Role Specific Desk Permissions
             if (role === 'reporter') {
                 avatar.innerHTML = `<i class="fa-solid fa-microphone text-amber-600"></i>`;
                 avatar.className = "w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-lg";
                 nameEl.innerText = "फील्ड रिपोर्टर (संवाददाता)";
-                badgeEl.innerText = "ड्राफ्ट व खबर भेजने की अनुमति (Locked)";
+                badgeEl.innerText = "समाचार लाइव व डिलीट अनुमति (News Only)";
                 badgeEl.className = "bg-amber-100 text-amber-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full";
-                submitBtnLabel.innerText = "डेस्क को अनुमोदन हेतु भेजें (Submit Draft)";
-                roleNotice.innerText = "रिपोर्टर मोड: खबर पहले डेस्क जांच के लिए जाएगी";
+                submitBtnLabel.innerText = "खबर तुरंत लाइव प्रकाशित करें (Publish Live)";
+                roleNotice.innerText = "रिपोर्टर डेस्क: समाचार लाइव प्रकाशित व डिलीट करने की अनुमति";
             } else if (role === 'sub_editor') {
                 avatar.innerHTML = `<i class="fa-solid fa-pen-nib text-blue-600"></i>`;
                 avatar.className = "w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-lg";
                 nameEl.innerText = "उप-संपादक (डेस्क)";
-                badgeEl.innerText = "संपादन व तथ्य-जांच अनुमति (Locked)";
+                badgeEl.innerText = "समाचार संपादन, लाइव व डिलीट अनुमति (News Only)";
                 badgeEl.className = "bg-blue-100 text-blue-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full";
-                submitBtnLabel.innerText = "संपादित करके प्रकाशित करें";
-                roleNotice.innerText = "उप-संपादक मोड: तथ्य जांच एवं प्रकाशन सक्रिय";
+                submitBtnLabel.innerText = "संपादित करके लाइव प्रकाशित करें (Publish Live)";
+                roleNotice.innerText = "उप-संपादक डेस्क: समाचार संपादन, लाइव व डिलीट करने की अनुमति";
             } else {
                 avatar.innerHTML = `<img src="director.jpg" alt="दीपक राजपूत" class="w-full h-full object-cover">`;
                 avatar.className = "w-12 h-12 rounded-xl border-2 border-red-500 overflow-hidden shadow-sm shrink-0";
                 nameEl.innerText = "दीपक राजपूत (डायरेक्टर / प्रधान संपादक)";
-                badgeEl.innerText = "पूर्ण नियंत्रण (Full Master Access)";
+                badgeEl.innerText = "पूर्ण मास्टर नियंत्रण (Full Master Access)";
                 badgeEl.className = "bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full";
-                submitBtnLabel.innerText = "सीधे प्रकाशित करें (Publish Live)";
-                roleNotice.innerText = "डायरेक्टर मोड: सीधा प्रकाशन, पासवर्ड प्रबंधन व ऑडिट सक्रिय";
+                submitBtnLabel.innerText = "सीधे लाइव प्रकाशित करें (Publish Live)";
+                roleNotice.innerText = "डायरेक्टर मोड: क्लाउड सेटिंग्स, विज्ञापन, पासवर्ड व संपूर्ण नियंत्रण सक्रिय";
             }
         }
 
         // 2. Tab Navigation
         function switchTab(tabKey) {
+            const session = getActiveSession();
+            const currentRole = session ? session.role : StorageService.getCurrentRole();
+            const isDirector = (currentRole === 'chief_editor');
+
+            // Strict Privacy Enforcer: Non-directors CANNOT access Cloud, Ads, or Audit History
+            if (!isDirector && (tabKey === 'cloud' || tabKey === 'ads' || tabKey === 'audit')) {
+                window.showToast("⛔ यह अनुभाग केवल डायरेक्टर (दीपक राजपूत) के लिए सुरक्षित है!", "error");
+                switchTab('editor');
+                return;
+            }
+
             const tabs = ['dashboard', 'editor', 'breaking', 'liveblog', 'inbox', 'stories', 'ads', 'audit', 'cloud'];
             tabs.forEach(t => {
                 const pane = document.getElementById(`tab-${t}`);
@@ -2872,7 +2928,7 @@
             let articles = StorageService.getArticles();
             const session = getActiveSession();
             const userRole = session ? session.role : 'chief_editor';
-            const canDelete = (userRole === 'chief_editor' || userRole === 'sub_editor');
+            const canDelete = (userRole === 'chief_editor' || userRole === 'sub_editor' || userRole === 'reporter');
 
             // Metrics Update
             const totalCount = articles.length;
@@ -2975,8 +3031,8 @@
 
         window.removeArticle = function(id) {
             const session = getActiveSession();
-            if (!session || (session.role !== 'chief_editor' && session.role !== 'sub_editor')) {
-                window.showToast("⚠️ खबर हटाने की अनुमति केवल डायरेक्टर व उप-संपादक को है।", "warning");
+            if (!session) {
+                window.showToast("⚠️ कृपया पहले न्यूज़ डेस्क में लॉगिन करें।", "warning");
                 return;
             }
             const articles = StorageService.getArticles();
@@ -2996,8 +3052,8 @@
 
         window.clearAllDemoArticles = function() {
             const session = getActiveSession();
-            if (!session || (session.role !== 'chief_editor' && session.role !== 'sub_editor')) {
-                window.showToast("⚠️ डेमो खबरें हटाने की अनुमति केवल डायरेक्टर व उप-संपादक को है।", "warning");
+            if (!session || session.role !== 'chief_editor') {
+                window.showToast("⛔ सभी डेमो खबरें एक साथ हटाने की अनुमति केवल डायरेक्टर को है।", "error");
                 return;
             }
             const articles = StorageService.getArticles();
