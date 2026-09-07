@@ -123,12 +123,10 @@
 
                 <!-- Reporter Byline & Metadata -->
                 <div class="flex flex-wrap items-center justify-between gap-3 py-3 border-y border-slate-100 text-xs text-slate-600 mb-5 font-hindi">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-full bg-red-100 text-red-700 flex items-center justify-center font-bold">
-                            <i class="fa-solid fa-user-pen"></i>
-                        </div>
+                    <div class="flex items-center gap-2.5">
+                        <img id="article-author-avatar" src="director.jpg" alt="दीपक राजपूत" class="w-10 h-10 rounded-full object-cover border-2 border-red-500 shadow-xs shrink-0">
                         <div>
-                            <p id="article-author" class="font-bold text-slate-900 leading-tight">ब्यूरो रिपोर्ट</p>
+                            <p id="article-author" class="font-bold text-slate-900 leading-tight">दीपक राजपूत (प्रधान संपादक)</p>
                             <p class="text-[11px] text-slate-500">TODAY INDIA LIVE NEWS नेटवर्क</p>
                         </div>
                     </div>
@@ -179,6 +177,25 @@
                 <!-- Article Body Text -->
                 <div id="article-content-body" class="prose max-w-none text-slate-800 font-hindi text-base sm:text-lg leading-relaxed space-y-4">
                     <!-- Injected dynamically -->
+                </div>
+
+                <!-- Director & Editorial Spotlight Card -->
+                <div class="mt-6 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-red-50/70 to-slate-50 border border-red-200/80 flex flex-col sm:flex-row items-center gap-4 font-hindi shadow-xs">
+                    <div class="relative w-16 h-16 sm:w-20 sm:h-20 shrink-0">
+                        <img src="director.jpg" alt="दीपक राजपूत - डायरेक्टर" class="w-full h-full rounded-full object-cover border-3 border-white shadow-md ring-2 ring-red-500">
+                        <span class="absolute bottom-0 right-0 bg-red-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full shadow-xs uppercase">
+                            डायरेक्टर
+                        </span>
+                    </div>
+                    <div class="flex-1 text-center sm:text-left">
+                        <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                            <span class="bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider">संपादकीय प्रमुख</span>
+                            <h4 class="font-black text-base text-slate-900">दीपक राजपूत (डायरेक्टर व प्रधान संपादक)</h4>
+                        </div>
+                        <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                            "जैसी हकीकत, वैसी खबर" — TODAY INDIA LIVE NEWS निर्भीक, निष्पक्ष और पारदर्शी पत्रकारिता के लिए प्रतिबद्ध है। कानपुर नगर एवं उत्तर प्रदेश की हर सच्चाई बिना किसी दबाव के आपके सामने लाना ही हमारा लक्ष्य है।
+                        </p>
+                    </div>
                 </div>
 
                 <!-- WhatsApp Community Banner -->

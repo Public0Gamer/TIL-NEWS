@@ -165,7 +165,7 @@ function renderHomePageContent(filterZone = 'all') {
                         </p>
                         <div class="flex flex-wrap items-center justify-between text-xs text-slate-300 pt-2 border-t border-white/15 gap-2">
                             <div class="flex items-center gap-3 sm:gap-4">
-                                <span class="font-semibold text-white"><i class="fa-solid fa-microphone-lines text-red-500 mr-1.5"></i> ${heroArticle.author || "दीपक राजपूत"}</span>
+                                <span class="font-semibold text-white flex items-center gap-1.5"><img src="director.jpg" alt="दीपक राजपूत" class="w-5 h-5 rounded-full object-cover border border-amber-400 shrink-0"> ${heroArticle.author || "दीपक राजपूत (डायरेक्टर)"}</span>
                                 <span><i class="fa-regular fa-clock text-amber-400 mr-1"></i> ${heroArticle.time || "ताज़ा"}</span>
                                 <span class="hidden sm:inline"><i class="fa-regular fa-eye text-emerald-400 mr-1"></i> ${heroArticle.views} देखा गया</span>
                             </div>

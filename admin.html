@@ -63,10 +63,17 @@
 
             <!-- Unauthenticated Header Label -->
             <div id="header-gate-label" class="flex items-center gap-2 sm:gap-3">
-                <span class="inline-flex items-center gap-1.5 bg-red-950/70 border border-red-800 text-red-300 text-xs font-semibold px-3 py-1.5 rounded-lg">
+                <!-- Director Profile Pill (Top Side) -->
+                <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 pl-1.5 pr-3 py-1 rounded-full shadow-xs">
+                    <img src="director.jpg" alt="दीपक राजपूत" class="w-8 h-8 rounded-full object-cover border-2 border-red-500 shrink-0 shadow-xs">
+                    <div class="flex flex-col text-left">
+                        <span class="text-white font-bold text-xs font-hindi leading-tight">दीपक राजपूत</span>
+                        <span class="text-[9px] text-amber-400 font-black uppercase tracking-wider leading-none">डायरेक्टर</span>
+                    </div>
+                </div>
+                <span class="hidden sm:inline-flex items-center gap-1.5 bg-red-950/70 border border-red-800 text-red-300 text-xs font-semibold px-3 py-1.5 rounded-lg">
                     <i class="fa-solid fa-shield-halved text-red-400"></i>
-                    <span class="font-hindi hidden sm:inline">संपादकीय सुरक्षा गेटवे</span>
-                    <span class="font-hindi sm:hidden">गेटवे</span>
+                    <span class="font-hindi">संपादकीय सुरक्षा गेटवे</span>
                 </span>
                 <a href="index.html" class="bg-slate-900 hover:bg-slate-800 text-slate-200 text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
                     <i class="fa-solid fa-arrow-left text-[10px]"></i>
@@ -76,6 +83,14 @@
 
             <!-- Authenticated Role Selector & Status Controls -->
             <div id="header-auth-controls" class="hidden flex flex-wrap items-center gap-2 sm:gap-3">
+                <!-- Director Profile Pill (Top Side) -->
+                <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 pl-1.5 pr-3 py-1 rounded-full shadow-xs">
+                    <img src="director.jpg" alt="दीपक राजपूत" class="w-8 h-8 rounded-full object-cover border-2 border-amber-400 shrink-0 shadow-xs">
+                    <div class="flex flex-col text-left">
+                        <span class="text-white font-bold text-xs font-hindi leading-tight">दीपक राजपूत</span>
+                        <span class="text-[9px] text-amber-400 font-black uppercase tracking-wider leading-none">डायरेक्टर</span>
+                    </div>
+                </div>
                 <!-- Role Switcher (Visible to Director only) -->
                 <div id="header-role-container" class="flex items-center gap-2 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg text-xs font-hindi">
                     <span class="text-slate-400">सक्रिय भूमिका:</span>
@@ -136,15 +151,19 @@
                 
                 <!-- Card Header -->
                 <div class="bg-gradient-to-r from-slate-950 via-slate-900 to-red-950 text-white p-6 text-center border-b-2 border-red-600 relative">
-                    <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-red-600/20 border border-red-500/40 text-red-500 mb-3 shadow-inner">
-                        <i class="fa-solid fa-shield-halved text-2xl"></i>
+                    <!-- Director Avatar on Login Card -->
+                    <div class="relative w-20 h-20 mx-auto mb-3">
+                        <img src="director.jpg" alt="दीपक राजपूत - डायरेक्टर" class="w-full h-full rounded-full object-cover border-3 border-white shadow-xl ring-2 ring-red-500">
+                        <span class="absolute bottom-0 right-0 bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-md uppercase tracking-wider">
+                            डायरेक्टर
+                        </span>
                     </div>
                     <div class="flex items-center justify-center gap-2 mb-1.5">
                         <img src="logo.png" onerror="this.onerror=null;this.src='../logo.png';" alt="TIL NEWS" class="h-6 w-auto object-contain bg-white px-2 py-0.5 rounded">
                         <span class="bg-red-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded tracking-wider">SECURE CMS</span>
                     </div>
                     <h2 class="text-xl font-black tracking-tight text-white">केंद्रीय संपादकीय नियंत्रण कक्ष</h2>
-                    <p class="text-xs text-slate-300 mt-1 font-normal">कानपुर ब्यूरो — केवल अधिकृत संपादकीय टीम हेतु</p>
+                    <p class="text-xs text-slate-300 mt-1 font-normal">दीपक राजपूत (डायरेक्टर व प्रधान संपादक) • अधिकृत डेस्क</p>
                 </div>
 
                 <!-- Card Body Form -->
@@ -388,12 +407,12 @@
             <!-- Quick Profile & Role Card -->
             <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs font-hindi">
                 <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
-                    <div id="role-avatar" class="w-10 h-10 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold text-lg">
-                        <i class="fa-solid fa-user-shield"></i>
+                    <div id="role-avatar" class="w-12 h-12 rounded-xl border-2 border-red-500 overflow-hidden shadow-sm shrink-0">
+                        <img src="director.jpg" alt="दीपक राजपूत" class="w-full h-full object-cover">
                     </div>
                     <div>
-                        <h4 id="role-name-display" class="font-bold text-sm text-slate-900">दीपक राजपूत (प्रधान संपादक)</h4>
-                        <span id="role-badge-display" class="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full">
+                        <h4 id="role-name-display" class="font-bold text-sm text-slate-900">दीपक राजपूत (डायरेक्टर / प्रधान संपादक)</h4>
+                        <span id="role-badge-display" class="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full inline-block mt-0.5">
                             पूर्ण नियंत्रण (Full Access)
                         </span>
                     </div>
@@ -1657,8 +1676,8 @@
                 submitBtnLabel.innerText = "संपादित करके प्रकाशित करें";
                 roleNotice.innerText = "उप-संपादक मोड: तथ्य जांच एवं प्रकाशन सक्रिय";
             } else {
-                avatar.innerHTML = `<i class="fa-solid fa-user-shield text-red-600"></i>`;
-                avatar.className = "w-10 h-10 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold text-lg";
+                avatar.innerHTML = `<img src="director.jpg" alt="दीपक राजपूत" class="w-full h-full object-cover">`;
+                avatar.className = "w-12 h-12 rounded-xl border-2 border-red-500 overflow-hidden shadow-sm shrink-0";
                 nameEl.innerText = "दीपक राजपूत (डायरेक्टर / प्रधान संपादक)";
                 badgeEl.innerText = "पूर्ण नियंत्रण (Full Master Access)";
                 badgeEl.className = "bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full";
