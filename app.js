@@ -31,6 +31,13 @@ window.showToast = function(message, type = "success") {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
+    try {
+        if (typeof CloudStorageService !== 'undefined') {
+            CloudStorageService.init();
+        }
+    } catch(e) {
+        console.warn("CloudStorageService init notice:", e);
+    }
     try { initDateTime(); } catch(e) {}
     try { initBreakingTicker(); } catch(e) {}
     try { renderDailyRatesBar(); } catch(e) {}
@@ -42,6 +49,25 @@ document.addEventListener("DOMContentLoaded", () => {
     try { setupMobileMenu(); } catch(e) {}
     try { trackVisitor(); } catch(e) {}
     try { setupSearchSystem(); } catch(e) {}
+});
+
+// Real-Time Multi-Device Sync Event Listener (Auto-updates UI across all connected devices)
+window.addEventListener('todayindia:cloud_updated', (e) => {
+    try {
+        const detail = (e && e.detail) || {};
+        console.log("☁️ Multi-device cloud sync update:", detail);
+        if (detail.type === 'articles') {
+            if (typeof renderHomePageContent === 'function') renderHomePageContent();
+            if (typeof renderCategoryPage === 'function') renderCategoryPage();
+        } else if (detail.type === 'breaking') {
+            if (typeof initBreakingTicker === 'function') initBreakingTicker();
+        } else if (detail.type === 'ads') {
+            if (typeof renderAdBanners === 'function') renderAdBanners();
+            if (typeof window.initUniversalAdEngine === 'function') window.initUniversalAdEngine();
+        }
+    } catch(err) {
+        console.warn("Error handling cloud update:", err);
+    }
 });
 
 // 1. Live Date & Panchang Display

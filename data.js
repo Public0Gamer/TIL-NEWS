@@ -462,12 +462,18 @@ const StorageService = {
         newArticle.isDemo = false;
         articles.unshift(newArticle);
         this.saveArticles(articles);
+        if (typeof CloudStorageService !== 'undefined' && CloudStorageService.isCloudReady()) {
+            CloudStorageService.saveArticle(newArticle);
+        }
         return articles;
     },
     deleteArticle(id) {
         let articles = this.getArticles();
         articles = articles.filter(a => a.id !== id);
         this.saveArticles(articles);
+        if (typeof CloudStorageService !== 'undefined' && CloudStorageService.isCloudReady()) {
+            CloudStorageService.deleteArticle(id);
+        }
         return articles;
     },
     deleteDemoArticles() {
@@ -487,6 +493,10 @@ const StorageService = {
             isHero: (a.id === id)
         }));
         this.saveArticles(articles);
+        if (typeof CloudStorageService !== 'undefined' && CloudStorageService.isCloudReady()) {
+            const heroArt = articles.find(a => a.id === id);
+            if (heroArt) CloudStorageService.saveArticle(heroArt);
+        }
         return articles;
     },
     updateArticle(id, updatedData) {
@@ -498,6 +508,9 @@ const StorageService = {
             }
             articles[index] = { ...articles[index], ...updatedData };
             this.saveArticles(articles);
+            if (typeof CloudStorageService !== 'undefined' && CloudStorageService.isCloudReady()) {
+                CloudStorageService.saveArticle(articles[index]);
+            }
             return articles[index];
         }
         return null;
@@ -519,6 +532,9 @@ const StorageService = {
     },
     saveBreakingNews(list) {
         this.safeSetItem("todayindia_breaking", JSON.stringify(list));
+        if (typeof CloudStorageService !== 'undefined' && CloudStorageService.isCloudReady()) {
+            CloudStorageService.saveBreakingNews(list);
+        }
     },
     addBreakingItem(text, priority = "normal") {
         const list = this.getBreakingNews();
@@ -584,12 +600,18 @@ const StorageService = {
         const tips = this.getCitizenTips();
         tips.unshift(tip);
         this.safeSetItem("todayindia_citizen_tips", JSON.stringify(tips));
+        if (typeof CloudStorageService !== 'undefined' && CloudStorageService.isCloudReady()) {
+            CloudStorageService.saveCitizenTip(tip);
+        }
         return tips;
     },
     deleteCitizenTip(id) {
         let tips = this.getCitizenTips();
         tips = tips.filter(t => t.id !== id);
         this.safeSetItem("todayindia_citizen_tips", JSON.stringify(tips));
+        if (typeof CloudStorageService !== 'undefined' && CloudStorageService.isCloudReady()) {
+            CloudStorageService.deleteCitizenTip(id);
+        }
         return tips;
     },
 
@@ -636,6 +658,9 @@ const StorageService = {
         };
         campaigns.unshift(newAd);
         this.saveAdCampaigns(campaigns);
+        if (typeof CloudStorageService !== 'undefined' && CloudStorageService.isCloudReady()) {
+            CloudStorageService.saveAd(newAd);
+        }
         return newAd;
     },
 
@@ -645,6 +670,9 @@ const StorageService = {
         if (index !== -1) {
             campaigns[index] = { ...campaigns[index], ...updatedFields };
             this.saveAdCampaigns(campaigns);
+            if (typeof CloudStorageService !== 'undefined' && CloudStorageService.isCloudReady()) {
+                CloudStorageService.saveAd(campaigns[index]);
+            }
             return campaigns[index];
         }
         return null;
@@ -654,6 +682,9 @@ const StorageService = {
         let campaigns = this.getAdCampaigns();
         campaigns = campaigns.filter(c => c.id !== id);
         this.saveAdCampaigns(campaigns);
+        if (typeof CloudStorageService !== 'undefined' && CloudStorageService.isCloudReady()) {
+            CloudStorageService.deleteAd(id);
+        }
         return campaigns;
     },
 
@@ -663,6 +694,9 @@ const StorageService = {
         if (ad) {
             ad.enabled = !ad.enabled;
             this.saveAdCampaigns(campaigns);
+            if (typeof CloudStorageService !== 'undefined' && CloudStorageService.isCloudReady()) {
+                CloudStorageService.saveAd(ad);
+            }
             return ad.enabled;
         }
         return false;
@@ -1181,3 +1215,495 @@ const TrackingService = {
         return 'संपादकीय सदस्य';
     }
 };
+
+
+// Official Firebase Project Credentials for TODAY INDIA LIVE NEWS
+const DEFAULT_FIREBASE_CONFIG = {
+    apiKey: "AIzaSyBrvu8aoDir1jIjrrxNH2YQsQNL2-KmaAI",
+    authDomain: "odayindialivenews.firebaseapp.com",
+    projectId: "odayindialivenews",
+    storageBucket: "odayindialivenews.firebasestorage.app",
+    messagingSenderId: "699830943250",
+    appId: "1:699830943250:web:027894b86241ce36d122cb",
+    measurementId: "G-2V9DC4HP0Y"
+};
+
+// ==========================================
+// CloudStorageService - Offline-First Hybrid Cloud Engine
+// Google Firebase Firestore + ImgBB Free Cloud CDN
+// Lifetime Permanent Storage & Real-Time Sync
+// ==========================================
+const CloudStorageService = {
+    db: null,
+    firebaseApp: null,
+    isInitialized: false,
+    _activeListeners: [],
+
+    // 1. Configuration Helpers
+    getFirebaseConfig() {
+        try {
+            const raw = localStorage.getItem("todayindia_firebase_config");
+            if (raw) return JSON.parse(raw);
+            return DEFAULT_FIREBASE_CONFIG;
+        } catch (e) {
+            return DEFAULT_FIREBASE_CONFIG;
+        }
+    },
+
+    saveFirebaseConfig(configObjOrString) {
+        try {
+            let config = configObjOrString;
+            if (typeof config === 'string') {
+                let clean = config.trim();
+                if (clean.includes('{') && clean.includes('}')) {
+                    clean = clean.substring(clean.indexOf('{'), clean.lastIndexOf('}') + 1);
+                    try {
+                        config = JSON.parse(clean);
+                    } catch (err) {
+                        config = new Function('return ' + clean)();
+                    }
+                } else {
+                    config = JSON.parse(clean);
+                }
+            }
+            if (config && (config.apiKey || config.projectId)) {
+                localStorage.setItem("todayindia_firebase_config", JSON.stringify(config));
+                this.init(true);
+                return { success: true, config };
+            }
+            return { success: false, error: "अमान्य फायरबेस सेटिंग्स (apiKey या projectId गायब है)" };
+        } catch (e) {
+            return { success: false, error: e.message };
+        }
+    },
+
+    clearFirebaseConfig() {
+        try {
+            this._activeListeners.forEach(unsub => {
+                if (typeof unsub === 'function') unsub();
+            });
+            this._activeListeners = [];
+        } catch(e) {}
+        localStorage.removeItem("todayindia_firebase_config");
+        this.db = null;
+        this.firebaseApp = null;
+        this.isInitialized = false;
+    },
+
+    getImgBBKey() {
+        return localStorage.getItem("todayindia_imgbb_key") || "";
+    },
+
+    saveImgBBKey(key) {
+        if (key && typeof key === 'string' && key.trim()) {
+            localStorage.setItem("todayindia_imgbb_key", key.trim());
+        } else {
+            localStorage.removeItem("todayindia_imgbb_key");
+        }
+    },
+
+    isCloudReady() {
+        return !!(this.db && this.isInitialized);
+    },
+
+    isImgBBReady() {
+        return !!(this.getImgBBKey());
+    },
+
+    getStatus() {
+        const config = this.getFirebaseConfig();
+        const imgbb = this.getImgBBKey();
+        return {
+            cloudConnected: this.isCloudReady(),
+            hasFirebaseConfig: !!(config && config.projectId),
+            projectId: (config && config.projectId) || null,
+            hasImgBB: !!imgbb,
+            imgbbKeyMasked: imgbb ? (imgbb.substring(0, 4) + "••••••••" + imgbb.slice(-4)) : null
+        };
+    },
+
+    // 2. Initialize Firebase and Firestore
+    init(forceReinit = false) {
+        if (this.isInitialized && !forceReinit) return true;
+        if (typeof window === 'undefined' || typeof window.firebase === 'undefined') {
+            return false;
+        }
+
+        const config = this.getFirebaseConfig();
+        if (!config || !config.apiKey || !config.projectId) {
+            return false;
+        }
+
+        try {
+            if (window.firebase.apps && window.firebase.apps.length > 0) {
+                this.firebaseApp = window.firebase.apps[0];
+            } else {
+                this.firebaseApp = window.firebase.initializeApp(config);
+            }
+            this.db = window.firebase.firestore();
+            this.isInitialized = true;
+            console.log("🟢 TODAY INDIA LIVE: Google Firebase Firestore Connected Successfully! Project:", config.projectId);
+
+            this.setupRealtimeListeners();
+            return true;
+        } catch (e) {
+            console.error("Firebase initialization failed:", e);
+            this.isInitialized = false;
+            return false;
+        }
+    },
+
+    // 3. Realtime Listeners for Multi-Device Auto-Sync
+    setupRealtimeListeners() {
+        if (!this.db) return;
+
+        this._activeListeners.forEach(unsub => {
+            if (typeof unsub === 'function') unsub();
+        });
+        this._activeListeners = [];
+
+        // A. Listen to Articles Collection
+        try {
+            const unsubArticles = this.db.collection("articles").onSnapshot((snapshot) => {
+                if (!snapshot || snapshot.empty) return;
+                const cloudArticles = [];
+                snapshot.forEach(doc => {
+                    cloudArticles.push({ id: doc.id, ...doc.data() });
+                });
+                
+                if (cloudArticles.length > 0) {
+                    cloudArticles.sort((a, b) => {
+                        const tA = a.createdAtTimestamp || (a.date ? new Date(a.date).getTime() : 0);
+                        const tB = b.createdAtTimestamp || (b.date ? new Date(b.date).getTime() : 0);
+                        return tB - tA;
+                    });
+                    
+                    localStorage.setItem("todayindia_articles", JSON.stringify(cloudArticles));
+                    window.dispatchEvent(new CustomEvent('todayindia:cloud_updated', {
+                        detail: { type: 'articles', count: cloudArticles.length }
+                    }));
+                }
+            }, (err) => {
+                console.warn("Firestore articles listener warning:", err);
+            });
+            this._activeListeners.push(unsubArticles);
+        } catch (e) {
+            console.warn("Could not attach articles listener:", e);
+        }
+
+        // B. Listen to Breaking News
+        try {
+            const unsubBreaking = this.db.collection("settings").doc("breaking_news").onSnapshot((doc) => {
+                if (doc && doc.exists && doc.data() && Array.isArray(doc.data().items)) {
+                    const items = doc.data().items;
+                    if (items.length > 0) {
+                        localStorage.setItem("todayindia_breaking", JSON.stringify(items));
+                        window.dispatchEvent(new CustomEvent('todayindia:cloud_updated', {
+                            detail: { type: 'breaking', count: items.length }
+                        }));
+                    }
+                }
+            }, (err) => console.warn("Firestore breaking listener warning:", err));
+            this._activeListeners.push(unsubBreaking);
+        } catch (e) {
+            console.warn("Could not attach breaking listener:", e);
+        }
+
+        // C. Listen to Ads
+        try {
+            const unsubAds = this.db.collection("ads").onSnapshot((snapshot) => {
+                if (snapshot && !snapshot.empty) {
+                    const ads = [];
+                    snapshot.forEach(doc => ads.push({ id: doc.id, ...doc.data() }));
+                    if (ads.length > 0) {
+                        localStorage.setItem("todayindia_ad_campaigns", JSON.stringify(ads));
+                        window.dispatchEvent(new CustomEvent('todayindia:cloud_updated', {
+                            detail: { type: 'ads', count: ads.length }
+                        }));
+                    }
+                }
+            }, (err) => console.warn("Firestore ads listener warning:", err));
+            this._activeListeners.push(unsubAds);
+        } catch (e) {
+            console.warn("Could not attach ads listener:", e);
+        }
+
+        // D. Listen to Citizen Tips
+        try {
+            const unsubTips = this.db.collection("citizen_tips").onSnapshot((snapshot) => {
+                if (snapshot && !snapshot.empty) {
+                    const tips = [];
+                    snapshot.forEach(doc => tips.push({ id: doc.id, ...doc.data() }));
+                    if (tips.length > 0) {
+                        tips.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                        localStorage.setItem("todayindia_citizen_tips", JSON.stringify(tips));
+                        window.dispatchEvent(new CustomEvent('todayindia:cloud_updated', {
+                            detail: { type: 'tips', count: tips.length }
+                        }));
+                    }
+                }
+            }, (err) => console.warn("Firestore citizen_tips listener warning:", err));
+            this._activeListeners.push(unsubTips);
+        } catch (e) {
+            console.warn("Could not attach tips listener:", e);
+        }
+    },
+
+    // 4. Cloud CRUD operations
+    async saveArticle(article) {
+        if (!this.isCloudReady() || !article || !article.id) return false;
+        try {
+            const dataToSave = { ...article };
+            if (!dataToSave.createdAtTimestamp) {
+                dataToSave.createdAtTimestamp = Date.now();
+            }
+            await this.db.collection("articles").doc(article.id).set(dataToSave, { merge: true });
+            return true;
+        } catch (e) {
+            console.error("Cloud saveArticle failed:", e);
+            return false;
+        }
+    },
+
+    async deleteArticle(articleId) {
+        if (!this.isCloudReady() || !articleId) return false;
+        try {
+            await this.db.collection("articles").doc(articleId).delete();
+            return true;
+        } catch (e) {
+            console.error("Cloud deleteArticle failed:", e);
+            return false;
+        }
+    },
+
+    async saveBreakingNews(items) {
+        if (!this.isCloudReady() || !Array.isArray(items)) return false;
+        try {
+            await this.db.collection("settings").doc("breaking_news").set({
+                items: items,
+                updatedAt: Date.now()
+            }, { merge: true });
+            return true;
+        } catch (e) {
+            console.error("Cloud saveBreakingNews failed:", e);
+            return false;
+        }
+    },
+
+    async saveAd(ad) {
+        if (!this.isCloudReady() || !ad || !ad.id) return false;
+        try {
+            await this.db.collection("ads").doc(ad.id).set(ad, { merge: true });
+            return true;
+        } catch (e) {
+            console.error("Cloud saveAd failed:", e);
+            return false;
+        }
+    },
+
+    async deleteAd(adId) {
+        if (!this.isCloudReady() || !adId) return false;
+        try {
+            await this.db.collection("ads").doc(adId).delete();
+            return true;
+        } catch (e) {
+            console.error("Cloud deleteAd failed:", e);
+            return false;
+        }
+    },
+
+    async saveCitizenTip(tip) {
+        if (!this.isCloudReady() || !tip || !tip.id) return false;
+        try {
+            await this.db.collection("citizen_tips").doc(tip.id).set(tip, { merge: true });
+            return true;
+        } catch (e) {
+            console.error("Cloud saveCitizenTip failed:", e);
+            return false;
+        }
+    },
+
+    async deleteCitizenTip(tipId) {
+        if (!this.isCloudReady() || !tipId) return false;
+        try {
+            await this.db.collection("citizen_tips").doc(tipId).delete();
+            return true;
+        } catch (e) {
+            console.error("Cloud deleteCitizenTip failed:", e);
+            return false;
+        }
+    },
+
+    // 5. ImgBB Free Cloud Media Upload (returns fast CDN URL: https://i.ibb.co/...)
+    async uploadImageToImgBB(fileOrBase64) {
+        if (!fileOrBase64) return "";
+        if (typeof fileOrBase64 === 'string' && (fileOrBase64.startsWith('http://') || fileOrBase64.startsWith('https://'))) {
+            return fileOrBase64;
+        }
+
+        const apiKey = this.getImgBBKey();
+        if (!apiKey) {
+            if (typeof ImageCompressor !== 'undefined') {
+                return await ImageCompressor.compress(fileOrBase64, 900, 600, 0.72);
+            }
+            return fileOrBase64;
+        }
+
+        try {
+            let base64Data = "";
+            if (typeof fileOrBase64 === 'string' && fileOrBase64.startsWith('data:image/')) {
+                base64Data = fileOrBase64.split(',')[1];
+            } else if (fileOrBase64 instanceof File || fileOrBase64 instanceof Blob) {
+                let compressedBase64 = fileOrBase64;
+                if (typeof ImageCompressor !== 'undefined') {
+                    compressedBase64 = await ImageCompressor.compress(fileOrBase64, 1200, 800, 0.82);
+                } else {
+                    const reader = new FileReader();
+                    compressedBase64 = await new Promise((res) => {
+                        reader.onload = ev => res(ev.target.result);
+                        reader.readAsDataURL(fileOrBase64);
+                    });
+                }
+                base64Data = (typeof compressedBase64 === 'string' && compressedBase64.includes(','))
+                    ? compressedBase64.split(',')[1]
+                    : compressedBase64;
+            } else {
+                base64Data = fileOrBase64;
+            }
+
+            const formData = new FormData();
+            formData.append("image", base64Data);
+
+            const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+                method: "POST",
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error(`ImgBB upload error: HTTP ${response.status}`);
+            }
+
+            const json = await response.json();
+            if (json && json.success && json.data && json.data.url) {
+                console.log("☁️ ImgBB Cloud CDN Upload Successful:", json.data.url);
+                return json.data.url;
+            } else {
+                throw new Error(json.error ? json.error.message : "Upload failed");
+            }
+        } catch (e) {
+            console.warn("ImgBB upload failed, falling back to local compressed image:", e);
+            if (typeof ImageCompressor !== 'undefined') {
+                return await ImageCompressor.compress(fileOrBase64, 900, 600, 0.72);
+            }
+            return fileOrBase64;
+        }
+    },
+
+    // 6. Test Firebase Connection
+    async testConnection(configString = null) {
+        try {
+            let cfg = configString ? null : this.getFirebaseConfig();
+            if (configString) {
+                const parseRes = this.saveFirebaseConfig(configString);
+                if (!parseRes.success) {
+                    return { success: false, message: parseRes.error };
+                }
+                cfg = parseRes.config;
+            }
+
+            if (!cfg || !cfg.apiKey || !cfg.projectId) {
+                return { success: false, message: "फायरबेस सेटिंग्स नहीं मिली। कृपया Config JSON पेस्ट करें।" };
+            }
+
+            if (typeof window.firebase === 'undefined') {
+                return { success: false, message: "Firebase SDK स्क्रिप्ट्स लोड नहीं हुईं। कृपया इंटरनेट कनेक्शन जांचें।" };
+            }
+
+            const testApp = (window.firebase.apps && window.firebase.apps.length > 0)
+                ? window.firebase.apps[0]
+                : window.firebase.initializeApp(cfg);
+            const db = testApp.firestore();
+
+            const testId = "ping-" + Date.now();
+            await db.collection("_ping_test").doc(testId).set({
+                ping: "ok",
+                timestamp: Date.now(),
+                channel: "TODAY INDIA LIVE NEWS"
+            });
+            await db.collection("_ping_test").doc(testId).delete();
+
+            return {
+                success: true,
+                message: `✅ गूगल फायरबेस क्लाउड से सफलतापूर्वक कनेक्शन स्थापित हो गया! (Project: ${cfg.projectId})`
+            };
+        } catch (e) {
+            return {
+                success: false,
+                message: `❌ कनेक्शन विफल: ${e.message || "फायरबेस क्रेडेंशियल्स या Firestore रूल्स जांचें।"}`
+            };
+        }
+    },
+
+    // 7. 1-Click Complete Data Migration from LocalStorage to Firebase Cloud
+    async migrateLocalDataToCloud(onProgress = null) {
+        if (!this.isCloudReady()) {
+            return { success: false, message: "क्लाउड कनेक्टेड नहीं है। पहले फायरबेस क्रेडेंशियल्स जोड़ें।" };
+        }
+
+        try {
+            let total = 0;
+            let completed = 0;
+
+            const articles = (typeof StorageService !== 'undefined') ? StorageService.getArticles() : [];
+            const breaking = (typeof StorageService !== 'undefined') ? StorageService.getBreakingNews() : [];
+            const ads = (typeof StorageService !== 'undefined') ? StorageService.getAdCampaigns() : [];
+            const tips = (typeof StorageService !== 'undefined') ? StorageService.getCitizenTips() : [];
+
+            total = articles.length + 1 + ads.length + tips.length;
+
+            if (onProgress) onProgress({ step: "प्रारंभ", completed: 0, total });
+
+            // 1. Articles
+            for (let i = 0; i < articles.length; i++) {
+                const art = articles[i];
+                await this.saveArticle(art);
+                completed++;
+                if (onProgress) onProgress({ step: `खबर अपलोड हो रही है (${completed}/${total})`, completed, total });
+            }
+
+            // 2. Breaking News
+            await this.saveBreakingNews(breaking);
+            completed++;
+            if (onProgress) onProgress({ step: `लाल पट्टी (ब्रेकिंग टिकर) अपलोड हुई`, completed, total });
+
+            // 3. Ads
+            for (let i = 0; i < ads.length; i++) {
+                await this.saveAd(ads[i]);
+                completed++;
+                if (onProgress) onProgress({ step: `विज्ञापन अपलोड हो रहा है (${completed}/${total})`, completed, total });
+            }
+
+            // 4. Tips
+            for (let i = 0; i < tips.length; i++) {
+                await this.saveCitizenTip(tips[i]);
+                completed++;
+                if (onProgress) onProgress({ step: `नागरिक टिप अपलोड हो रही है (${completed}/${total})`, completed, total });
+            }
+
+            return {
+                success: true,
+                message: `🎉 बधाई हो! सभी ${completed} आइटम सफलतापूर्वक Google Cloud Firestore पर माइग्रेट हो गए!`,
+                stats: { articles: articles.length, breaking: breaking.length, ads: ads.length, tips: tips.length }
+            };
+        } catch (e) {
+            return { success: false, message: "माइग्रेशन के दौरान त्रुटि: " + e.message };
+        }
+    }
+};
+
+// Global Browser Exports
+if (typeof window !== 'undefined') {
+    window.StorageService = StorageService;
+    window.TrackingService = TrackingService;
+    window.CloudStorageService = CloudStorageService;
+}

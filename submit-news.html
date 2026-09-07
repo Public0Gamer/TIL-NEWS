@@ -223,8 +223,11 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="js/data.js?v=20260907_v9_broadcast"></script>
-    <script src="js/app.js?v=20260907_v9_broadcast"></script>
+    <!-- Google Firebase SDK (Compat v10 for Free Lifetime Cloud Storage) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="js/data.js?v=20260907_v10_cloud"></script>
+    <script src="js/app.js?v=20260907_v10_cloud"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const form = document.getElementById("citizen-report-form");
@@ -241,7 +244,9 @@
                     try {
                         previewBox.classList.remove("hidden");
                         previewName.innerText = `⏳ फोटो तैयार की जा रही है: ${file.name}...`;
-                        if (typeof ImageCompressor !== 'undefined') {
+                        if (typeof CloudStorageService !== 'undefined') {
+                            uploadedImageUrl = await CloudStorageService.uploadImageToImgBB(file);
+                        } else if (typeof ImageCompressor !== 'undefined') {
                             uploadedImageUrl = await ImageCompressor.compress(file, 900, 600, 0.72);
                         } else {
                             const reader = new FileReader();
@@ -251,7 +256,8 @@
                             });
                         }
                         previewImg.src = uploadedImageUrl;
-                        previewName.innerText = `✅ फोटो लोड व कंप्रेस हो गई (${file.name})`;
+                        const isCloud = uploadedImageUrl.startsWith('http');
+                        previewName.innerText = `✅ फोटो तैयार (${file.name} - ${isCloud ? 'क्लाउड' : 'ऑप्टिमाइज़्ड'})`;
                     } catch(err) {
                         console.error("Photo compress error:", err);
                         previewName.innerText = `⚠️ ${file.name}`;

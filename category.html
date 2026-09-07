@@ -225,8 +225,11 @@
     </script>
 
     <!-- Scripts -->
-    <script src="js/data.js?v=20260907_v9_broadcast"></script>
-    <script src="js/app.js?v=20260907_v9_broadcast"></script>
+    <!-- Google Firebase SDK (Compat v10 for Free Lifetime Cloud Storage) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="js/data.js?v=20260907_v10_cloud"></script>
+    <script src="js/app.js?v=20260907_v10_cloud"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const urlParams = new URLSearchParams(window.location.search);
