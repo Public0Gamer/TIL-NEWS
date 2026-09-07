@@ -30,7 +30,17 @@ window.showToast = function(message, type = "success") {
     }
 };
 
+// Immediate inline theme check to avoid flicker
+(function() {
+    try {
+        if (localStorage.getItem("todayindia_theme") === "dark") {
+            document.documentElement.classList.add("dark");
+        }
+    } catch(e) {}
+})();
+
 document.addEventListener("DOMContentLoaded", () => {
+    try { initTheme(); } catch(e) {}
     try {
         if (typeof CloudStorageService !== 'undefined') {
             CloudStorageService.init();
@@ -1009,4 +1019,148 @@ window.performLiveSearch = function(query) {
             `).join("")}
         </div>
     `;
+};
+
+
+// ==========================================
+// 🌙 Dark / Night Reading Mode Theme Engine
+// ==========================================
+function initTheme() {
+    const saved = localStorage.getItem("todayindia_theme") || "light";
+    if (saved === "dark") {
+        document.documentElement.classList.add("dark");
+    } else {
+        document.documentElement.classList.remove("dark");
+    }
+    updateThemeIcons(saved === "dark");
+}
+
+function updateThemeIcons(isDark) {
+    document.querySelectorAll(".theme-icon").forEach(el => {
+        el.innerText = isDark ? "☀️" : "🌙";
+    });
+    document.querySelectorAll(".theme-toggle-btn").forEach(btn => {
+        btn.title = isDark ? "दिन का मोड (Light Mode) चालू करें" : "नाइट/डार्क मोड (Dark Mode) चालू करें";
+    });
+}
+
+window.toggleTheme = function() {
+    const isDark = document.documentElement.classList.toggle("dark");
+    const theme = isDark ? "dark" : "light";
+    localStorage.setItem("todayindia_theme", theme);
+    updateThemeIcons(isDark);
+};
+
+// ==========================================
+// 📰 Digital E-Paper Reader Engine
+// ==========================================
+let currentEPaperPage = 1;
+
+window.openEPaperModal = function() {
+    const epaper = (typeof StorageService !== 'undefined' && StorageService.getEPaperInfo) ? StorageService.getEPaperInfo() : null;
+    if (!epaper) return;
+
+    let modal = document.getElementById("epaper-reader-modal");
+    if (!modal) {
+        modal = document.createElement("div");
+        modal.id = "epaper-reader-modal";
+        modal.className = "fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/85 backdrop-blur-md transition-opacity duration-300 font-hindi";
+        document.body.appendChild(modal);
+    }
+
+    currentEPaperPage = 1;
+    renderEPaperModalContent(modal, epaper);
+    modal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+};
+
+function renderEPaperModalContent(modal, epaper) {
+    const page = epaper.pages.find(p => p.pageNum === currentEPaperPage) || epaper.pages[0];
+
+    modal.innerHTML = `
+        <div class="bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-2xl max-w-4xl w-full border border-slate-200 dark:border-slate-800 flex flex-col max-h-[92vh] transition-all">
+            <!-- Header Bar -->
+            <div class="flex items-center justify-between px-4 sm:px-6 py-3.5 bg-slate-900 text-white border-b border-slate-800 shrink-0">
+                <div class="flex items-center gap-3">
+                    <span class="bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded tracking-wider uppercase flex items-center gap-1">
+                        <i class="fa-solid fa-newspaper"></i> ई-अखबार
+                    </span>
+                    <div>
+                        <h3 class="font-black text-sm sm:text-base text-white truncate">${epaper.title}</h3>
+                        <p class="text-[11px] text-slate-300">📅 ${epaper.date} | 📍 ${epaper.edition}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="downloadEPaperPDF()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1 cursor-pointer">
+                        <i class="fa-solid fa-download"></i> <span class="hidden sm:inline">PDF डाउनलोड</span>
+                    </button>
+                    <button type="button" onclick="closeEPaperModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-red-600 flex items-center justify-center text-white transition cursor-pointer text-sm font-bold" title="बंद करें">
+                        ✕
+                    </button>
+                </div>
+            </div>
+
+            <!-- Page Navigation Strip -->
+            <div class="px-4 py-2 bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between gap-2 overflow-x-auto text-xs shrink-0 no-scrollbar">
+                <div class="flex items-center gap-1.5">
+                    ${epaper.pages.map(p => `
+                        <button type="button" onclick="changeEPaperPage(${p.pageNum})" class="px-3 py-1 rounded-lg font-bold transition cursor-pointer ${p.pageNum === currentEPaperPage ? 'bg-red-600 text-white shadow-xs' : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200'}">
+                            पन्ना ${p.pageNum}
+                        </button>
+                    `).join("")}
+                </div>
+                <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 shrink-0">
+                    ${page.name} (${currentEPaperPage}/${epaper.totalPages})
+                </span>
+            </div>
+
+            <!-- Scrollable Newspaper Page Viewer -->
+            <div class="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-200/70 dark:bg-slate-950/80 flex items-center justify-center">
+                <div class="epaper-newspaper-page rounded-2xl overflow-hidden max-w-2xl w-full border border-slate-300 dark:border-slate-700 shadow-xl bg-white dark:bg-slate-900 transition duration-300">
+                    <div class="relative group">
+                        <img src="${page.preview}" alt="${page.name}" class="w-full h-auto object-cover select-none">
+                        <div class="p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
+                            <span class="font-bold text-slate-800 dark:text-slate-200"><i class="fa-solid fa-file-lines text-red-600 mr-1"></i> ${page.name}</span>
+                            <span class="text-slate-400 text-[11px]">कानपुर संस्करण • डिजिटल ई-अखबार</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Control Footer -->
+            <div class="px-4 py-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3 shrink-0">
+                <button type="button" onclick="changeEPaperPage(${Math.max(1, currentEPaperPage - 1)})" ${currentEPaperPage === 1 ? 'disabled class="opacity-40 cursor-not-allowed text-xs font-bold text-slate-400 px-3 py-1.5"' : 'class="text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-red-600 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-xl cursor-pointer"'}>
+                    ◀ पिछला पन्ना
+                </button>
+                <div class="text-center">
+                    <span class="text-xs font-bold text-slate-800 dark:text-slate-200">पृष्ठ ${currentEPaperPage} of ${epaper.totalPages}</span>
+                </div>
+                <button type="button" onclick="changeEPaperPage(${Math.min(epaper.totalPages, currentEPaperPage + 1)})" ${currentEPaperPage === epaper.totalPages ? 'disabled class="opacity-40 cursor-not-allowed text-xs font-bold text-slate-400 px-3 py-1.5"' : 'class="text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-red-600 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-xl cursor-pointer"'}>
+                    अगला पन्ना ▶
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+window.changeEPaperPage = function(pageNum) {
+    currentEPaperPage = pageNum;
+    const modal = document.getElementById("epaper-reader-modal");
+    const epaper = (typeof StorageService !== 'undefined' && StorageService.getEPaperInfo) ? StorageService.getEPaperInfo() : null;
+    if (modal && epaper) {
+        renderEPaperModalContent(modal, epaper);
+    }
+};
+
+window.closeEPaperModal = function() {
+    const modal = document.getElementById("epaper-reader-modal");
+    if (modal) {
+        modal.classList.add("hidden");
+    }
+    document.body.style.overflow = "";
+};
+
+window.downloadEPaperPDF = function() {
+    alert("📄 आज का ई-अखबार (PDF Edition) डाउनलोड प्रारंभ हो रहा है...");
+    window.print();
 };

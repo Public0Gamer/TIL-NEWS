@@ -764,6 +764,25 @@ const StorageService = {
             adCampaignsCount: campaigns.length,
             activeAdsCount: campaigns.filter(c => c.enabled).length
         };
+    },
+
+    // E-Paper Digital Edition Data
+    getEPaperInfo() {
+        const today = new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+        return {
+            title: "TODAY INDIA LIVE NEWS — दैनिक डिजिटल संस्करण",
+            edition: "कानपुर व उत्तर प्रदेश महासंस्करण",
+            date: today,
+            totalPages: 4,
+            pages: [
+                { pageNum: 1, name: "मुख्य पृष्ठ (Front Page - ब्रेकिंग व प्रमुख हलचल)", preview: "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=1200&auto=format&fit=crop&q=80" },
+                { pageNum: 2, name: "हमारा कानपुर (City & Local Bureau)", preview: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&auto=format&fit=crop&q=80" },
+                { pageNum: 3, name: "कारोबार व मंडी भाव (Business & Bullion)", preview: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200&auto=format&fit=crop&q=80" },
+                { pageNum: 4, name: "देश-विदेश व विचार (National Editorial)", preview: "https://images.unsplash.com/photo-1495020689067-958852a7765e?w=1200&auto=format&fit=crop&q=80" }
+            ],
+            pdfUrl: "#",
+            downloadFileName: `TODAY_INDIA_LIVE_EPAPER_${new Date().toISOString().split('T')[0]}.pdf`
+        };
     }
 };
 
@@ -1546,6 +1565,50 @@ const CloudStorageService = {
             await this.db.collection("analytics").doc("portal").set(updateData, { merge: true });
         } catch(e) {
             console.warn("Could not set portal views baseline in cloud:", e);
+        }
+    },
+
+    // 3.8 Cloud Comments Engine (Cross-Device Discussion Forum)
+    async saveComment(articleId, comment) {
+        if (!this.isCloudReady() || !articleId || !comment) return false;
+        try {
+            const commentData = {
+                articleId: articleId,
+                name: comment.name || "नागरिक",
+                city: comment.city || "कानपुर",
+                text: comment.text || "",
+                timestamp: Date.now(),
+                createdAtFormatted: new Date().toLocaleString("hi-IN")
+            };
+            await this.db.collection("comments").add(commentData);
+            return true;
+        } catch(e) {
+            console.warn("Could not save comment to cloud:", e);
+            return false;
+        }
+    },
+
+    listenToArticleComments(articleId, callback) {
+        if (!this.isCloudReady() || !articleId || typeof callback !== 'function') return null;
+        try {
+            const unsub = this.db.collection("comments")
+                .where("articleId", "==", articleId)
+                .onSnapshot((snapshot) => {
+                    const comments = [];
+                    if (snapshot && !snapshot.empty) {
+                        snapshot.forEach(doc => {
+                            comments.push({ id: doc.id, ...doc.data() });
+                        });
+                        comments.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                    }
+                    localStorage.setItem(`todayindia_comments_${articleId}`, JSON.stringify(comments));
+                    callback(comments);
+                }, (err) => console.warn("Comments listener warning:", err));
+            this._activeListeners.push(unsub);
+            return unsub;
+        } catch(e) {
+            console.warn("Could not attach comments listener:", e);
+            return null;
         }
     },
 

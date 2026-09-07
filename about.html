@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
+    <!-- Anti-Flicker Theme Engine -->
+    <script>
+        (function() {
+            try {
+                const saved = localStorage.getItem("todayindia_theme");
+                if (saved === "dark" || (!saved && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+                    document.documentElement.classList.add("dark");
+                } else {
+                    document.documentElement.classList.remove("dark");
+                }
+            } catch(e) {}
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>हमारे बारे में (About Us) | TODAY INDIA LIVE NEWS | जैसी हकीकत, वैसी खबर</title>
@@ -15,6 +28,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -59,6 +73,23 @@
             </div>
         </div>
     </header>
+    <!-- 1.5 Official WhatsApp Channel Community Bar -->
+    <div class="bg-gradient-to-r from-emerald-700 via-teal-700 to-emerald-800 text-white text-xs py-2 px-4 shadow-sm font-hindi">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2 truncate">
+                <span class="bg-emerald-500/30 text-white font-bold px-2 py-0.5 rounded text-[10px] uppercase tracking-wider flex items-center gap-1 shrink-0">
+                    <i class="fa-brands fa-whatsapp text-emerald-300 text-xs"></i> ऑफिशियल चैनल
+                </span>
+                <span class="font-semibold text-[11px] sm:text-xs truncate">
+                    कानपुर व देश की हर बड़ी ब्रेकिंग न्यूज़ सबसे पहले सीधे अपने WhatsApp पर पाने के लिए हमारे ऑफिशियल चैनल से जुड़ें!
+                </span>
+            </div>
+            <a href="https://wa.me/918840026359?text=नमस्ते,%20मुझे%20TODAY%20INDIA%20LIVE%20NEWS%20के%20व्हाट्सएप%20चैनल%20से%20जुड़ना%20है" target="_blank" rel="noopener" class="bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-black px-3.5 py-1 rounded-full text-[11px] shrink-0 transition flex items-center gap-1 shadow-xs cursor-pointer">
+                <span>चैनल जॉइन करें ➔</span>
+            </a>
+        </div>
+    </div>
+
 
     <!-- Main Branding Bar -->
     <div class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
@@ -78,13 +109,20 @@
                 </div>
             </a>
             <div class="flex items-center gap-2">
-                <button type="button" onclick="openSearchModal()" class="w-9 h-9 rounded-lg bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-600 flex items-center justify-center transition border border-slate-200 cursor-pointer" title="खबरें खोजें (Search / Ctrl+K)">
+                <button type="button" onclick="toggleTheme()" class="theme-toggle-btn w-9 h-9 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-amber-400 flex items-center justify-center transition border border-slate-200 dark:border-slate-700 cursor-pointer" title="डार्क / लाइट मोड बदलें">
+                    <i class="fa-solid fa-moon text-sm"></i>
+                </button>
+                <button type="button" onclick="openEPaperModal()" class="bg-slate-800 hover:bg-slate-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer" title="डिजिटल ई-पेपर पढ़ें">
+                    <i class="fa-solid fa-newspaper text-amber-400"></i>
+                    <span class="hidden sm:inline">ई-पेपर</span>
+                </button>
+                <button type="button" onclick="openSearchModal()" class="w-9 h-9 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-red-50 text-slate-700 dark:text-slate-200 hover:text-red-600 flex items-center justify-center transition border border-slate-200 dark:border-slate-700 cursor-pointer" title="खबरें खोजें (Search / Ctrl+K)">
                     <i class="fa-solid fa-magnifying-glass text-sm"></i>
                 </button>
-                <a href="submit-news.html" class="bg-amber-50 text-amber-800 border border-amber-300 px-3 py-1.5 rounded-lg text-xs font-bold">
+                <a href="submit-news.html" class="bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700 px-3 py-1.5 rounded-lg text-xs font-bold">
                     <i class="fa-solid fa-camera mr-1"></i> खबर भेजें
                 </a>
-                <a href="index.html" class="bg-red-600 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold">
+                <a href="index.html" class="bg-red-600 hover:bg-red-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold">
                     <i class="fa-solid fa-tv mr-1"></i> LIVE TV
                 </a>
             </div>
@@ -384,6 +422,43 @@
 
         </section>
 
+        <!-- Section 6: Grievance Redressal Mechanism (IT Rules 2021 Compliance) -->
+        <section class="mt-8 bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="w-10 h-10 rounded-2xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-scale-balanced"></i>
+                </span>
+                <div>
+                    <h3 class="text-xl font-black text-slate-900 dark:text-white">शिकायत निवारण तंत्र (Grievance Redressal Desk)</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">सूचना प्रौद्योगिकी (मध्यवर्ती दिशानिर्देश और डिजिटल मीडिया आचार संहिता) नियम, 2021 के अंतर्गत</p>
+                </div>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+                TODAY INDIA LIVE NEWS प्रेस काउंसिल ऑफ इंडिया (PCI) और सूचना एवं प्रसारण मंत्रालय, भारत सरकार के डिजिटल मीडिया आचार संहिता नियमों का कड़ाई से पालन करता है। यदि हमारे पोर्टल पर प्रकाशित किसी भी समाचार, लेख अथवा सामग्री से संबंधित आपको कोई आपत्ति या शिकायत है, तो आप हमारे नामित शिकायत निवारण अधिकारी को सीधे लिखित शिकायत भेज सकते हैं।
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-800/60 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
+                <div class="space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
+                    <p class="font-bold text-slate-900 dark:text-white text-sm">शिकायत निवारण अधिकारी:</p>
+                    <p class="font-bold text-red-600 dark:text-red-400 text-base">दीपक राजपूत</p>
+                    <p class="text-slate-500 dark:text-slate-400">पद: निदेशक एवं प्रधान संपादक (Director & Editor-in-Chief)</p>
+                    <p class="text-slate-500 dark:text-slate-400">पता: गुलमोहर विहार, नौबस्ता, कानपुर नगर, उत्तर प्रदेश - 208021</p>
+                </div>
+                <div class="space-y-2 text-xs text-slate-700 dark:text-slate-300">
+                    <p class="font-bold text-slate-900 dark:text-white">त्वरित संपर्क:</p>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-envelope text-red-600 w-4"></i>
+                        <span>ईमेल: <a href="mailto:todayindialivenews24@gmail.com" class="text-red-600 dark:text-red-400 font-bold hover:underline">todayindialivenews24@gmail.com</a></span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-phone text-emerald-600 w-4"></i>
+                        <span>हेल्पलाइन: <a href="tel:8840026359" class="text-slate-900 dark:text-white font-bold hover:underline">8840026359</a> (प्रातः 10 से सायं 6 बजे)</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 italic">
+                        * नियमानुसार शिकायत प्राप्ति के 24 घंटे में पावती तथा 15 कार्यदिवसों के भीतर समाधान सुनिश्चित किया जाता है।
+                    </p>
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- Footer -->
@@ -404,6 +479,24 @@
                 <a href="https://instagram.com/todayindialivenews" target="_blank" rel="noopener" class="bg-gradient-to-r from-amber-500 via-pink-500 to-purple-600 text-white px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 shadow-xs hover:scale-105 active:scale-95 transition"><i class="fa-brands fa-instagram text-base"></i> Instagram</a>
                 <a href="https://twitter.com/TodayIndialive1?s=08" target="_blank" rel="noopener" class="bg-black hover:bg-slate-800 text-white px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 border border-slate-700 shadow-xs hover:scale-105 active:scale-95 transition"><i class="fa-brands fa-x-twitter text-sm"></i> Twitter / X</a>
                 <a href="https://wa.me/918840026359" target="_blank" rel="noopener" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 shadow-xs hover:scale-105 active:scale-95 transition"><i class="fa-brands fa-whatsapp text-base"></i> WhatsApp</a>
+            </div>
+
+            <!-- IT Rules 2021 Compliance & Grievance Redressal Mechanism -->
+            <div class="mt-4 pt-4 border-t border-slate-800 bg-slate-900/60 rounded-2xl p-4 border border-slate-800 text-xs text-slate-400 font-hindi mb-4 text-left">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+                    <div>
+                        <span class="text-amber-400 font-bold flex items-center gap-1.5 mb-1">
+                            <i class="fa-solid fa-scale-balanced"></i> कानूनी अनुपालन एवं शिकायत निवारण (IT Rules 2021 Compliance)
+                        </span>
+                        <p class="text-[11px] leading-relaxed text-slate-400">
+                            सूचना प्रौद्योगिकी (मध्यवर्ती दिशानिर्देश और डिजिटल मीडिया आचार संहिता) नियम, 2021 के तहत समाचार सामग्री से संबंधित किसी भी आपत्ति या शिकायत के लिए हमारे शिकायत निवारण अधिकारी से संपर्क करें।
+                        </p>
+                    </div>
+                    <div class="shrink-0 bg-slate-800 px-3.5 py-2 rounded-xl border border-slate-700">
+                        <p class="font-bold text-slate-200">शिकायत अधिकारी: <span class="text-white">दीपक राजपूत (निदेशक)</span></p>
+                        <p class="text-[11px] text-slate-400">ईमेल: <a href="mailto:todayindialivenews24@gmail.com" class="text-amber-400 hover:underline">todayindialivenews24@gmail.com</a> | 📞 8840026359</p>
+                    </div>
+                </div>
             </div>
 
             <p>गुलमोहर विहार, नौबस्ता, कानपुर नगर, उत्तर प्रदेश | संपर्क: 8840026359 | ईमेल: todayindialivenews24@gmail.com</p>

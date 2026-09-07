@@ -239,3 +239,91 @@ body {
         color: #000;
     }
 }
+
+/* =======================================================
+   🌙 Comprehensive Night / Dark Mode Theme
+   ======================================================= */
+html.dark {
+    --news-bg: #090d16;
+    --news-card-bg: #111827;
+    --news-text: #f3f4f6;
+    --news-text-muted: #9ca3af;
+    --news-border: #1f2937;
+    color-scheme: dark;
+}
+
+html.dark body {
+    background-color: #090d16 !important;
+    color: #f3f4f6 !important;
+}
+
+/* Background overrides for dark mode */
+html.dark .bg-white {
+    background-color: #111827 !important;
+}
+
+html.dark .bg-slate-50 {
+    background-color: #0f172a !important;
+}
+
+html.dark .bg-slate-100 {
+    background-color: #1e293b !important;
+}
+
+html.dark .bg-slate-200 {
+    background-color: #334155 !important;
+}
+
+/* Text overrides for dark mode */
+html.dark .text-slate-900,
+html.dark .text-slate-800 {
+    color: #f9fafb !important;
+}
+
+html.dark .text-slate-700,
+html.dark .text-slate-600 {
+    color: #cbd5e1 !important;
+}
+
+html.dark .text-slate-500 {
+    color: #94a3b8 !important;
+}
+
+/* Borders for dark mode */
+html.dark .border-slate-100,
+html.dark .border-slate-200,
+html.dark .border-slate-300 {
+    border-color: #1f2937 !important;
+}
+
+/* Cards & hover */
+html.dark .news-card {
+    background-color: #111827 !important;
+    border-color: #1f2937 !important;
+}
+
+html.dark .news-card:hover {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Inputs in dark mode */
+html.dark input,
+html.dark textarea,
+html.dark select {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+    border-color: #334155 !important;
+}
+
+/* E-Paper Modal Styles */
+.epaper-newspaper-page {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+    background-color: #fffdf9;
+    border: 1px solid #e2e8f0;
+}
+html.dark .epaper-newspaper-page {
+    background-color: #1a2234;
+    border-color: #334155;
+    color: #f8fafc;
+}
+

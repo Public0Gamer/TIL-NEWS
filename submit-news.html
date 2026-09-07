@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
+    <!-- Anti-Flicker Theme Engine -->
+    <script>
+        (function() {
+            try {
+                const saved = localStorage.getItem("todayindia_theme");
+                if (saved === "dark" || (!saved && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+                    document.documentElement.classList.add("dark");
+                } else {
+                    document.documentElement.classList.remove("dark");
+                }
+            } catch(e) {}
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>खबर भेजें | TODAY INDIA LIVE NEWS कानपुर | Citizen Reporter</title>
@@ -14,6 +27,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -64,7 +78,10 @@
                 </div>
             </a>
             <div class="flex items-center gap-2">
-                <a href="category.html?cat=all" class="w-9 h-9 rounded-lg bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-600 flex items-center justify-center transition border border-slate-200" title="खबरें खोजें">
+                <button type="button" onclick="toggleTheme()" class="theme-toggle-btn w-9 h-9 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-amber-400 flex items-center justify-center transition border border-slate-200 dark:border-slate-700 cursor-pointer" title="डार्क / लाइट मोड बदलें">
+                    <i class="fa-solid fa-moon text-sm"></i>
+                </button>
+                <a href="category.html?cat=all" class="w-9 h-9 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-red-50 text-slate-700 dark:text-slate-200 hover:text-red-600 flex items-center justify-center transition border border-slate-200 dark:border-slate-700" title="खबरें खोजें">
                     <i class="fa-solid fa-magnifying-glass text-sm"></i>
                 </a>
                 <a href="https://api.whatsapp.com/send?phone=918840026359" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5">
@@ -213,6 +230,24 @@
                 <a href="https://instagram.com/todayindialivenews" target="_blank" rel="noopener" class="bg-gradient-to-r from-amber-500 via-pink-500 to-purple-600 text-white px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 shadow-xs hover:scale-105 active:scale-95 transition"><i class="fa-brands fa-instagram text-base"></i> Instagram</a>
                 <a href="https://twitter.com/TodayIndialive1?s=08" target="_blank" rel="noopener" class="bg-black hover:bg-slate-800 text-white px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 border border-slate-700 shadow-xs hover:scale-105 active:scale-95 transition"><i class="fa-brands fa-x-twitter text-sm"></i> Twitter / X</a>
                 <a href="https://wa.me/918840026359" target="_blank" rel="noopener" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 shadow-xs hover:scale-105 active:scale-95 transition"><i class="fa-brands fa-whatsapp text-base"></i> WhatsApp</a>
+            </div>
+
+            <!-- IT Rules 2021 Compliance & Grievance Redressal Mechanism -->
+            <div class="mt-4 pt-4 border-t border-slate-800 bg-slate-900/60 rounded-2xl p-4 border border-slate-800 text-xs text-slate-400 font-hindi mb-4 text-left">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+                    <div>
+                        <span class="text-amber-400 font-bold flex items-center gap-1.5 mb-1">
+                            <i class="fa-solid fa-scale-balanced"></i> कानूनी अनुपालन एवं शिकायत निवारण (IT Rules 2021 Compliance)
+                        </span>
+                        <p class="text-[11px] leading-relaxed text-slate-400">
+                            सूचना प्रौद्योगिकी (मध्यवर्ती दिशानिर्देश और डिजिटल मीडिया आचार संहिता) नियम, 2021 के तहत समाचार सामग्री से संबंधित किसी भी आपत्ति या शिकायत के लिए हमारे शिकायत निवारण अधिकारी से संपर्क करें।
+                        </p>
+                    </div>
+                    <div class="shrink-0 bg-slate-800 px-3.5 py-2 rounded-xl border border-slate-700">
+                        <p class="font-bold text-slate-200">शिकायत अधिकारी: <span class="text-white">दीपक राजपूत (निदेशक)</span></p>
+                        <p class="text-[11px] text-slate-400">ईमेल: <a href="mailto:todayindialivenews24@gmail.com" class="text-amber-400 hover:underline">todayindialivenews24@gmail.com</a> | 📞 8840026359</p>
+                    </div>
+                </div>
             </div>
 
             <p>मुख्यालय: गुलमोहर विहार, नौबस्ता, कानपुर नगर, उत्तर प्रदेश | मोबाइल: <a href="tel:8840026359" class="text-white hover:text-red-400 font-bold font-brand">8840026359</a> | ईमेल: <a href="mailto:todayindialivenews24@gmail.com" class="text-white hover:text-red-400">todayindialivenews24@gmail.com</a></p>
