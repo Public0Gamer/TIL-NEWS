@@ -766,23 +766,73 @@ const StorageService = {
         };
     },
 
-    // E-Paper Digital Edition Data
+    // Official WhatsApp Community Channel Link Engine
+    getWhatsAppLink() {
+        try {
+            const saved = localStorage.getItem("todayindia_whatsapp_channel_link");
+            if (saved && saved.trim().startsWith("http")) {
+                return saved.trim();
+            }
+        } catch(e) {}
+        return "https://whatsapp.com/channel/0029Va51llxJpe8ZsuceeA73C";
+    },
+
+    setWhatsAppLink(link) {
+        if (!link || typeof link !== 'string') return false;
+        try {
+            const cleanLink = link.trim();
+            localStorage.setItem("todayindia_whatsapp_channel_link", cleanLink);
+            if (typeof CloudStorageService !== 'undefined' && CloudStorageService.saveSetting) {
+                CloudStorageService.saveSetting("whatsapp_channel_link", cleanLink);
+            }
+            return true;
+        } catch(e) {
+            console.warn("Could not save WhatsApp link:", e);
+            return false;
+        }
+    },
+
+    // E-Paper Digital Edition Data (Clean - NO Demo Data)
     getEPaperInfo() {
-        const today = new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'long', year: 'numeric' });
-        return {
-            title: "TODAY INDIA LIVE NEWS — दैनिक डिजिटल संस्करण",
-            edition: "कानपुर व उत्तर प्रदेश महासंस्करण",
-            date: today,
-            totalPages: 4,
-            pages: [
-                { pageNum: 1, name: "मुख्य पृष्ठ (Front Page - ब्रेकिंग व प्रमुख हलचल)", preview: "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=1200&auto=format&fit=crop&q=80" },
-                { pageNum: 2, name: "हमारा कानपुर (City & Local Bureau)", preview: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&auto=format&fit=crop&q=80" },
-                { pageNum: 3, name: "कारोबार व मंडी भाव (Business & Bullion)", preview: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200&auto=format&fit=crop&q=80" },
-                { pageNum: 4, name: "देश-विदेश व विचार (National Editorial)", preview: "https://images.unsplash.com/photo-1495020689067-958852a7765e?w=1200&auto=format&fit=crop&q=80" }
-            ],
-            pdfUrl: "#",
-            downloadFileName: `TODAY_INDIA_LIVE_EPAPER_${new Date().toISOString().split('T')[0]}.pdf`
-        };
+        try {
+            const saved = localStorage.getItem("todayindia_epaper_data");
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (parsed && Array.isArray(parsed.pages) && parsed.pages.length > 0) {
+                    return parsed;
+                }
+            }
+        } catch(e) {}
+        return null; // Return null if not published yet!
+    },
+
+    saveEPaperInfo(epaperData) {
+        if (!epaperData || !Array.isArray(epaperData.pages)) return false;
+        try {
+            epaperData.updatedAt = new Date().toISOString();
+            epaperData.totalPages = epaperData.pages.length;
+            localStorage.setItem("todayindia_epaper_data", JSON.stringify(epaperData));
+            if (typeof CloudStorageService !== 'undefined' && CloudStorageService.saveEPaper) {
+                CloudStorageService.saveEPaper(epaperData);
+            }
+            return true;
+        } catch(e) {
+            console.warn("Could not save e-paper:", e);
+            return false;
+        }
+    },
+
+    deleteEPaper() {
+        try {
+            localStorage.removeItem("todayindia_epaper_data");
+            if (typeof CloudStorageService !== 'undefined' && CloudStorageService.deleteEPaper) {
+                CloudStorageService.deleteEPaper();
+            }
+            return true;
+        } catch(e) {
+            console.warn("Could not delete e-paper:", e);
+            return false;
+        }
     }
 };
 
@@ -1608,6 +1658,68 @@ const CloudStorageService = {
             return unsub;
         } catch(e) {
             console.warn("Could not attach comments listener:", e);
+            return null;
+        }
+    },
+
+    // 3.9 Cloud E-Paper & Platform Settings Engine
+    async saveEPaper(epaperData) {
+        if (!this.isCloudReady() || !epaperData) return false;
+        try {
+            await this.db.collection("settings").doc("epaper_edition").set({
+                ...epaperData,
+                updatedAt: Date.now()
+            });
+            return true;
+        } catch(e) {
+            console.warn("Cloud saveEPaper failed:", e);
+            return false;
+        }
+    },
+
+    async deleteEPaper() {
+        if (!this.isCloudReady()) return false;
+        try {
+            await this.db.collection("settings").doc("epaper_edition").delete();
+            return true;
+        } catch(e) {
+            console.warn("Cloud deleteEPaper failed:", e);
+            return false;
+        }
+    },
+
+    async saveSetting(key, val) {
+        if (!this.isCloudReady() || !key) return false;
+        try {
+            await this.db.collection("settings").doc(key).set({
+                value: val,
+                updatedAt: Date.now()
+            }, { merge: true });
+            return true;
+        } catch(e) {
+            console.warn("Cloud saveSetting failed:", e);
+            return false;
+        }
+    },
+
+    listenToEPaper(callback) {
+        if (!this.isCloudReady() || typeof callback !== 'function') return null;
+        try {
+            const unsub = this.db.collection("settings").doc("epaper_edition")
+                .onSnapshot((doc) => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        localStorage.setItem("todayindia_epaper_data", JSON.stringify(data));
+                        callback(data);
+                    } else {
+                        localStorage.removeItem("todayindia_epaper_data");
+                        callback(null);
+                    }
+                }, (err) => console.warn("E-Paper listener warning:", err));
+            this._activeListeners.push(unsub);
+            return unsub;
+        } catch(e) {
+            console.warn("Could not attach e-paper listener:", e);
             return null;
         }
     },

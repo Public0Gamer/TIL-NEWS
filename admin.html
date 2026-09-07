@@ -456,6 +456,10 @@
                     <span class="flex items-center gap-2"><i class="fa-solid fa-newspaper w-5 text-center text-emerald-600"></i> प्रकाशित खबरें (Published)</span>
                     <span id="sidebar-stories-count" class="text-xs bg-slate-200 text-slate-700 font-mono px-1.5 py-0.5 rounded font-bold">0</span>
                 </button>
+                <button onclick="switchTab('epaper')" id="nav-btn-epaper" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 transition flex items-center justify-between">
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-file-pdf w-5 text-center text-teal-600"></i> डिजिटल ई-अखबार (E-Paper)</span>
+                    <span id="sidebar-epaper-count" class="text-xs bg-teal-100 text-teal-800 font-mono px-1.5 py-0.5 rounded font-bold">0</span>
+                </button>
                 <button onclick="switchTab('ads')" id="nav-btn-ads" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 transition flex items-center justify-between">
                     <span class="flex items-center gap-2"><i class="fa-solid fa-rectangle-ad w-5 text-center text-indigo-600"></i> विज्ञापन प्रबंधन (Ad Space)</span>
                     <span id="sidebar-ads-count" class="text-xs bg-indigo-100 text-indigo-800 font-mono px-1.5 py-0.5 rounded font-bold">3</span>
@@ -1536,7 +1540,150 @@
                 </div>
             </div>
 
-        </main>
+            <!-- SECTION 8: DIGITAL E-PAPER & WHATSAPP COMMUNITY MANAGEMENT DESK -->
+        <div id="tab-epaper" class="hidden space-y-6">
+            <!-- Top Title Banner -->
+            <div class="bg-gradient-to-r from-teal-900 via-slate-900 to-slate-900 rounded-3xl p-6 sm:p-7 text-white shadow-lg border border-teal-800/60 font-hindi flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-2xl bg-teal-600/30 border border-teal-400/40 text-teal-400 flex items-center justify-center text-2xl shadow-inner shrink-0">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-xl sm:text-2xl font-black">डिजिटल ई-अखबार एवं कम्युनिटी डेस्क</h2>
+                            <span class="bg-teal-500 text-slate-950 font-black text-[10px] px-2 py-0.5 rounded uppercase">डायरेक्टर व उप-संपादक</span>
+                        </div>
+                        <p class="text-xs text-teal-200/80 mt-1">कानपुर नगर व उत्तर प्रदेश डिजिटल दैनिक ई-अखबार का प्रकाशन, पन्ने जोड़ना, हटाना व लाइव संचालन</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <button type="button" onclick="handleDeleteEntireEPaper()" id="btn-delete-all-epaper" class="hidden bg-red-600 hover:bg-red-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+                        <i class="fa-solid fa-trash-can"></i> आज का ई-अखबार हटाएं
+                    </button>
+                </div>
+            </div>
+
+            <!-- WhatsApp Channel / Group Link Hub -->
+            <div class="bg-white rounded-3xl p-6 border border-emerald-200 shadow-sm font-hindi">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl shrink-0">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-slate-900 text-base">🟢 ऑफिशियल WhatsApp चैनल / ग्रुप लिंक हब</h3>
+                        <p class="text-xs text-slate-500">यहाँ डाला गया लिंक पूरी वेबसाइट के सभी व्हाट्सएप बटनों और ई-अखबार मोडल पर तुरंत लागू हो जाएगा</p>
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-3 items-center">
+                    <div class="relative flex-1 w-full">
+                        <i class="fa-solid fa-link absolute left-3.5 top-3.5 text-slate-400 text-xs"></i>
+                        <input type="url" id="admin-whatsapp-channel-input" value="https://whatsapp.com/channel/0029Va51llxJpe8ZsuceeA73C" placeholder="https://whatsapp.com/channel/..." class="w-full pl-9 pr-3 py-2.5 bg-slate-50 rounded-xl border border-slate-300 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100 text-xs font-mono text-slate-900 outline-none">
+                    </div>
+                    <button type="button" onclick="saveAdminWhatsAppLink()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-2 cursor-pointer shadow-sm shrink-0">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>लिंक अपडेट करें</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Grid: Edition Details (Left) + Add New Page (Right) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 font-hindi">
+                <!-- Edition Metadata Form (5 Cols) -->
+                <div class="lg:col-span-5 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+                    <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+                        <i class="fa-solid fa-gear text-teal-600"></i>
+                        <h3 class="font-bold text-slate-900 text-sm">1. दैनिक संस्करण विवरण (Edition Info)</h3>
+                    </div>
+                    <form id="epaper-edition-form" onsubmit="handleSaveEPaperEdition(event)" class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">अखबार का नाम / शीर्षक</label>
+                            <input type="text" id="epaper-edition-title" value="TODAY INDIA LIVE NEWS — दैनिक डिजिटल संस्करण" required class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:border-teal-600 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">संस्करण का क्षेत्र (Edition Area)</label>
+                            <input type="text" id="epaper-edition-name" value="कानपुर व उत्तर प्रदेश महासंस्करण" required class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:border-teal-600 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">प्रकाशन तिथि (Date)</label>
+                            <input type="text" id="epaper-edition-date" value="सोमवार, 7 सितंबर 2026" required class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:border-teal-600 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">PDF डाउनलोड लिंक (वैकल्पिक)</label>
+                            <input type="text" id="epaper-edition-pdf" placeholder="https://... या # (वैकल्पिक)" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:border-teal-600 focus:outline-none font-mono">
+                        </div>
+                        <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-2 cursor-pointer shadow-sm">
+                            <i class="fa-solid fa-floppy-disk text-teal-400"></i>
+                            <span>संस्करण विवरण सुरक्षित करें</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Add Page Form (7 Cols) -->
+                <div class="lg:col-span-7 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-circle-plus text-teal-600"></i>
+                            <h3 class="font-bold text-slate-900 text-sm">2. नया पन्ना जोड़ें / अपलोड करें (Upload Page)</h3>
+                        </div>
+                        <span id="epaper-next-page-badge" class="bg-teal-50 text-teal-700 text-[11px] font-bold px-2 py-0.5 rounded-full">पन्ना 1</span>
+                    </div>
+                    <form id="epaper-page-form" onsubmit="handleAddEPaperPage(event)" class="space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">पन्ना संख्या</label>
+                                <input type="number" id="epaper-page-num" min="1" max="50" value="1" required class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:border-teal-600 focus:outline-none font-bold text-center">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs font-bold text-slate-700 mb-1">पन्ने का नाम / विषय</label>
+                                <input type="text" id="epaper-page-name" placeholder="जैसे: मुख्य पृष्ठ (Front Page)" required class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:border-teal-600 focus:outline-none">
+                            </div>
+                        </div>
+
+                        <!-- File Upload or URL -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">पन्ने की फोटो (इमेज फाइल चुनें या URL डालें)</label>
+                            <div class="flex flex-col sm:flex-row gap-2 items-center">
+                                <input type="file" id="epaper-page-file" accept="image/*" onchange="previewEPaperPageFile(event)" class="w-full sm:w-1/2 text-xs file:mr-2 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100 cursor-pointer">
+                                <span class="text-xs text-slate-400 font-bold">या</span>
+                                <input type="url" id="epaper-page-url" placeholder="https://... इमेज URL" class="w-full sm:flex-1 text-xs p-2.5 rounded-xl border border-slate-300 focus:border-teal-600 focus:outline-none">
+                            </div>
+                        </div>
+
+                        <!-- Image Preview -->
+                        <div id="epaper-page-preview-box" class="hidden p-3 bg-slate-50 rounded-2xl border border-slate-200 flex items-center gap-3">
+                            <img id="epaper-page-preview-img" src="" class="w-16 h-20 object-cover rounded-lg border border-slate-300 shadow-xs">
+                            <div class="text-xs">
+                                <p class="font-bold text-slate-800">पन्ना प्रीव्यू तैयार है</p>
+                                <span class="text-emerald-600 font-semibold"><i class="fa-solid fa-circle-check"></i> इमेज लोड हो गई</span>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="btn-add-epaper-page" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-2 cursor-pointer shadow-sm">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <span>+ यह पन्ना ई-अखबार में जोड़ें</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Published Pages Manager Grid -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm font-hindi">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-newspaper text-red-600 text-base"></i>
+                        <h3 class="font-black text-slate-900 text-base">3. वर्तमान प्रकाशित पन्नों की सूची (Live Edition Pages)</h3>
+                    </div>
+                    <span id="epaper-live-badge" class="bg-slate-100 text-slate-700 text-xs font-bold px-3 py-1 rounded-full">
+                        0 पन्ने लाइव
+                    </span>
+                </div>
+
+                <div id="epaper-pages-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- Populated via renderEPaperManager() -->
+                </div>
+            </div>
+        </div>
+    </main>
 
     </div>
 
@@ -1934,10 +2081,13 @@
             const navCloud = document.getElementById("nav-btn-cloud");
             const navAds = document.getElementById("nav-btn-ads");
             const navAudit = document.getElementById("nav-btn-audit");
+            const navEPaper = document.getElementById("nav-btn-epaper");
+            const canOperateEPaper = (isDirector || role === 'sub_editor');
 
             if (navCloud) navCloud.classList.toggle("hidden", !isDirector);
             if (navAds) navAds.classList.toggle("hidden", !isDirector);
             if (navAudit) navAudit.classList.toggle("hidden", !isDirector);
+            if (navEPaper) navEPaper.classList.toggle("hidden", !canOperateEPaper);
 
             // 2. Sensitive Dashboard Controls (Mandi Rate Manual Edit, Reset, etc.)
             const btnEditRates = document.getElementById("btn-edit-rates");
@@ -1997,6 +2147,8 @@
             const currentRole = session ? session.role : StorageService.getCurrentRole();
             const isDirector = (currentRole === 'chief_editor');
 
+            const canOperateEPaper = (isDirector || currentRole === 'sub_editor');
+
             // Strict Privacy Enforcer: Non-directors CANNOT access Cloud, Ads, or Audit History
             if (!isDirector && (tabKey === 'cloud' || tabKey === 'ads' || tabKey === 'audit')) {
                 window.showToast("⛔ यह अनुभाग केवल डायरेक्टर (दीपक राजपूत) के लिए सुरक्षित है!", "error");
@@ -2004,7 +2156,14 @@
                 return;
             }
 
-            const tabs = ['dashboard', 'editor', 'breaking', 'liveblog', 'inbox', 'stories', 'ads', 'audit', 'cloud'];
+            // E-Paper Access: Director & Sub-Editor ONLY (Reporter cannot access)
+            if (tabKey === 'epaper' && !canOperateEPaper) {
+                window.showToast("⛔ ई-अखबार केवल डायरेक्टर व उप-संपादक के लिए सुरक्षित है!", "error");
+                switchTab('editor');
+                return;
+            }
+
+            const tabs = ['dashboard', 'editor', 'breaking', 'liveblog', 'inbox', 'stories', 'ads', 'audit', 'cloud', 'epaper'];
             tabs.forEach(t => {
                 const pane = document.getElementById(`tab-${t}`);
                 const btn = document.getElementById(`nav-btn-${t}`);
@@ -2020,7 +2179,9 @@
                 }
             });
 
-            if (tabKey === 'audit') {
+            if (tabKey === 'epaper') {
+                renderEPaperManager();
+            } else if (tabKey === 'audit') {
                 renderUploadLedgerTable();
             } else if (tabKey === 'dashboard') {
                 refreshDashboard();
@@ -3782,6 +3943,213 @@
                 console.log("Audio not supported");
             }
         }
+    
+        // ==========================================
+        // SECTION 8: DIGITAL E-PAPER & WHATSAPP HUB JAVASCRIPT ENGINE
+        // ==========================================
+        let epaperUploadedPageBase64 = null;
+
+        function renderEPaperManager() {
+            const epaper = (typeof StorageService !== 'undefined' && StorageService.getEPaperInfo) ? StorageService.getEPaperInfo() : null;
+            const container = document.getElementById("epaper-pages-container");
+            const liveBadge = document.getElementById("epaper-live-badge");
+            const deleteEntireBtn = document.getElementById("btn-delete-all-epaper");
+            const sideCount = document.getElementById("sidebar-epaper-count");
+            const nextPageNum = document.getElementById("epaper-page-num");
+            const nextPageBadge = document.getElementById("epaper-next-page-badge");
+            const waInput = document.getElementById("admin-whatsapp-channel-input");
+
+            // Sync WhatsApp channel input
+            if (waInput && typeof StorageService !== 'undefined' && StorageService.getWhatsAppLink) {
+                waInput.value = StorageService.getWhatsAppLink();
+            }
+
+            if (!epaper || !Array.isArray(epaper.pages) || epaper.pages.length === 0) {
+                if (container) {
+                    container.innerHTML = `
+                        <div class="col-span-full p-8 text-center bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+                            <div class="w-14 h-14 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center text-2xl mx-auto mb-3">
+                                <i class="fa-solid fa-newspaper"></i>
+                            </div>
+                            <h4 class="font-black text-slate-800 text-sm mb-1">वर्तमान में कोई ई-अखबार प्रकाशित नहीं है</h4>
+                            <p class="text-xs text-slate-500 mb-3">ऊपर दिए गए फॉर्म से अखबार का विवरण भरें और पन्ने (Page 1, 2, 3...) अपलोड करें।</p>
+                        </div>
+                    `;
+                }
+                if (liveBadge) liveBadge.innerText = "0 पन्ने लाइव (अप्रकाशित)";
+                if (deleteEntireBtn) deleteEntireBtn.classList.add("hidden");
+                if (sideCount) sideCount.innerText = "0";
+                if (nextPageNum) nextPageNum.value = 1;
+                if (nextPageBadge) nextPageBadge.innerText = "पन्ना 1";
+                return;
+            }
+
+            // Sync edition info fields
+            const titleInput = document.getElementById("epaper-edition-title");
+            const nameInput = document.getElementById("epaper-edition-name");
+            const dateInput = document.getElementById("epaper-edition-date");
+            const pdfInput = document.getElementById("epaper-edition-pdf");
+            if (titleInput && epaper.title) titleInput.value = epaper.title;
+            if (nameInput && epaper.edition) nameInput.value = epaper.edition;
+            if (dateInput && epaper.date) dateInput.value = epaper.date;
+            if (pdfInput && epaper.pdfUrl) pdfInput.value = epaper.pdfUrl;
+
+            // Badges
+            const count = epaper.pages.length;
+            if (liveBadge) liveBadge.innerText = `${count} पन्ने लाइव प्रकाशित`;
+            if (deleteEntireBtn) deleteEntireBtn.classList.remove("hidden");
+            if (sideCount) sideCount.innerText = count;
+            if (nextPageNum) nextPageNum.value = count + 1;
+            if (nextPageBadge) nextPageBadge.innerText = `पन्ना ${count + 1}`;
+
+            // Render Page Cards
+            if (container) {
+                container.innerHTML = epaper.pages.map((p, idx) => `
+                    <div class="bg-slate-50 rounded-2xl border border-slate-200 p-3 shadow-xs flex flex-col justify-between group hover:border-teal-400 transition">
+                        <div class="relative rounded-xl overflow-hidden mb-2.5 bg-white border border-slate-200 aspect-[3/4] flex items-center justify-center">
+                            <img src="${p.preview}" alt="${p.name}" class="w-full h-full object-cover select-none">
+                            <span class="absolute top-2 left-2 bg-slate-900/80 backdrop-blur-xs text-white text-[10px] font-black px-2 py-0.5 rounded-lg">
+                                पन्ना ${p.pageNum}
+                            </span>
+                        </div>
+                        <div>
+                            <h5 class="font-bold text-xs text-slate-900 truncate mb-2" title="${p.name}">
+                                ${p.name}
+                            </h5>
+                            <div class="flex items-center gap-2 pt-2 border-t border-slate-200">
+                                <button type="button" onclick="window.open('${p.preview}', '_blank')" class="flex-1 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 py-1 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer" title="बड़ा देखें">
+                                    <i class="fa-solid fa-eye"></i> देखें
+                                </button>
+                                <button type="button" onclick="handleDeleteEPaperPage(${p.pageNum})" class="bg-red-50 hover:bg-red-600 hover:text-white text-red-600 py-1 px-2.5 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1 cursor-pointer" title="यह पन्ना हटाएं">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join("");
+            }
+        }
+
+        function previewEPaperPageFile(event) {
+            const file = event.target.files[0];
+            const previewBox = document.getElementById("epaper-page-preview-box");
+            const previewImg = document.getElementById("epaper-page-preview-img");
+            if (!file) {
+                epaperUploadedPageBase64 = null;
+                if (previewBox) previewBox.classList.add("hidden");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                epaperUploadedPageBase64 = e.target.result;
+                if (previewImg) previewImg.src = epaperUploadedPageBase64;
+                if (previewBox) previewBox.classList.remove("hidden");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleSaveEPaperEdition(event) {
+            if (event) event.preventDefault();
+            let epaper = (typeof StorageService !== 'undefined' && StorageService.getEPaperInfo) ? StorageService.getEPaperInfo() : null;
+            if (!epaper) {
+                epaper = { pages: [] };
+            }
+            epaper.title = document.getElementById("epaper-edition-title").value.trim() || "TODAY INDIA LIVE NEWS — दैनिक डिजिटल संस्करण";
+            epaper.edition = document.getElementById("epaper-edition-name").value.trim() || "कानपुर व उत्तर प्रदेश महासंस्करण";
+            epaper.date = document.getElementById("epaper-edition-date").value.trim() || new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+            epaper.pdfUrl = document.getElementById("epaper-edition-pdf").value.trim() || "#";
+
+            StorageService.saveEPaperInfo(epaper);
+            renderEPaperManager();
+            window.showToast("✅ ई-अखबार संस्करण विवरण सुरक्षित कर लिया गया है!", "success");
+        }
+
+        function handleAddEPaperPage(event) {
+            if (event) event.preventDefault();
+            const pageNum = parseInt(document.getElementById("epaper-page-num").value) || 1;
+            const pageName = document.getElementById("epaper-page-name").value.trim() || `पन्ना ${pageNum}`;
+            const pageUrl = document.getElementById("epaper-page-url").value.trim();
+
+            const imageSrc = epaperUploadedPageBase64 || pageUrl;
+            if (!imageSrc) {
+                window.showToast("⚠️ कृपया पन्ने की इमेज फाइल चुनें या इमेज URL डालें!", "error");
+                return;
+            }
+
+            let epaper = (typeof StorageService !== 'undefined' && StorageService.getEPaperInfo) ? StorageService.getEPaperInfo() : null;
+            if (!epaper) {
+                epaper = {
+                    title: document.getElementById("epaper-edition-title").value.trim() || "TODAY INDIA LIVE NEWS — दैनिक डिजिटल संस्करण",
+                    edition: document.getElementById("epaper-edition-name").value.trim() || "कानपुर व उत्तर प्रदेश महासंस्करण",
+                    date: document.getElementById("epaper-edition-date").value.trim() || new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
+                    pdfUrl: document.getElementById("epaper-edition-pdf").value.trim() || "#",
+                    pages: []
+                };
+            }
+
+            const existingIdx = epaper.pages.findIndex(p => p.pageNum === pageNum);
+            const newPage = { pageNum, name: pageName, preview: imageSrc };
+
+            if (existingIdx >= 0) {
+                epaper.pages[existingIdx] = newPage;
+            } else {
+                epaper.pages.push(newPage);
+            }
+            epaper.pages.sort((a, b) => a.pageNum - b.pageNum);
+
+            StorageService.saveEPaperInfo(epaper);
+
+            // Reset page form
+            document.getElementById("epaper-page-form").reset();
+            epaperUploadedPageBase64 = null;
+            const previewBox = document.getElementById("epaper-page-preview-box");
+            if (previewBox) previewBox.classList.add("hidden");
+
+            renderEPaperManager();
+            window.showToast(`✅ पन्ना ${pageNum} (${pageName}) सफलतापूर्वक ई-अखबार में जोड़ दिया गया!`, "success");
+        }
+
+        function handleDeleteEPaperPage(pageNum) {
+            if (!confirm(`क्या आप वाकई पन्ना ${pageNum} को ई-अखबार से हटाना चाहते हैं?`)) return;
+            let epaper = (typeof StorageService !== 'undefined' && StorageService.getEPaperInfo) ? StorageService.getEPaperInfo() : null;
+            if (!epaper || !Array.isArray(epaper.pages)) return;
+
+            epaper.pages = epaper.pages.filter(p => p.pageNum !== pageNum);
+            epaper.pages.forEach((p, idx) => {
+                p.pageNum = idx + 1;
+            });
+
+            if (epaper.pages.length === 0) {
+                StorageService.deleteEPaper();
+            } else {
+                StorageService.saveEPaperInfo(epaper);
+            }
+
+            renderEPaperManager();
+            window.showToast("🗑️ पन्ना हटा दिया गया है!", "info");
+        }
+
+        function handleDeleteEntireEPaper() {
+            if (!confirm("⚠️ क्या आप आज का पूरा ई-अखबार हटाना चाहते हैं? इसके बाद पाठकों को 'तैयार हो रहा है' संदेश दिखेगा।")) return;
+            StorageService.deleteEPaper();
+            renderEPaperManager();
+            window.showToast("🗑️ आज का पूरा ई-अखबार हटा दिया गया है!", "info");
+        }
+
+        function saveAdminWhatsAppLink() {
+            const input = document.getElementById("admin-whatsapp-channel-input");
+            if (!input) return;
+            const link = input.value.trim();
+            if (!link || !link.startsWith("http")) {
+                window.showToast("⚠️ कृपया वैध WhatsApp लिंक दर्ज करें (https://...)", "error");
+                return;
+            }
+            if (typeof StorageService !== 'undefined' && StorageService.setWhatsAppLink) {
+                StorageService.setWhatsAppLink(link);
+            }
+            window.showToast("✅ मुख्य WhatsApp चैनल लिंक सफलतापूर्वक अपडेट हो गया!", "success");
+        }
+
     </script>
 </body>
 </html>

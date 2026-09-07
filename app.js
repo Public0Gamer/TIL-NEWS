@@ -1057,9 +1057,6 @@ window.toggleTheme = function() {
 let currentEPaperPage = 1;
 
 window.openEPaperModal = function() {
-    const epaper = (typeof StorageService !== 'undefined' && StorageService.getEPaperInfo) ? StorageService.getEPaperInfo() : null;
-    if (!epaper) return;
-
     let modal = document.getElementById("epaper-reader-modal");
     if (!modal) {
         modal = document.createElement("div");
@@ -1068,11 +1065,51 @@ window.openEPaperModal = function() {
         document.body.appendChild(modal);
     }
 
-    currentEPaperPage = 1;
-    renderEPaperModalContent(modal, epaper);
+    const epaper = (typeof StorageService !== 'undefined' && StorageService.getEPaperInfo) ? StorageService.getEPaperInfo() : null;
+    const waLink = (typeof StorageService !== 'undefined' && StorageService.getWhatsAppLink) ? StorageService.getWhatsAppLink() : "https://whatsapp.com/channel/0029Va51llxJpe8ZsuceeA73C";
+
+    if (!epaper || !Array.isArray(epaper.pages) || epaper.pages.length === 0) {
+        renderEPaperEmptyState(modal, waLink);
+    } else {
+        currentEPaperPage = 1;
+        renderEPaperModalContent(modal, epaper);
+    }
     modal.classList.remove("hidden");
     document.body.style.overflow = "hidden";
 };
+
+function renderEPaperEmptyState(modal, waLink) {
+    modal.innerHTML = `
+        <div class="bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-2xl max-w-lg w-full border border-slate-200 dark:border-slate-800 flex flex-col p-6 sm:p-8 text-center font-hindi transition-all">
+            <div class="flex justify-end mb-1">
+                <button type="button" onclick="closeEPaperModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-red-600 hover:text-white flex items-center justify-center text-slate-500 transition cursor-pointer text-sm font-bold" title="बंद करें">✕</button>
+            </div>
+            <div class="w-20 h-20 mx-auto rounded-3xl bg-red-50 dark:bg-red-950/50 text-red-600 dark:text-red-400 flex items-center justify-center text-3xl mb-4 shadow-inner">
+                <i class="fa-solid fa-newspaper"></i>
+            </div>
+            <span class="bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider mx-auto mb-3">
+                दैनिक डिजिटल संस्करण
+            </span>
+            <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mb-2">आज का ई-अखबार तैयार हो रहा है</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
+                संपादकीय डेस्क द्वारा कानपुर नगर व उत्तर प्रदेश का आज का डिजिटल दैनिक संस्करण संकलित किया जा रहा है। अपलोड होते ही यह यहाँ तुरंत लाइव उपलब्ध हो जाएगा।
+            </p>
+            <div class="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-2xl p-4 mb-5 text-left flex items-center gap-3">
+                <div class="w-11 h-11 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xl shrink-0 shadow-xs">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </div>
+                <div>
+                    <h5 class="text-xs font-bold text-emerald-950 dark:text-emerald-200">ई-अखबार सीधे WhatsApp पर पाएं</h5>
+                    <p class="text-[11px] text-emerald-800 dark:text-emerald-400">रोज सुबह कानपुर की हर बड़ी ब्रेकिंग व ई-अखबार अपने फोन पर प्राप्त करें।</p>
+                </div>
+            </div>
+            <a href="${waLink}" target="_blank" rel="noopener" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-2xl text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-md cursor-pointer">
+                <i class="fa-brands fa-whatsapp text-lg"></i>
+                <span>ऑफिशियल WhatsApp चैनल से जुड़ें</span>
+            </a>
+        </div>
+    `;
+}
 
 function renderEPaperModalContent(modal, epaper) {
     const page = epaper.pages.find(p => p.pageNum === currentEPaperPage) || epaper.pages[0];
@@ -1164,3 +1201,19 @@ window.downloadEPaperPDF = function() {
     alert("📄 आज का ई-अखबार (PDF Edition) डाउनलोड प्रारंभ हो रहा है...");
     window.print();
 };
+
+// Dynamic WhatsApp Channel Link Auto-Binder
+function initWhatsAppLinks() {
+    if (typeof StorageService === 'undefined' || !StorageService.getWhatsAppLink) return;
+    const link = StorageService.getWhatsAppLink();
+    document.querySelectorAll('a[href*="whatsapp.com/channel"], a[href*="wa.me"]').forEach(a => {
+        if (a.innerText.includes('चैनल') || a.innerText.includes('ग्रुप') || a.closest('.bg-gradient-to-r') || a.href.includes('channel')) {
+            a.href = link;
+        }
+    });
+}
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initWhatsAppLinks);
+} else {
+    initWhatsAppLinks();
+}
