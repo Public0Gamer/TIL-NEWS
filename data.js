@@ -327,27 +327,86 @@ const INITIAL_ADS = {
     }
 };
 
+const YOUTUBE_CHANNEL_ID = "UC0pvCtEkKsmeCmGdxRKrBaA";
+const YOUTUBE_CHANNEL_HANDLE = "@TILNEWS";
+
+const DEFAULT_LIVE_TV_CONFIG = {
+    channelId: "UC0pvCtEkKsmeCmGdxRKrBaA",
+    channelHandle: "@TILNEWS",
+    streamUrl: "https://www.youtube.com/@TILNEWS/live",
+    videoId: "",
+    title: "TODAY INDIA LIVE 24x7 कानपुर लाइव बुलेटिन",
+    isOnAir: true,
+    viewers: "14,280",
+    updatedAt: new Date().toISOString()
+};
+
 const INITIAL_VIDEOS = [
     {
-        id: "vid-1",
-        title: "कानपुर बुलेटिन 100: शहर की 100 बड़ी खबरें नॉन-स्टॉप देखिए सिर्फ 15 मिनट में",
-        duration: "14:22",
-        views: "18K",
-        thumbnail: "https://images.unsplash.com/photo-1495020689067-958852a7765e?w=600&auto=format&fit=crop&q=80"
+        id: "yt-ScVssakcrJg",
+        videoId: "ScVssakcrJg",
+        title: "मानव श्रृंखला बनाकर असम के मुख्य मंत्री के खिलाफ प्रदर्शन",
+        duration: "ताज़ा बुलेटिन",
+        views: "TIL NEWS",
+        link: "https://www.youtube.com/watch?v=ScVssakcrJg",
+        thumbnail: "https://i.ytimg.com/vi/ScVssakcrJg/hqdefault.jpg",
+        pubDate: "2024-01-24 08:35:14",
+        isAutoSynced: true
     },
     {
-        id: "vid-2",
-        title: "ग्राउंड रिपोर्ट: कानपुर गंगा बैराज पर जलस्तर की लाइव स्थिति, देखिए हमारी खास रिपोर्ट",
-        duration: "06:45",
-        views: "9.4K",
-        thumbnail: "https://images.unsplash.com/photo-1588681664899-f142ff2dc9b1?w=600&auto=format&fit=crop&q=80"
+        id: "yt-TNtY8qUqg3o",
+        videoId: "TNtY8qUqg3o",
+        title: "श्रीराम मंदिर प्राण प्रतिष्ठा को लेकर शहर भर में भव्य धार्मिक आयोजन",
+        duration: "ताज़ा बुलेटिन",
+        views: "TIL NEWS",
+        link: "https://www.youtube.com/watch?v=TNtY8qUqg3o",
+        thumbnail: "https://i.ytimg.com/vi/TNtY8qUqg3o/hqdefault.jpg",
+        pubDate: "2024-01-23 11:59:40",
+        isAutoSynced: true
     },
     {
-        id: "vid-3",
-        title: "एक्सक्लूसिव इंटरव्यू: कानपुर के पुलिस कमिश्नर से सीधी बातचीत, शहर की सुरक्षा का नया प्लान",
-        duration: "18:10",
-        views: "24K",
-        thumbnail: "https://images.unsplash.com/photo-1526470608268-f674ce90ebd4?w=600&auto=format&fit=crop&q=80"
+        id: "yt-Ec9Mr5a5dl8",
+        videoId: "Ec9Mr5a5dl8",
+        title: "मुरारी लाल अग्रवाल ने राम दरबार खाटू श्याम यात्रा का शुभारंभ किया",
+        duration: "ताज़ा बुलेटिन",
+        views: "TIL NEWS",
+        link: "https://www.youtube.com/watch?v=Ec9Mr5a5dl8",
+        thumbnail: "https://i.ytimg.com/vi/Ec9Mr5a5dl8/hqdefault.jpg",
+        pubDate: "2024-01-22 10:39:03",
+        isAutoSynced: true
+    },
+    {
+        id: "yt-16tMwtWdsg4",
+        videoId: "16tMwtWdsg4",
+        title: "छत्रपति शाहूजी महाराज विश्वविद्यालय पहुंचे डिप्टी सीएम बृजेश पाठक",
+        duration: "ताज़ा बुलेटिन",
+        views: "TIL NEWS",
+        link: "https://www.youtube.com/watch?v=16tMwtWdsg4",
+        thumbnail: "https://i.ytimg.com/vi/16tMwtWdsg4/hqdefault.jpg",
+        pubDate: "2024-01-20 09:36:48",
+        isAutoSynced: true
+    },
+    {
+        id: "yt-hodH5wGNnjg",
+        videoId: "hodH5wGNnjg",
+        title: "कानपुर नगर निगम द्वारा आयोजित विकसित भारत संकल्प यात्रा",
+        duration: "ताज़ा बुलेटिन",
+        views: "TIL NEWS",
+        link: "https://www.youtube.com/watch?v=hodH5wGNnjg",
+        thumbnail: "https://i.ytimg.com/vi/hodH5wGNnjg/hqdefault.jpg",
+        pubDate: "2024-01-19 09:23:33",
+        isAutoSynced: true
+    },
+    {
+        id: "yt-WOlifyDj6xM",
+        videoId: "WOlifyDj6xM",
+        title: "हास्य कलाकार अन्नू अवस्थी ने किआ नया सॉनेट कार लॉन्च की",
+        duration: "ताज़ा बुलेटिन",
+        views: "TIL NEWS",
+        link: "https://www.youtube.com/watch?v=WOlifyDj6xM",
+        thumbnail: "https://i.ytimg.com/vi/WOlifyDj6xM/hqdefault.jpg",
+        pubDate: "2024-01-17 07:34:43",
+        isAutoSynced: true
     }
 ];
 
@@ -833,6 +892,188 @@ const StorageService = {
             console.warn("Could not delete e-paper:", e);
             return false;
         }
+    },
+
+    // Video News & YouTube Bulletins Desk
+    getVideos() {
+        const stored = localStorage.getItem("todayindia_video_news");
+        if (!stored) {
+            this.safeSetItem("todayindia_video_news", JSON.stringify(INITIAL_VIDEOS));
+            return INITIAL_VIDEOS;
+        }
+        try {
+            const list = JSON.parse(stored);
+            return Array.isArray(list) && list.length > 0 ? list : INITIAL_VIDEOS;
+        } catch(e) {
+            return INITIAL_VIDEOS;
+        }
+    },
+    saveVideos(videos) {
+        this.safeSetItem("todayindia_video_news", JSON.stringify(videos));
+        if (typeof CloudStorageService !== 'undefined' && CloudStorageService.isCloudReady && CloudStorageService.isCloudReady()) {
+            CloudStorageService.saveVideos(videos);
+        }
+    },
+    addVideo(newVideo) {
+        const videos = this.getVideos();
+        videos.unshift(newVideo);
+        this.saveVideos(videos);
+        return videos;
+    },
+    deleteVideo(videoId) {
+        let videos = this.getVideos();
+        videos = videos.filter(v => v.videoId !== videoId && v.id !== videoId);
+        this.saveVideos(videos);
+        return videos;
+    },
+
+    // Live TV 24x7 Broadcast Configuration
+    getLiveTVConfig() {
+        const stored = localStorage.getItem("todayindia_live_tv_config");
+        if (!stored) {
+            this.safeSetItem("todayindia_live_tv_config", JSON.stringify(DEFAULT_LIVE_TV_CONFIG));
+            return DEFAULT_LIVE_TV_CONFIG;
+        }
+        try {
+            return JSON.parse(stored) || DEFAULT_LIVE_TV_CONFIG;
+        } catch(e) {
+            return DEFAULT_LIVE_TV_CONFIG;
+        }
+    },
+    saveLiveTVConfig(cfg) {
+        this.safeSetItem("todayindia_live_tv_config", JSON.stringify(cfg));
+        if (typeof CloudStorageService !== 'undefined' && CloudStorageService.isCloudReady && CloudStorageService.isCloudReady()) {
+            CloudStorageService.saveLiveTV(cfg);
+        }
+    }
+};
+
+// ==========================================
+// YouTube Channel Smart Auto-Sync Engine (@TILNEWS)
+// ==========================================
+const YouTubeSyncService = {
+    CHANNEL_ID: "UC0pvCtEkKsmeCmGdxRKrBaA",
+    CHANNEL_HANDLE: "@TILNEWS",
+    CACHE_KEY: "todayindia_youtube_last_sync",
+    CACHE_TTL_MS: 15 * 60 * 1000, // 15 minutes auto-sync cache
+
+    extractVideoId(url) {
+        if (!url || typeof url !== 'string') return "";
+        url = url.trim();
+        if (/^[a-zA-Z0-9_-]{11}$/.test(url)) return url;
+        const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|live\/|shorts\/))([a-zA-Z0-9_-]{11})/);
+        return m ? m[1] : "";
+    },
+
+    async fetchChannelVideos() {
+        const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${this.CHANNEL_ID}`;
+        const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`;
+
+        try {
+            const resp = await fetch(proxyUrl, { headers: { 'Accept': 'application/json' } });
+            if (!resp.ok) throw new Error("rss2json status " + resp.status);
+            const data = await resp.json();
+            if (data.status !== "ok" || !Array.isArray(data.items)) throw new Error("Invalid RSS response");
+
+            return data.items.map(item => {
+                const vid = this.extractVideoId(item.link);
+                return {
+                    id: "yt-" + (vid || Math.random().toString(36).substr(2, 9)),
+                    videoId: vid,
+                    title: item.title || "ताज़ा वीडियो बुलेटिन",
+                    link: item.link || (vid ? `https://www.youtube.com/watch?v=${vid}` : `https://www.youtube.com/@TILNEWS`),
+                    thumbnail: vid ? `https://i.ytimg.com/vi/${vid}/hqdefault.jpg` : (item.thumbnail || "https://images.unsplash.com/photo-1495020689067-958852a7765e?w=600"),
+                    pubDate: item.pubDate || new Date().toISOString(),
+                    duration: "ताज़ा बुलेटिन",
+                    views: "TIL NEWS",
+                    isAutoSynced: true
+                };
+            }).filter(v => v.videoId);
+        } catch (err) {
+            console.warn("Primary YouTube RSS sync notice, trying fallback...", err);
+            try {
+                const fallbackUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(feedUrl)}`;
+                const rawResp = await fetch(fallbackUrl);
+                if (rawResp.ok) {
+                    const xmlText = await rawResp.text();
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+                    const entries = Array.from(xmlDoc.querySelectorAll("entry"));
+                    if (entries.length > 0) {
+                        return entries.map(entry => {
+                            const vidEl = entry.querySelector("videoId") || entry.getElementsByTagNameNS("*", "videoId")[0];
+                            const vid = vidEl ? vidEl.textContent.trim() : "";
+                            const titleEl = entry.querySelector("title");
+                            const title = titleEl ? titleEl.textContent.trim() : "ताज़ा वीडियो बुलेटिन";
+                            const linkEl = entry.querySelector("link");
+                            const link = linkEl ? linkEl.getAttribute("href") : (vid ? `https://www.youtube.com/watch?v=${vid}` : "");
+                            const pubDateEl = entry.querySelector("published");
+                            const pubDate = pubDateEl ? pubDateEl.textContent.trim() : "";
+
+                            return {
+                                id: "yt-" + (vid || Math.random().toString(36).substr(2, 9)),
+                                videoId: vid,
+                                title: title,
+                                link: link || `https://www.youtube.com/watch?v=${vid}`,
+                                thumbnail: vid ? `https://i.ytimg.com/vi/${vid}/hqdefault.jpg` : "https://images.unsplash.com/photo-1495020689067-958852a7765e?w=600",
+                                pubDate: pubDate,
+                                duration: "ताज़ा बुलेटिन",
+                                views: "TIL NEWS",
+                                isAutoSynced: true
+                            };
+                        }).filter(v => v.videoId);
+                    }
+                }
+            } catch(fallbackErr) {
+                console.warn("YouTube fallback RSS proxy notice:", fallbackErr);
+            }
+            return null;
+        }
+    },
+
+    async syncVideos(force = false) {
+        const lastSync = parseInt(localStorage.getItem(this.CACHE_KEY) || "0", 10);
+        const now = Date.now();
+
+        if (!force && (now - lastSync) < this.CACHE_TTL_MS) {
+            return { success: true, videos: StorageService.getVideos(), cached: true };
+        }
+
+        const channelVideos = await this.fetchChannelVideos();
+        if (!channelVideos || channelVideos.length === 0) {
+            return { success: false, videos: StorageService.getVideos(), message: "YouTube से नए वीडियो लोड नहीं हो सके" };
+        }
+
+        const existing = StorageService.getVideos();
+        const manualVideos = existing.filter(v => !v.isAutoSynced);
+
+        const seenIds = new Set();
+        const merged = [];
+
+        // Manual videos take priority
+        manualVideos.forEach(v => {
+            if (v.videoId && !seenIds.has(v.videoId)) {
+                seenIds.add(v.videoId);
+                merged.push(v);
+            }
+        });
+
+        // Add channel auto-synced videos
+        channelVideos.forEach(v => {
+            if (v.videoId && !seenIds.has(v.videoId)) {
+                seenIds.add(v.videoId);
+                merged.push(v);
+            }
+        });
+
+        StorageService.saveVideos(merged);
+        localStorage.setItem(this.CACHE_KEY, now.toString());
+
+        if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent("todayindia_videos_updated", { detail: { videos: merged } }));
+        }
+
+        return { success: true, videos: merged, count: channelVideos.length };
     }
 };
 
@@ -1746,6 +1987,72 @@ const CloudStorageService = {
         }
     },
 
+    async saveLiveTV(liveTVData) {
+        if (!this.isCloudReady() || !liveTVData) return false;
+        try {
+            await this.db.collection("settings").doc("live_tv").set({
+                ...liveTVData,
+                updatedAt: Date.now()
+            });
+            return true;
+        } catch(e) {
+            console.warn("Cloud saveLiveTV failed:", e);
+            return false;
+        }
+    },
+
+    listenToLiveTV(callback) {
+        if (!this.isCloudReady() || typeof callback !== 'function') return null;
+        try {
+            const unsub = this.db.collection("settings").doc("live_tv")
+                .onSnapshot((doc) => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        localStorage.setItem("todayindia_live_tv_config", JSON.stringify(data));
+                        callback(data);
+                    }
+                }, (err) => console.warn("Live TV listener warning:", err));
+            this._activeListeners.push(unsub);
+            return unsub;
+        } catch(e) {
+            console.warn("Could not attach live TV listener:", e);
+            return null;
+        }
+    },
+
+    async saveVideos(videos) {
+        if (!this.isCloudReady() || !Array.isArray(videos)) return false;
+        try {
+            await this.db.collection("settings").doc("youtube_videos").set({
+                videos: videos,
+                updatedAt: Date.now()
+            });
+            return true;
+        } catch(e) {
+            console.warn("Cloud saveVideos failed:", e);
+            return false;
+        }
+    },
+
+    listenToVideos(callback) {
+        if (!this.isCloudReady() || typeof callback !== 'function') return null;
+        try {
+            const unsub = this.db.collection("settings").doc("youtube_videos")
+                .onSnapshot((doc) => {
+                    if (doc.exists && doc.data() && Array.isArray(doc.data().videos)) {
+                        const videos = doc.data().videos;
+                        localStorage.setItem("todayindia_video_news", JSON.stringify(videos));
+                        callback(videos);
+                    }
+                }, (err) => console.warn("Videos listener warning:", err));
+            this._activeListeners.push(unsub);
+            return unsub;
+        } catch(e) {
+            console.warn("Could not attach videos listener:", e);
+            return null;
+        }
+    },
+
     // 4. Cloud CRUD operations
     async saveArticle(article) {
         if (!this.isCloudReady() || !article || !article.id) return false;
@@ -2003,4 +2310,5 @@ if (typeof window !== 'undefined') {
     window.StorageService = StorageService;
     window.TrackingService = TrackingService;
     window.CloudStorageService = CloudStorageService;
+    window.YouTubeSyncService = YouTubeSyncService;
 }

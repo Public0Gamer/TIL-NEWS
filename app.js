@@ -312,36 +312,9 @@ function renderHomePageContent(filterZone = 'all') {
         }
     }
 
-    // D. Videos Section (Studio Live Broadcast Design)
-    const videoContainer = document.getElementById("video-bulletins-grid");
-    if (videoContainer && typeof INITIAL_VIDEOS !== 'undefined') {
-        videoContainer.innerHTML = INITIAL_VIDEOS.map(v => `
-            <div class="bg-slate-800/90 rounded-xl border border-slate-700 overflow-hidden shadow-md news-card cursor-pointer group" onclick="openLiveTVModal()">
-                <div class="relative h-44 overflow-hidden">
-                    <img src="${v.thumbnail}" alt="${v.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                    <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition flex items-center justify-center">
-                        <div class="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl group-hover:scale-115 transition">
-                            <i class="fa-solid fa-play ml-1 text-base"></i>
-                        </div>
-                    </div>
-                    <span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded tracking-wide uppercase flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span> VIDEO
-                    </span>
-                    <span class="absolute bottom-2 right-2 bg-black/85 text-white text-xs px-2 py-0.5 rounded font-mono font-semibold">
-                        ${v.duration}
-                    </span>
-                </div>
-                <div class="p-3.5">
-                    <h4 class="font-bold text-sm text-white group-hover:text-amber-300 transition clamp-2 font-hindi leading-snug">
-                        ${v.title}
-                    </h4>
-                    <div class="flex items-center justify-between text-xs text-slate-400 mt-2.5 pt-2 border-t border-slate-700/60">
-                        <span><i class="fa-solid fa-eye text-[10px] text-red-500 mr-1"></i> ${v.views} व्यूज</span>
-                        <span class="text-red-400 font-bold flex items-center gap-1"><i class="fa-regular fa-circle-play"></i> अभी देखें</span>
-                    </div>
-                </div>
-            </div>
-        `).join("");
+    // D. Videos Section (Studio Live Broadcast Design & Dynamic Auto-Sync)
+    if (typeof window.renderVideoBulletinsGrid === 'function') {
+        window.renderVideoBulletinsGrid();
     }
 }
 
@@ -653,24 +626,295 @@ function renderAdBanners() {
     }
 }
 
-// 6. Live TV Modal
-function setupLiveTVModal() {
-    const modal = document.getElementById("live-tv-modal");
-    if (!modal) return;
+// 3.01 Dedicated Video Bulletins Grid Renderer
+window.renderVideoBulletinsGrid = function(videosList) {
+    const videoContainer = document.getElementById("video-bulletins-grid");
+    if (!videoContainer) return;
 
+    const videos = videosList || ((typeof StorageService !== 'undefined' && StorageService.getVideos) 
+        ? StorageService.getVideos() 
+        : (typeof INITIAL_VIDEOS !== 'undefined' ? INITIAL_VIDEOS : []));
+
+    if (!Array.isArray(videos) || videos.length === 0) {
+        videoContainer.innerHTML = `
+            <div class="col-span-full text-center py-8 text-slate-400 font-hindi">
+                <i class="fa-brands fa-youtube text-4xl text-red-500 mb-2"></i>
+                <p>वर्तमान में कोई वीडियो उपलब्ध नहीं है।</p>
+            </div>
+        `;
+        return;
+    }
+
+    videoContainer.innerHTML = videos.slice(0, 6).map(v => {
+        const safeTitle = (v.title || "ताज़ा वीडियो बुलेटिन").replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+        const safeTitleJs = (v.title || "ताज़ा वीडियो बुलेटिन").replace(/'/g, "\\'").replace(/"/g, '\\"');
+        const vid = v.videoId || ((typeof YouTubeSyncService !== 'undefined' && v.link) ? YouTubeSyncService.extractVideoId(v.link) : '');
+        return `
+            <div class="bg-slate-800/90 hover:bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-md news-card cursor-pointer group transition duration-300 flex flex-col justify-between" onclick="playVideoModal('${vid}', '${safeTitleJs}')">
+                <div class="relative h-44 overflow-hidden bg-black">
+                    <img src="${v.thumbnail}" alt="${safeTitle}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition flex items-center justify-center">
+                        <div class="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl group-hover:scale-115 transition">
+                            <i class="fa-solid fa-play ml-1 text-base"></i>
+                        </div>
+                    </div>
+                    <span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded tracking-wide uppercase flex items-center gap-1 shadow-xs">
+                        <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span> ${v.isAutoSynced ? 'YOUTUBE' : 'VIDEO'}
+                    </span>
+                    <span class="absolute bottom-2 right-2 bg-black/85 text-white text-[11px] px-2 py-0.5 rounded font-mono font-semibold">
+                        ${v.duration || 'बुलेटिन'}
+                    </span>
+                </div>
+                <div class="p-3.5 flex flex-col justify-between flex-grow">
+                    <h4 class="font-bold text-sm text-white group-hover:text-amber-300 transition clamp-2 font-hindi leading-snug mb-2">
+                        ${safeTitle}
+                    </h4>
+                    <div class="flex items-center justify-between text-xs text-slate-400 mt-2 pt-2 border-t border-slate-700/60">
+                        <span class="flex items-center gap-1 text-[11px]">
+                            <i class="fa-brands fa-youtube text-red-500"></i> ${v.views || 'TIL NEWS'}
+                        </span>
+                        <span class="text-red-400 font-bold flex items-center gap-1 text-[11px] group-hover:text-red-300 transition">
+                            <i class="fa-regular fa-circle-play"></i> अभी देखें ➔
+                        </span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join("");
+};
+
+// 6. Live TV & National Video Player Modals (National Media Grade)
+function setupLiveTVModal() {
+    let modal = document.getElementById("live-tv-modal");
+
+    // Dynamic Live TV Opener
     window.openLiveTVModal = function() {
+        if (!modal) {
+            modal = document.getElementById("live-tv-modal");
+        }
+        if (!modal) {
+            // Create fallback modal on pages where it doesn't exist
+            modal = document.createElement("div");
+            modal.id = "live-tv-modal";
+            modal.className = "fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs";
+            modal.innerHTML = `
+                <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl animate-fade-in text-white">
+                    <div class="px-5 py-3.5 bg-slate-800 border-b border-slate-700 flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-3 h-3 rounded-full bg-red-600 animate-ping"></span>
+                            <span class="font-brand font-black text-lg tracking-wide">TODAY INDIA LIVE</span>
+                            <span id="live-tv-status-badge" class="bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded">🔴 LIVE ON-AIR</span>
+                        </div>
+                        <button onclick="closeLiveTVModal()" class="text-slate-400 hover:text-white text-xl p-1 cursor-pointer">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <div id="live-tv-player-container" class="relative aspect-video bg-black flex items-center justify-center overflow-hidden">
+                    </div>
+                    <div class="p-4 bg-slate-800/80 flex flex-wrap items-center justify-between gap-3 text-xs">
+                        <div class="flex items-center gap-3">
+                            <span id="live-tv-viewers-display" class="text-slate-400"><i class="fa-solid fa-eye text-red-500 mr-1"></i> 14,280 दर्शक लाइव</span>
+                            <span class="text-slate-400">|</span>
+                            <span id="live-tv-title-display" class="text-amber-400 font-semibold font-hindi">वर्तमान प्रसारण: कानपुर प्राइम टाइम स्पेशल</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <a href="https://www.youtube.com/@TILNEWS" target="_blank" rel="noopener" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded font-bold transition flex items-center gap-1.5 shadow-xs">
+                                <i class="fa-brands fa-youtube text-sm"></i> @TILNEWS चैनल
+                            </a>
+                            <button type="button" onclick="shareOnWhatsApp('TODAY INDIA LIVE NEWS कानपुर लाइव प्रसारण देखें', 'index.html')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded font-bold transition flex items-center gap-1.5 cursor-pointer">
+                                <i class="fa-brands fa-whatsapp text-sm"></i> लाइव स्ट्रीम शेयर करें
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            modal.addEventListener("click", (e) => {
+                if (e.target === modal) window.closeLiveTVModal();
+            });
+        }
+
+        const cfg = (typeof StorageService !== 'undefined' && StorageService.getLiveTVConfig) 
+            ? StorageService.getLiveTVConfig() 
+            : { channelId: "UC0pvCtEkKsmeCmGdxRKrBaA", isOnAir: true, title: "TODAY INDIA LIVE 24x7 कानपुर लाइव बुलेटिन", viewers: "14,280" };
+
+        const playerContainer = document.getElementById("live-tv-player-container");
+        const titleEl = document.getElementById("live-tv-title-display");
+        const statusBadge = document.getElementById("live-tv-status-badge");
+        const viewersEl = document.getElementById("live-tv-viewers-display");
+
+        if (titleEl) titleEl.innerText = cfg.title || "TODAY INDIA LIVE 24x7 कानपुर लाइव बुलेटिन";
+        if (viewersEl && cfg.viewers) viewersEl.innerHTML = `<i class="fa-solid fa-eye text-red-500 mr-1"></i> ${cfg.viewers} दर्शक लाइव`;
+
+        if (playerContainer) {
+            if (cfg.isOnAir === false) {
+                if (statusBadge) {
+                    statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-slate-400"></span> OFFLINE`;
+                    statusBadge.className = "bg-slate-700 text-slate-300 text-[10px] font-black px-2 py-0.5 rounded flex items-center gap-1";
+                }
+                playerContainer.innerHTML = `
+                    <div class="w-full h-full flex flex-col items-center justify-center bg-slate-950 p-6 text-center text-white">
+                        <div class="w-16 h-16 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center text-2xl mb-3">
+                            <i class="fa-solid fa-satellite-dish"></i>
+                        </div>
+                        <h3 class="text-lg font-bold font-hindi mb-1">वर्तमान में लाइव प्रसारण ऑफलाइन है</h3>
+                        <p class="text-xs text-slate-400 font-hindi max-w-md mb-4">हमारा अगला विशेष लाइव बुलेटिन जल्द शुरू होगा। तब तक हमारे यूट्यूब चैनल पर ताज़ा बुलेटिन देखें।</p>
+                        <a href="https://www.youtube.com/@TILNEWS" target="_blank" rel="noopener" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow-md">
+                            <i class="fa-brands fa-youtube text-base"></i> @TILNEWS चैनल पर जाएं
+                        </a>
+                    </div>
+                `;
+            } else {
+                if (statusBadge) {
+                    statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-white animate-ping"></span> 🔴 LIVE ON-AIR`;
+                    statusBadge.className = "bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded flex items-center gap-1";
+                }
+
+                let vid = cfg.videoId || "";
+                if (!vid && cfg.streamUrl) {
+                    vid = (typeof YouTubeSyncService !== 'undefined' && YouTubeSyncService.extractVideoId)
+                        ? YouTubeSyncService.extractVideoId(cfg.streamUrl)
+                        : "";
+                }
+
+                let embedUrl = "";
+                if (vid) {
+                    embedUrl = `https://www.youtube-nocookie.com/embed/${vid}?autoplay=1&rel=0`;
+                } else {
+                    embedUrl = `https://www.youtube-nocookie.com/embed/live_stream?channel=UC0pvCtEkKsmeCmGdxRKrBaA&autoplay=1`;
+                }
+
+                playerContainer.innerHTML = `
+                    <iframe class="w-full h-full" src="${embedUrl}" title="TODAY INDIA LIVE Broadcast" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="absolute top-4 right-4 pointer-events-none bg-black/70 px-3 py-1 rounded-md text-xs font-brand font-bold text-red-500 flex items-center gap-1.5 shadow-md">
+                        <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                        KANPUR BUREAU LIVE
+                    </div>
+                `;
+            }
+        }
+
         modal.classList.remove("hidden");
         document.body.style.overflow = "hidden";
     };
 
     window.closeLiveTVModal = function() {
+        if (!modal) modal = document.getElementById("live-tv-modal");
+        if (!modal) return;
+        const playerContainer = document.getElementById("live-tv-player-container");
+        if (playerContainer) playerContainer.innerHTML = ""; // Stop audio/video immediately
         modal.classList.add("hidden");
         document.body.style.overflow = "auto";
     };
 
-    modal.addEventListener("click", (e) => {
-        if (e.target === modal) {
-            window.closeLiveTVModal();
+    if (modal) {
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) window.closeLiveTVModal();
+        });
+    }
+
+    // Dynamic Dedicated Video Player Modal for Bulletins
+    window.playVideoModal = function(videoId, title) {
+        let vModal = document.getElementById("video-player-modal");
+        if (!vModal) {
+            vModal = document.createElement("div");
+            vModal.id = "video-player-modal";
+            vModal.className = "fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs";
+            vModal.innerHTML = `
+                <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl animate-fade-in text-white">
+                    <div class="px-5 py-3.5 bg-slate-800 border-b border-slate-700 flex items-center justify-between">
+                        <div class="flex items-center gap-2.5 truncate pr-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>
+                            <span id="vpm-title" class="font-hindi font-bold text-sm sm:text-base text-white truncate"></span>
+                        </div>
+                        <button onclick="closeVideoModal()" class="text-slate-400 hover:text-white text-xl p-1 shrink-0 cursor-pointer">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <div id="vpm-player" class="relative aspect-video bg-black flex items-center justify-center overflow-hidden">
+                    </div>
+                    <div class="p-4 bg-slate-800/90 flex flex-wrap items-center justify-between gap-3 text-xs">
+                        <div class="flex items-center gap-2 text-slate-300 font-hindi">
+                            <i class="fa-solid fa-circle-check text-red-500"></i>
+                            <span>TODAY INDIA LIVE NEWS • आधिकारिक वीडियो बुलेटिन</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <a id="vpm-yt-link" href="#" target="_blank" rel="noopener" class="bg-red-600 hover:bg-red-700 text-white px-3.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer">
+                                <i class="fa-brands fa-youtube text-sm"></i> YouTube पर देखें (HD)
+                            </a>
+                            <button id="vpm-wa-btn" type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 cursor-pointer">
+                                <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp शेयर
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(vModal);
+            vModal.addEventListener("click", (e) => {
+                if (e.target === vModal) window.closeVideoModal();
+            });
+        }
+
+        const titleEl = document.getElementById("vpm-title");
+        if (titleEl) titleEl.innerText = title || "वीडियो बुलेटिन";
+
+        const ytLinkEl = document.getElementById("vpm-yt-link");
+        if (ytLinkEl) ytLinkEl.href = videoId ? `https://www.youtube.com/watch?v=${videoId}` : `https://www.youtube.com/@TILNEWS`;
+
+        const waBtn = document.getElementById("vpm-wa-btn");
+        if (waBtn) {
+            waBtn.onclick = function() {
+                const url = videoId ? `https://www.youtube.com/watch?v=${videoId}` : window.location.href;
+                const shareText = encodeURIComponent(`📹 TODAY INDIA LIVE NEWS:
+*${title}*
+
+वीडियो देखें: ${url}`);
+                window.open(`https://api.whatsapp.com/send?text=${shareText}`, '_blank');
+            };
+        }
+
+        const playerEl = document.getElementById("vpm-player");
+        if (playerEl) {
+            if (videoId) {
+                playerEl.innerHTML = `<iframe class="w-full h-full" src="https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0" title="${title || 'News Video'}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+            } else {
+                playerEl.innerHTML = `<div class="p-8 text-center text-slate-400 font-hindi">वीडियो लोड नहीं हो सका</div>`;
+            }
+        }
+
+        vModal.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+    };
+
+    window.closeVideoModal = function() {
+        const vModal = document.getElementById("video-player-modal");
+        if (!vModal) return;
+        const playerEl = document.getElementById("vpm-player");
+        if (playerEl) playerEl.innerHTML = ""; // Stop video immediately
+        vModal.classList.add("hidden");
+        document.body.style.overflow = "auto";
+    };
+
+    // Auto-Sync Video Bulletins from YouTube Channel (@TILNEWS)
+    if (typeof YouTubeSyncService !== 'undefined') {
+        YouTubeSyncService.syncVideos().then(res => {
+            if (res && res.success && res.videos && typeof window.renderVideoBulletinsGrid === 'function') {
+                window.renderVideoBulletinsGrid(res.videos);
+            }
+        }).catch(err => console.warn("Auto-sync background check notice:", err));
+    }
+
+    if (typeof CloudStorageService !== 'undefined' && CloudStorageService.listenToVideos) {
+        CloudStorageService.listenToVideos((newVideos) => {
+            if (typeof window.renderVideoBulletinsGrid === 'function') {
+                window.renderVideoBulletinsGrid(newVideos);
+            }
+        });
+    }
+
+    window.addEventListener("todayindia_videos_updated", (e) => {
+        if (e.detail && e.detail.videos && typeof window.renderVideoBulletinsGrid === 'function') {
+            window.renderVideoBulletinsGrid(e.detail.videos);
         }
     });
 }

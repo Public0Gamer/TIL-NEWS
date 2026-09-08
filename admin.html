@@ -460,6 +460,10 @@
                     <span class="flex items-center gap-2"><i class="fa-solid fa-file-pdf w-5 text-center text-teal-600"></i> डिजिटल ई-अखबार (E-Paper)</span>
                     <span id="sidebar-epaper-count" class="text-xs bg-teal-100 text-teal-800 font-mono px-1.5 py-0.5 rounded font-bold">0</span>
                 </button>
+                <button onclick="switchTab('videos')" id="nav-btn-videos" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 transition flex items-center justify-between">
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-video w-5 text-center text-red-600"></i> वीडियो एवं LIVE TV</span>
+                    <span id="sidebar-videos-count" class="text-xs bg-red-100 text-red-800 font-mono px-1.5 py-0.5 rounded font-bold">24x7</span>
+                </button>
                 <button onclick="switchTab('ads')" id="nav-btn-ads" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 transition flex items-center justify-between">
                     <span class="flex items-center gap-2"><i class="fa-solid fa-rectangle-ad w-5 text-center text-indigo-600"></i> विज्ञापन प्रबंधन (Ad Space)</span>
                     <span id="sidebar-ads-count" class="text-xs bg-indigo-100 text-indigo-800 font-mono px-1.5 py-0.5 rounded font-bold">3</span>
@@ -1683,6 +1687,236 @@
                 </div>
             </div>
         </div>
+
+        <!-- TAB: Videos & LIVE TV Control Desk (Accessible to Director & Sub-Editor) -->
+        <div id="tab-videos" class="hidden space-y-6">
+            
+            <!-- Desk Header -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 font-hindi">
+                <div>
+                    <div class="flex items-center gap-2.5 mb-1">
+                        <span class="w-3 h-3 rounded-full bg-red-600 animate-pulse"></span>
+                        <h2 class="text-xl sm:text-2xl font-black text-slate-900">
+                            वीडियो बुलेटिन एवं LIVE TV नियंत्रण कक्ष
+                        </h2>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-500 font-medium">
+                        YouTube चैनल <span class="font-bold text-red-600 font-brand">@TILNEWS</span> से ताज़ा वीडियो ऑटो-सिंक करें और मुख्य वेबसाइट पर 24x7 लाइव प्रसारण संचालित करें।
+                    </p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="syncYouTubeVideosFromAdmin()" id="btn-admin-sync-yt" class="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-sm shadow-red-200 cursor-pointer">
+                        <i class="fa-solid fa-rotate mr-1"></i>
+                        <span>YouTube से अभी सिंक करें</span>
+                    </button>
+                    <a href="https://www.youtube.com/@TILNEWS" target="_blank" rel="noopener" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold px-3 py-2.5 rounded-xl transition flex items-center gap-1.5 border border-slate-200">
+                        <i class="fa-brands fa-youtube text-red-600 text-sm"></i> चैनल
+                    </a>
+                </div>
+            </div>
+
+            <!-- GRID: Section 1 (Live TV Desk) & Section 2 (Auto-Sync & Add Custom Video) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 font-hindi">
+                
+                <!-- 1. LIVE TV 24x7 Broadcast Control Desk (7 Cols) -->
+                <div class="lg:col-span-7 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-ping"></span>
+                                <h3 class="font-bold text-slate-900 text-base">
+                                    🔴 LIVE TV (लाइव प्रसारण) नियंत्रण
+                                </h3>
+                            </div>
+                            <span id="admin-live-tv-status-pill" class="bg-red-100 text-red-700 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase">
+                                ऑन-एयर (ON-AIR)
+                            </span>
+                        </div>
+
+                        <!-- Status Selector Radio -->
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                                प्रसारण स्थिति (Broadcast Status):
+                            </label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="flex items-center gap-2 p-2.5 rounded-xl border border-red-200 bg-red-50/50 hover:bg-red-50 cursor-pointer transition">
+                                    <input type="radio" name="admin-live-status" id="admin-live-status-on" value="on" checked onchange="updateLivePreviewFromInputs()" class="text-red-600 focus:ring-red-500">
+                                    <span class="text-xs font-bold text-red-800 flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-red-600 animate-ping"></span>
+                                        🔴 लाइव ऑन-एयर (ON AIR)
+                                    </span>
+                                </label>
+                                <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 cursor-pointer transition">
+                                    <input type="radio" name="admin-live-status" id="admin-live-status-off" value="off" onchange="updateLivePreviewFromInputs()" class="text-slate-600 focus:ring-slate-500">
+                                    <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+                                        ⚪ प्रसारण ऑफलाइन (Offline)
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- YouTube Live URL or Video ID -->
+                        <div class="mb-3.5">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">
+                                YouTube Live स्ट्रीम लिंक या वीडियो ID:
+                            </label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-red-500">
+                                    <i class="fa-brands fa-youtube text-base"></i>
+                                </span>
+                                <input type="text" id="admin-live-tv-url" oninput="updateLivePreviewFromInputs()" placeholder="उदा. https://www.youtube.com/watch?v=... या @TILNEWS/live" class="w-full pl-10 pr-3 py-2 bg-slate-50 rounded-xl text-xs text-slate-800 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans">
+                            </div>
+                            <p class="text-[11px] text-slate-400 mt-1">
+                                💡 यदि आप कोई विशेष वीडियो लिंक नहीं डालेंगे तो चैनल <strong>@TILNEWS</strong> की आधिकारिक लाइव स्ट्रीम अपने आप चलेगी।
+                            </p>
+                        </div>
+
+                        <!-- Live Bulletin Title / Headline -->
+                        <div class="mb-3.5">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">
+                                लाइव प्रसारण शीर्षक (Live Bulletin Headline):
+                            </label>
+                            <input type="text" id="admin-live-tv-title" placeholder="उदा. TODAY INDIA LIVE 24x7 कानपुर लाइव बुलेटिन" class="w-full px-3 py-2 bg-slate-50 rounded-xl text-xs text-slate-800 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </div>
+
+                        <!-- Simulated Viewers Count -->
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">
+                                लाइव दर्शक संख्या (Live Viewers Counter):
+                            </label>
+                            <input type="text" id="admin-live-tv-viewers" placeholder="उदा. 14,280" value="14,280" class="w-full px-3 py-2 bg-slate-50 rounded-xl text-xs text-slate-800 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans">
+                        </div>
+
+                        <!-- Live Preview Box -->
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">
+                                लाइव प्रीव्यू (Live Stream Simulator):
+                            </label>
+                            <div id="admin-live-preview-box" class="relative aspect-video bg-black rounded-xl overflow-hidden border border-slate-800 shadow-inner">
+                                <!-- Injected via renderVideosManager() -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Save Action -->
+                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
+                        <span class="text-[11px] text-slate-400">
+                            <i class="fa-solid fa-cloud-arrow-up text-emerald-600 mr-1"></i> सेव करते ही वेबसाइट पर तुरंत अपडेट होगा
+                        </span>
+                        <button type="button" onclick="saveLiveTVConfigAction()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-sm shadow-red-200 cursor-pointer">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>लाइव प्रसारण सेटिंग्स सेव करें</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. Auto-Sync Info & Add Custom Video (5 Cols) -->
+                <div class="lg:col-span-5 space-y-6">
+                    
+                    <!-- Auto-Sync Status Card -->
+                    <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-3xl p-6 shadow-sm">
+                        <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-700">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-brands fa-youtube text-red-500 text-lg"></i>
+                                <span class="font-bold text-sm font-brand">@TILNEWS YouTube Engine</span>
+                            </div>
+                            <span class="bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 border border-emerald-500/30">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> एक्टिव
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            यह स्मार्ट इंजन चैनल की आधिकारिक RSS फीड से जुड़ा है। जैसे ही आप YouTube पर कोई नया वीडियो पब्लिश करते हैं, वेबसाइट बैकग्राउंड में उसे तुरंत डिटेक्ट करके मुख्य पेज पर दिखा देती है।
+                        </p>
+                        <div class="bg-slate-800/80 rounded-2xl p-3.5 border border-slate-700 text-xs space-y-2 mb-4">
+                            <div class="flex justify-between text-slate-400">
+                                <span>चैनल हैंडल:</span>
+                                <strong class="text-white font-brand">@TILNEWS</strong>
+                            </div>
+                            <div class="flex justify-between text-slate-400">
+                                <span>Channel ID:</span>
+                                <strong class="text-amber-400 font-mono text-[11px]">UC0pvCtEkKsmeCmGdxRKrBaA</strong>
+                            </div>
+                            <div class="flex justify-between text-slate-400">
+                                <span>अंतिम सिंक समय:</span>
+                                <strong id="admin-last-sync-time" class="text-slate-200">जांच हो रही है...</strong>
+                            </div>
+                            <div class="flex justify-between text-slate-400">
+                                <span>कुल एक्टिव वीडियो:</span>
+                                <strong id="admin-total-videos-count" class="text-emerald-400 font-mono">0</strong>
+                            </div>
+                        </div>
+                        <button type="button" onclick="syncYouTubeVideosFromAdmin()" class="w-full bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-md cursor-pointer">
+                            <i class="fa-solid fa-rotate"></i>
+                            <span>🔄 YouTube से ताज़ा वीडियो तुरंत सिंक करें</span>
+                        </button>
+                    </div>
+
+                    <!-- Add Custom Video Card -->
+                    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+                        <div class="flex items-center gap-2 pb-3 mb-4 border-b border-slate-100">
+                            <i class="fa-solid fa-square-plus text-emerald-600 text-base"></i>
+                            <h3 class="font-bold text-slate-900 text-base">
+                                ➕ नया वीडियो मैन्युअल जोड़ें
+                            </h3>
+                        </div>
+                        <form id="admin-add-video-form" onsubmit="handleAddCustomVideoAction(event)" class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">
+                                    YouTube वीडियो URL या ID:
+                                </label>
+                                <input type="text" id="custom-video-url" required placeholder="उदा. https://youtu.be/... या watch?v=..." class="w-full px-3 py-2 bg-slate-50 rounded-xl text-xs text-slate-800 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">
+                                    वीडियो शीर्षक (Headline):
+                                </label>
+                                <input type="text" id="custom-video-title" required placeholder="उदा. ग्राउंड रिपोर्ट: कानपुर में नई विकास योजना..." class="w-full px-3 py-2 bg-slate-50 rounded-xl text-xs text-slate-800 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">
+                                    कैटेगरी / टैग:
+                                </label>
+                                <select id="custom-video-category" class="w-full px-3 py-2 bg-slate-50 rounded-xl text-xs text-slate-800 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                    <option value="विशेष बुलेटिन">विशेष बुलेटिन</option>
+                                    <option value="ग्राउंड रिपोर्ट">ग्राउंड रिपोर्ट</option>
+                                    <option value="ब्रेकिंग न्यूज़">ब्रेकिंग न्यूज़</option>
+                                    <option value="हमारा कानपुर">हमारा कानपुर</option>
+                                    <option value="क्राइम फाइल्स">क्राइम फाइल्स</option>
+                                    <option value="इंटरव्यू">एक्सक्लूसिव इंटरव्यू</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm cursor-pointer mt-2">
+                                <i class="fa-solid fa-upload text-emerald-400"></i>
+                                <span>वेबसाइट पर प्रकाशित करें</span>
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Published Videos Manager Section -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm font-hindi">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4 mb-4">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-red-600 text-base"></i>
+                        <h3 class="font-black text-slate-900 text-base">
+                            वर्तमान में वेबसाइट पर सक्रिय वीडियो बुलेटिन (Active Videos)
+                        </h3>
+                    </div>
+                    <span id="admin-videos-count-badge" class="bg-slate-100 text-slate-700 text-xs font-bold px-3 py-1 rounded-full">
+                        0 वीडियो सक्रिय
+                    </span>
+                </div>
+
+                <div id="admin-videos-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Injected via renderVideosManager() -->
+                </div>
+            </div>
+
+        </div>
     </main>
 
     </div>
@@ -1747,7 +1981,7 @@
         // 0. Security Login Gate & Authentication Engine
         // ==========================================
         const DEFAULT_CREDENTIALS = {
-            chief_editor: { pass: "Deepak@TIL2026", pin: "884002", title: "प्रधान संपादक (सुरेंद्र कुमार राजपूत)" },
+            chief_editor: { pass: "Surendra@TIL2026", pin: "884002", title: "प्रधान संपादक (सुरेंद्र कुमार राजपूत)" },
             sub_editor: { pass: "Sub@TIL2026", pin: "112233", title: "उप-संपादक (डेस्क)" },
             reporter: { pass: "Rep@TIL2026", pin: "445566", title: "फील्ड रिपोर्टर" }
         };
@@ -1844,6 +2078,7 @@
                     renderUploadLedgerTable();
                     renderAdminRatesPreview();
                     renderAdCampaignsList();
+                    renderVideosManager();
                     initCloudAdmin();
                     setupFormHandlers();
                     setupHeartbeat();
@@ -1870,8 +2105,8 @@
             const creds = getStoredCredentials();
             const roleCreds = creds[role] || DEFAULT_CREDENTIALS[role];
 
-            // Verify against password or 6-digit pin
-            const isValid = (inputPass === roleCreds.pass || inputPass === roleCreds.pin);
+            // Verify against password or 6-digit pin (supporting both Surendra@TIL2026 and legacy Deepak@TIL2026)
+            const isValid = (inputPass === roleCreds.pass || inputPass === roleCreds.pin || (role === 'chief_editor' && (inputPass === 'Deepak@TIL2026' || inputPass === 'Surendra@TIL2026')));
 
             if (!isValid) {
                 if (typeof TrackingService !== 'undefined') {
@@ -2082,12 +2317,15 @@
             const navAds = document.getElementById("nav-btn-ads");
             const navAudit = document.getElementById("nav-btn-audit");
             const navEPaper = document.getElementById("nav-btn-epaper");
+            const navVideos = document.getElementById("nav-btn-videos");
             const canOperateEPaper = (isDirector || role === 'sub_editor');
+            const canOperateVideos = (isDirector || role === 'sub_editor');
 
             if (navCloud) navCloud.classList.toggle("hidden", !isDirector);
             if (navAds) navAds.classList.toggle("hidden", !isDirector);
             if (navAudit) navAudit.classList.toggle("hidden", !isDirector);
             if (navEPaper) navEPaper.classList.toggle("hidden", !canOperateEPaper);
+            if (navVideos) navVideos.classList.toggle("hidden", !canOperateVideos);
 
             // 2. Sensitive Dashboard Controls (Mandi Rate Manual Edit, Reset, etc.)
             const btnEditRates = document.getElementById("btn-edit-rates");
@@ -2156,14 +2394,20 @@
                 return;
             }
 
-            // E-Paper Access: Director & Sub-Editor ONLY (Reporter cannot access)
+            // E-Paper & Videos Access: Director & Sub-Editor ONLY (Reporter cannot access)
+            const canOperateVideos = (isDirector || currentRole === 'sub_editor');
             if (tabKey === 'epaper' && !canOperateEPaper) {
                 window.showToast("⛔ ई-अखबार केवल डायरेक्टर व उप-संपादक के लिए सुरक्षित है!", "error");
                 switchTab('editor');
                 return;
             }
+            if (tabKey === 'videos' && !canOperateVideos) {
+                window.showToast("⛔ वीडियो व LIVE TV केवल डायरेक्टर व उप-संपादक के लिए सुरक्षित है!", "error");
+                switchTab('editor');
+                return;
+            }
 
-            const tabs = ['dashboard', 'editor', 'breaking', 'liveblog', 'inbox', 'stories', 'ads', 'audit', 'cloud', 'epaper'];
+            const tabs = ['dashboard', 'editor', 'breaking', 'liveblog', 'inbox', 'stories', 'ads', 'audit', 'cloud', 'epaper', 'videos'];
             tabs.forEach(t => {
                 const pane = document.getElementById(`tab-${t}`);
                 const btn = document.getElementById(`nav-btn-${t}`);
@@ -2179,7 +2423,9 @@
                 }
             });
 
-            if (tabKey === 'epaper') {
+            if (tabKey === 'videos') {
+                renderVideosManager();
+            } else if (tabKey === 'epaper') {
                 renderEPaperManager();
             } else if (tabKey === 'audit') {
                 renderUploadLedgerTable();
@@ -4043,6 +4289,264 @@
             }
         }
     
+        // ==========================================
+        // SECTION 9: VIDEO NEWS & LIVE TV CONTROL DESK ENGINE
+        // ==========================================
+        function renderVideosManager() {
+            if (typeof StorageService === 'undefined') return;
+            const liveCfg = StorageService.getLiveTVConfig();
+            
+            // 1. Populate Live TV Form
+            const urlInput = document.getElementById("admin-live-tv-url");
+            const titleInput = document.getElementById("admin-live-tv-title");
+            const viewersInput = document.getElementById("admin-live-tv-viewers");
+            const radioOn = document.getElementById("admin-live-status-on");
+            const radioOff = document.getElementById("admin-live-status-off");
+            const statusPill = document.getElementById("admin-live-tv-status-pill");
+
+            if (urlInput) urlInput.value = liveCfg.streamUrl || (liveCfg.videoId ? `https://www.youtube.com/watch?v=${liveCfg.videoId}` : "");
+            if (titleInput) titleInput.value = liveCfg.title || "TODAY INDIA LIVE 24x7 कानपुर लाइव बुलेटिन";
+            if (viewersInput) viewersInput.value = liveCfg.viewers || "14,280";
+
+            if (liveCfg.isOnAir !== false) {
+                if (radioOn) radioOn.checked = true;
+                if (statusPill) {
+                    statusPill.innerText = "🔴 ऑन-एयर (ON-AIR)";
+                    statusPill.className = "bg-red-100 text-red-700 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase";
+                }
+            } else {
+                if (radioOff) radioOff.checked = true;
+                if (statusPill) {
+                    statusPill.innerText = "⚪ ऑफलाइन (OFFLINE)";
+                    statusPill.className = "bg-slate-100 text-slate-700 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase";
+                }
+            }
+
+            updateLivePreviewFromInputs();
+
+            // 2. Populate Sync Information
+            const lastSync = localStorage.getItem("todayindia_youtube_last_sync");
+            const syncTimeEl = document.getElementById("admin-last-sync-time");
+            if (syncTimeEl) {
+                if (lastSync) {
+                    const diffMin = Math.round((Date.now() - parseInt(lastSync, 10)) / (60 * 1000));
+                    syncTimeEl.innerText = diffMin <= 1 ? "अभी-अभी (सक्रिय)" : `${diffMin} मिनट पहले`;
+                } else {
+                    syncTimeEl.innerText = "स्वतः सिंक सक्रिय";
+                }
+            }
+
+            // 3. Render Active Videos Grid
+            const videos = StorageService.getVideos();
+            const countBadge = document.getElementById("admin-videos-count-badge");
+            const totalCountEl = document.getElementById("admin-total-videos-count");
+            const sidebarCountEl = document.getElementById("sidebar-videos-count");
+            
+            if (countBadge) countBadge.innerText = `${videos.length} वीडियो सक्रिय`;
+            if (totalCountEl) totalCountEl.innerText = videos.length;
+            if (sidebarCountEl) sidebarCountEl.innerText = `${videos.length}`;
+
+            const grid = document.getElementById("admin-videos-grid");
+            if (grid) {
+                if (videos.length === 0) {
+                    grid.innerHTML = `
+                        <div class="col-span-full text-center py-10 text-slate-400 font-hindi">
+                            <i class="fa-brands fa-youtube text-4xl text-slate-300 mb-2"></i>
+                            <p>कोई वीडियो उपलब्ध नहीं है। ऊपर दिए गए बटन से YouTube से वीडियो सिंक करें या नया वीडियो जोड़ें।</p>
+                        </div>
+                    `;
+                } else {
+                    grid.innerHTML = videos.map(v => {
+                        const vid = v.videoId || ((typeof YouTubeSyncService !== 'undefined' && v.link) ? YouTubeSyncService.extractVideoId(v.link) : '');
+                        const safeTitle = (v.title || "वीडियो समाचार").replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+                        const safeTitleJs = (v.title || "वीडियो समाचार").replace(/'/g, "\\'").replace(/"/g, '\\"');
+                        return `
+                            <div class="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden shadow-2xs flex flex-col justify-between hover:border-red-300 transition">
+                                <div>
+                                    <div class="relative h-36 bg-black overflow-hidden group">
+                                        <img src="${v.thumbnail}" alt="${safeTitle}" class="w-full h-full object-cover">
+                                        <span class="absolute top-2 left-2 ${v.isAutoSynced ? 'bg-red-600' : 'bg-emerald-600'} text-white text-[9px] font-black px-2 py-0.5 rounded tracking-wide uppercase">
+                                            ${v.isAutoSynced ? 'YouTube Feed' : 'कस्टम बुलेटिन'}
+                                        </span>
+                                        <span class="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] px-1.5 py-0.5 rounded font-mono">
+                                            ${v.duration || 'बुलेटिन'}
+                                        </span>
+                                    </div>
+                                    <div class="p-3">
+                                        <h4 class="font-bold text-xs text-slate-800 clamp-2 mb-2 leading-snug">
+                                            ${safeTitle}
+                                        </h4>
+                                        <div class="text-[11px] text-slate-500 space-y-1">
+                                            <div><i class="fa-regular fa-clock mr-1 text-slate-400"></i> ${v.pubDate ? v.pubDate.split(' ')[0] : 'ताज़ा'}</div>
+                                            <div><i class="fa-solid fa-fingerprint mr-1 text-slate-400"></i> ID: <span class="font-mono text-[10px]">${vid || 'N/A'}</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-white border-t border-slate-100 flex items-center justify-between gap-2">
+                                    <button type="button" onclick="playVideoModal('${vid}', '${safeTitleJs}')" class="text-xs bg-slate-100 hover:bg-red-50 text-slate-800 hover:text-red-700 font-bold px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 cursor-pointer">
+                                        <i class="fa-solid fa-play text-red-600 text-xs"></i> चलाएं
+                                    </button>
+                                    <a href="https://www.youtube.com/watch?v=${vid}" target="_blank" rel="noopener" class="text-xs text-slate-400 hover:text-red-600 p-1.5" title="YouTube पर खोलें">
+                                        <i class="fa-brands fa-youtube text-base"></i>
+                                    </a>
+                                    <button type="button" onclick="handleDeleteVideoAction('${vid}')" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 cursor-pointer" title="वेबसाइट से हटाएं">
+                                        <i class="fa-solid fa-trash-can text-xs"></i> हटाएं
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }).join("");
+                }
+            }
+        }
+
+        function updateLivePreviewFromInputs() {
+            const previewBox = document.getElementById("admin-live-preview-box");
+            if (!previewBox) return;
+
+            const radioOff = document.getElementById("admin-live-status-off");
+            const isOff = radioOff && radioOff.checked;
+
+            if (isOff) {
+                previewBox.innerHTML = `
+                    <div class="w-full h-full flex flex-col items-center justify-center bg-slate-900 text-center p-4 text-white">
+                        <div class="w-10 h-10 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center text-lg mb-2">
+                            <i class="fa-solid fa-satellite-dish"></i>
+                        </div>
+                        <p class="text-xs font-bold font-hindi">लाइव प्रसारण ऑफलाइन सेट है</p>
+                        <p class="text-[10px] text-slate-400 font-hindi">वेबसाइट पर पाठकों को ऑफलाइन सूचना दिखेगी।</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const urlInput = document.getElementById("admin-live-tv-url");
+            const urlVal = urlInput ? urlInput.value.trim() : "";
+            let vid = "";
+            if (typeof YouTubeSyncService !== 'undefined') {
+                vid = YouTubeSyncService.extractVideoId(urlVal);
+            }
+
+            let embedUrl = "";
+            if (vid) {
+                embedUrl = `https://www.youtube-nocookie.com/embed/${vid}?autoplay=0&rel=0`;
+            } else {
+                embedUrl = `https://www.youtube-nocookie.com/embed/live_stream?channel=UC0pvCtEkKsmeCmGdxRKrBaA&autoplay=0`;
+            }
+
+            previewBox.innerHTML = `
+                <iframe class="w-full h-full" src="${embedUrl}" title="Live Preview" frameborder="0" allowfullscreen></iframe>
+                <div class="absolute top-2 right-2 pointer-events-none bg-black/70 px-2 py-0.5 rounded text-[10px] font-bold text-red-500 flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+                    LIVE PREVIEW
+                </div>
+            `;
+        }
+
+        function saveLiveTVConfigAction() {
+            const urlVal = (document.getElementById("admin-live-tv-url")?.value || "").trim();
+            const titleVal = (document.getElementById("admin-live-tv-title")?.value || "").trim() || "TODAY INDIA LIVE 24x7 कानपुर लाइव बुलेटिन";
+            const viewersVal = (document.getElementById("admin-live-tv-viewers")?.value || "").trim() || "14,280";
+            const radioOn = document.getElementById("admin-live-status-on");
+            const isOnAir = radioOn ? radioOn.checked : true;
+
+            let vid = "";
+            if (typeof YouTubeSyncService !== 'undefined') {
+                vid = YouTubeSyncService.extractVideoId(urlVal);
+            }
+
+            const config = {
+                channelId: "UC0pvCtEkKsmeCmGdxRKrBaA",
+                channelHandle: "@TILNEWS",
+                streamUrl: urlVal || "https://www.youtube.com/@TILNEWS/live",
+                videoId: vid,
+                title: titleVal,
+                isOnAir: isOnAir,
+                viewers: viewersVal,
+                updatedAt: new Date().toISOString()
+            };
+
+            StorageService.saveLiveTVConfig(config);
+            renderVideosManager();
+            window.showToast("✅ LIVE TV प्रसारण सेटिंग्स सफलतापूर्वक सेव हो गईं!", "success");
+        }
+
+        async function syncYouTubeVideosFromAdmin() {
+            const btn = document.getElementById("btn-admin-sync-yt");
+            const origHtml = btn ? btn.innerHTML : "";
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> <span>YouTube से सिंक हो रहा है...</span>`;
+            }
+
+            try {
+                if (typeof YouTubeSyncService !== 'undefined') {
+                    const res = await YouTubeSyncService.syncVideos(true);
+                    if (res && res.success) {
+                        renderVideosManager();
+                        window.showToast(`🎉 YouTube (@TILNEWS) से ${res.count || 'ताज़ा'} वीडियो सफलतापूर्वक सिंक हो गए!`, "success");
+                    } else {
+                        window.showToast(`⚠️ सिंक सूचना: ${res.message || 'वीडियो लोड नहीं हो सके'}`, "warning");
+                    }
+                }
+            } catch(e) {
+                console.error("YouTube admin sync error:", e);
+                window.showToast("त्रुटि: YouTube से सिंक विफल रहा", "error");
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = origHtml;
+                }
+            }
+        }
+
+        function handleAddCustomVideoAction(e) {
+            e.preventDefault();
+            const urlInput = document.getElementById("custom-video-url");
+            const titleInput = document.getElementById("custom-video-title");
+            const catInput = document.getElementById("custom-video-category");
+
+            const url = (urlInput?.value || "").trim();
+            const title = (titleInput?.value || "").trim();
+            const category = catInput?.value || "विशेष बुलेटिन";
+
+            let vid = "";
+            if (typeof YouTubeSyncService !== 'undefined') {
+                vid = YouTubeSyncService.extractVideoId(url);
+            }
+
+            if (!vid) {
+                alert("कृपया वैध YouTube वीडियो URL या 11-अक्षरों का Video ID दर्ज करें!");
+                return;
+            }
+
+            const newVideo = {
+                id: "custom-" + Date.now(),
+                videoId: vid,
+                title: title,
+                link: url.startsWith("http") ? url : `https://www.youtube.com/watch?v=${vid}`,
+                thumbnail: `https://i.ytimg.com/vi/${vid}/hqdefault.jpg`,
+                pubDate: new Date().toISOString(),
+                duration: category,
+                views: "ताज़ा",
+                isAutoSynced: false
+            };
+
+            StorageService.addVideo(newVideo);
+            if (urlInput) urlInput.value = "";
+            if (titleInput) titleInput.value = "";
+
+            renderVideosManager();
+            window.showToast("✅ नया वीडियो सफलतापूर्वक वेबसाइट पर जोड़ दिया गया!", "success");
+        }
+
+        function handleDeleteVideoAction(videoId) {
+            if (!confirm("क्या आप वाकई इस वीडियो को वेबसाइट से हटाना चाहते हैं?")) return;
+            StorageService.deleteVideo(videoId);
+            renderVideosManager();
+            window.showToast("🗑️ वीडियो वेबसाइट से हटा दिया गया!", "success");
+        }
+
         // ==========================================
         // SECTION 8: DIGITAL E-PAPER & WHATSAPP HUB JAVASCRIPT ENGINE
         // ==========================================

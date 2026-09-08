@@ -608,26 +608,29 @@
             </div>
         </section>
 
-        <!-- SECTION D: Live TV & Video Bulletins -->
+        <!-- SECTION D: Live TV & Video Bulletins (National Studio Grade) -->
         <section id="video-section" class="bg-slate-900 text-white rounded-2xl p-5 sm:p-7 shadow-lg">
-            <div class="flex items-center justify-between pb-3 mb-5 border-b border-slate-800">
-                <div class="flex items-center gap-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 mb-5 border-b border-slate-800">
+                <div class="flex flex-wrap items-center gap-2.5">
                     <span class="w-3 h-3 rounded-full bg-red-500 animate-pulse"></span>
                     <h2 class="text-lg sm:text-2xl font-black font-hindi">
                         वीडियो बुलेटिन एवं लाइव कवरेज
                     </h2>
+                    <span class="bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-red-400 animate-ping"></span> YouTube Auto-Sync
+                    </span>
                 </div>
                 <div class="flex items-center gap-2">
                     <a href="https://www.youtube.com/@TILNEWS" target="_blank" rel="noopener" class="text-xs bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-xs">
                         <i class="fa-brands fa-youtube text-sm"></i> @TILNEWS सब्सक्राइब करें
                     </a>
-                    <button onclick="openLiveTVModal()" class="text-xs bg-slate-800 hover:bg-slate-700 text-white font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 border border-slate-700">
+                    <button type="button" onclick="openLiveTVModal()" class="text-xs bg-slate-800 hover:bg-slate-700 text-white font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 border border-slate-700 cursor-pointer">
                         <i class="fa-solid fa-play text-red-500"></i> LIVE टीवी
                     </button>
                 </div>
             </div>
 
-            <div id="video-bulletins-grid" class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div id="video-bulletins-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 <!-- Populated dynamically via js/app.js -->
             </div>
         </section>
@@ -771,26 +774,26 @@
 
     </main>
 
-    <!-- 6. LIVE TV MODAL -->
-    <div id="live-tv-modal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4">
+    <!-- 6. LIVE TV MODAL (24x7 Broadcast Player) -->
+    <div id="live-tv-modal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs">
         <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl animate-fade-in text-white">
             <!-- Modal Header -->
             <div class="px-5 py-3.5 bg-slate-800 border-b border-slate-700 flex items-center justify-between">
                 <div class="flex items-center gap-2.5">
                     <span class="w-3 h-3 rounded-full bg-red-600 animate-ping"></span>
                     <span class="font-brand font-black text-lg tracking-wide">TODAY INDIA LIVE</span>
-                    <span class="bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded">24x7 BROADCAST</span>
+                    <span id="live-tv-status-badge" class="bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded flex items-center gap-1">🔴 LIVE ON-AIR</span>
                 </div>
-                <button onclick="closeLiveTVModal()" class="text-slate-400 hover:text-white text-xl p-1">
+                <button type="button" onclick="closeLiveTVModal()" class="text-slate-400 hover:text-white text-xl p-1 cursor-pointer">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <!-- Video Player Simulator -->
-            <div class="relative aspect-video bg-black flex items-center justify-center overflow-hidden">
-                <iframe class="w-full h-full" src="https://www.youtube-nocookie.com/embed/live_stream?channel=UC4R8DWoMoI7CAwX8_BQqdMg&autoplay=1&mute=1" title="Today India Live Broadcast" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <!-- Video Player Simulator / Embed Container -->
+            <div id="live-tv-player-container" class="relative aspect-video bg-black flex items-center justify-center overflow-hidden">
+                <iframe class="w-full h-full" src="https://www.youtube-nocookie.com/embed/live_stream?channel=UC0pvCtEkKsmeCmGdxRKrBaA&autoplay=1" title="TODAY INDIA LIVE Broadcast" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 <!-- Watermark Overlay -->
-                <div class="absolute top-4 right-4 pointer-events-none bg-black/60 px-3 py-1 rounded-md text-xs font-brand font-bold text-red-500 flex items-center gap-1.5">
+                <div class="absolute top-4 right-4 pointer-events-none bg-black/70 px-3 py-1 rounded-md text-xs font-brand font-bold text-red-500 flex items-center gap-1.5 shadow-md">
                     <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
                     KANPUR BUREAU LIVE
                 </div>
@@ -799,16 +802,47 @@
             <!-- Modal Footer Controls -->
             <div class="p-4 bg-slate-800/80 flex flex-wrap items-center justify-between gap-3 text-xs">
                 <div class="flex items-center gap-3">
-                    <span class="text-slate-400"><i class="fa-solid fa-eye text-red-500 mr-1"></i> 14,280 दर्शक लाइव</span>
+                    <span id="live-tv-viewers-display" class="text-slate-400"><i class="fa-solid fa-eye text-red-500 mr-1"></i> 14,280 दर्शक लाइव</span>
                     <span class="text-slate-400">|</span>
-                    <span class="text-amber-400 font-semibold font-hindi">वर्तमान प्रसारण: कानपुर प्राइम टाइम स्पेशल</span>
+                    <span id="live-tv-title-display" class="text-amber-400 font-semibold font-hindi">वर्तमान प्रसारण: कानपुर प्राइम टाइम स्पेशल</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <a href="https://www.youtube.com/@TILNEWS" target="_blank" rel="noopener" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded font-bold transition flex items-center gap-1.5 shadow-xs">
                         <i class="fa-brands fa-youtube text-sm"></i> @TILNEWS चैनल
                     </a>
-                    <button onclick="shareOnWhatsApp('TODAY INDIA LIVE NEWS कानपुर लाइव प्रसारण देखें', 'index.html')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded font-bold transition flex items-center gap-1.5">
+                    <button type="button" onclick="shareOnWhatsApp('TODAY INDIA LIVE NEWS कानपुर लाइव प्रसारण देखें', 'index.html')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded font-bold transition flex items-center gap-1.5 cursor-pointer">
                         <i class="fa-brands fa-whatsapp text-sm"></i> लाइव स्ट्रीम शेयर करें
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6.01 VIDEO PLAYER MODAL (Direct On-Site Video Bulletin Player) -->
+    <div id="video-player-modal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl animate-fade-in text-white">
+            <div class="px-5 py-3.5 bg-slate-800 border-b border-slate-700 flex items-center justify-between">
+                <div class="flex items-center gap-2.5 truncate pr-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>
+                    <span id="vpm-title" class="font-hindi font-bold text-sm sm:text-base text-white truncate">वीडियो बुलेटिन</span>
+                </div>
+                <button type="button" onclick="closeVideoModal()" class="text-slate-400 hover:text-white text-xl p-1 shrink-0 cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="vpm-player" class="relative aspect-video bg-black flex items-center justify-center overflow-hidden">
+            </div>
+            <div class="p-4 bg-slate-800/90 flex flex-wrap items-center justify-between gap-3 text-xs">
+                <div class="flex items-center gap-2 text-slate-300 font-hindi">
+                    <i class="fa-solid fa-circle-check text-red-500"></i>
+                    <span>TODAY INDIA LIVE NEWS • आधिकारिक वीडियो बुलेटिन</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <a id="vpm-yt-link" href="#" target="_blank" rel="noopener" class="bg-red-600 hover:bg-red-700 text-white px-3.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer">
+                        <i class="fa-brands fa-youtube text-sm"></i> YouTube पर देखें (HD)
+                    </a>
+                    <button id="vpm-wa-btn" type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 cursor-pointer">
+                        <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp शेयर
                     </button>
                 </div>
             </div>
