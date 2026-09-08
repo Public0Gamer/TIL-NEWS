@@ -265,65 +265,22 @@ const INITIAL_LIVE_BLOGS = [
 // Real-Only Citizen News Pipeline (Pure authentic citizen submissions - empty by default)
 const INITIAL_CITIZEN_TIPS = [];
 
-// Initial Advertisement Campaigns (Multi-Format Ad Engine)
-const INITIAL_AD_CAMPAIGNS = [
-    {
-        id: "ad-101",
-        title: "श्री श्याम ज्वेलर्स - कानपुर धनतेरस व विवाह महासेल",
-        advertiser: "श्री श्याम ज्वेलर्स, माल रोड, कानपुर",
-        description: "100% हॉलमार्क शुद्ध सोने व हीरे के आभूषणों के मेकिंग चार्ज पर 25% तक की विशेष छूट। सीमित समय का ऑफर!",
-        imageUrl: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&auto=format&fit=crop&q=80",
-        linkUrl: "https://wa.me/919876543210?text=नमस्ते,%20मुझे%20आपके%20विज्ञापन%20के%20बारे%20में%20जानकारी%20चाहिए",
-        ctaText: "ऑफर देखें व संपर्क करें",
-        placement: "all", // "popup", "bottom_bar", "inpage", "all"
-        enabled: true,
-        impressions: 0,
-        clicks: 0,
-        createdAt: "2026-09-06"
-    },
-    {
-        id: "ad-102",
-        title: "कानपुर ग्लोबल एकेडमी - सत्र 2026-27 सीधा प्रवेश प्रारंभ",
-        advertiser: "कानपुर ग्लोबल ग्रुप ऑफ इंस्टीट्यूशंस, कल्याणपुर",
-        description: "स्मार्ट क्लास, रोबोटिक्स लैब और उच्च योग्य संकाय। नर्सरी से 12वीं तक दाखिले के लिए फॉर्म भरें।",
-        imageUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&auto=format&fit=crop&q=80",
-        linkUrl: "https://wa.me/919876543210?text=नमस्ते,%20एडमिशन%20के%20लिए%20जानकारी%20चाहिए",
-        ctaText: "ऑनलाइन दाखिला फॉर्म",
-        placement: "popup",
-        enabled: true,
-        impressions: 0,
-        clicks: 0,
-        createdAt: "2026-09-06"
-    },
-    {
-        id: "ad-103",
-        title: "ग्रीन वैली रेजिडेंसी - गंगा बैराज रोड पर KDA एप्रूव्ड प्लॉट्स",
-        advertiser: "ग्रीन इंफ्रा डेवलपर्स, कानपुर",
-        description: "मात्र ₹21 लाख से शुरू। पार्क, क्लब हाउस, 24 घंटे सुरक्षा और आसान बैंक लोन सुविधा।",
-        imageUrl: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&auto=format&fit=crop&q=80",
-        linkUrl: "https://wa.me/919876543210?text=नमस्ते,%20प्लॉट%20विजिट%20बुक%20करनी%20है",
-        ctaText: "मुफ्त साइट विजिट बुक करें",
-        placement: "bottom_bar",
-        enabled: true,
-        impressions: 0,
-        clicks: 0,
-        createdAt: "2026-09-06"
-    }
-];
+// Pure Real-Only Advertisement Campaigns (Zero demo ads - only admin created ads will operate)
+const INITIAL_AD_CAMPAIGNS = [];
 
-// Initial Advertisement Settings (Backwards Compatibility)
+// Initial Advertisement Settings (Backwards Compatibility - disabled by default)
 const INITIAL_ADS = {
     headerBanner: {
-        enabled: true,
-        title: "श्री श्याम ज्वेलर्स - कानपुर धनतेरस व विवाह महासेल",
-        imageUrl: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&auto=format&fit=crop&q=80",
-        linkUrl: "https://wa.me/919876543210"
+        enabled: false,
+        title: "",
+        imageUrl: "",
+        linkUrl: ""
     },
     sidebarBanner: {
-        enabled: true,
-        title: "कानपुर ग्लोबल एकेडमी - प्रवेश प्रारंभ",
-        imageUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&auto=format&fit=crop&q=80",
-        linkUrl: "https://wa.me/919876543210"
+        enabled: false,
+        title: "",
+        imageUrl: "",
+        linkUrl: ""
     }
 };
 
@@ -659,28 +616,40 @@ const StorageService = {
     },
 
     // ==========================================
-    // Universal Ad Campaigns Engine (Multi-Ad, Random Popups & Banners)
+    // Universal Ad Campaigns Engine (Multi-Ad, Random Popups & Banners - Pure Real Ads Only)
     // ==========================================
+    isDemoAd(ad) {
+        if (!ad) return false;
+        const id = (ad.id || "").toString();
+        const title = (ad.title || "").toString();
+        const adv = (ad.advertiser || "").toString();
+        if (id === "ad-101" || id === "ad-102" || id === "ad-103") return true;
+        if (title.includes("श्री श्याम ज्वेलर्स") || title.includes("कानपुर ग्लोबल") || title.includes("ग्लोबल एकेडमी") || title.includes("ग्रीन वैली")) return true;
+        if (adv.includes("श्री श्याम ज्वेलर्स") || adv.includes("ग्लोबल ग्रुप") || adv.includes("ग्रीन इंफ्रा")) return true;
+        return false;
+    },
+
     getAdCampaigns() {
         const stored = localStorage.getItem("todayindia_ad_campaigns");
-        if (!stored) {
-            this.safeSetItem("todayindia_ad_campaigns", JSON.stringify(INITIAL_AD_CAMPAIGNS));
-            return INITIAL_AD_CAMPAIGNS;
+        if (stored !== null) {
+            try {
+                const parsed = JSON.parse(stored);
+                if (Array.isArray(parsed)) {
+                    // Filter out any legacy demo ads immediately
+                    const clean = parsed.filter(ad => !this.isDemoAd(ad));
+                    if (clean.length !== parsed.length) {
+                        this.safeSetItem("todayindia_ad_campaigns", JSON.stringify(clean));
+                    }
+                    return clean;
+                }
+            } catch(e) {}
         }
-        try {
-            const parsed = JSON.parse(stored);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-                return parsed;
-            }
-            this.safeSetItem("todayindia_ad_campaigns", JSON.stringify(INITIAL_AD_CAMPAIGNS));
-            return INITIAL_AD_CAMPAIGNS;
-        } catch(e) {
-            return INITIAL_AD_CAMPAIGNS;
-        }
+        return [];
     },
 
     saveAdCampaigns(campaigns) {
-        this.safeSetItem("todayindia_ad_campaigns", JSON.stringify(campaigns));
+        const clean = Array.isArray(campaigns) ? campaigns.filter(ad => !this.isDemoAd(ad)) : [];
+        this.safeSetItem("todayindia_ad_campaigns", JSON.stringify(clean));
     },
 
     addAdCampaign(ad) {
@@ -776,12 +745,10 @@ const StorageService = {
             const campaigns = this.getAdCampaigns();
             let active = campaigns.filter(c => {
                 if (!c.enabled) return false;
+                if (this.isDemoAd(c)) return false;
                 if (placement === "all") return true;
                 return c.placement === placement || c.placement === "all";
             });
-            if (active.length === 0) {
-                active = campaigns.filter(c => c.enabled);
-            }
             if (active.length === 0) return null;
             const randomIndex = Math.floor(Math.random() * active.length);
             return active[randomIndex];
@@ -790,14 +757,14 @@ const StorageService = {
         }
     },
 
-    // Backwards Compatibility for existing templates
+    // Backwards Compatibility for existing templates (Pure real ads only)
     getAds() {
         const campaigns = this.getAdCampaigns();
-        const active = campaigns.find(c => c.enabled) || campaigns[0] || INITIAL_AD_CAMPAIGNS[0];
+        const active = campaigns.find(c => c.enabled && !this.isDemoAd(c)) || null;
         return {
             headerBanner: {
-                enabled: active ? active.enabled : true,
-                title: active ? active.title : "विशेष विज्ञापन",
+                enabled: active ? active.enabled : false,
+                title: active ? active.title : "",
                 imageUrl: active ? active.imageUrl : "",
                 linkUrl: active ? active.linkUrl : "#"
             },
@@ -1734,18 +1701,29 @@ const CloudStorageService = {
             console.warn("Could not attach breaking listener:", e);
         }
 
-        // C. Listen to Ads
+        // C. Listen to Ads (Pure Real Ads - Auto-purge demo ads from Firestore)
         try {
+            // Auto-purge legacy demo ads from Firestore collection
+            ["ad-101", "ad-102", "ad-103"].forEach(dId => {
+                this.db.collection("ads").doc(dId).delete().catch(() => {});
+            });
+
             const unsubAds = this.db.collection("ads").onSnapshot((snapshot) => {
-                if (snapshot && !snapshot.empty) {
+                if (snapshot) {
                     const ads = [];
-                    snapshot.forEach(doc => ads.push({ id: doc.id, ...doc.data() }));
-                    if (ads.length > 0) {
-                        localStorage.setItem("todayindia_ad_campaigns", JSON.stringify(ads));
-                        window.dispatchEvent(new CustomEvent('todayindia:cloud_updated', {
-                            detail: { type: 'ads', count: ads.length }
-                        }));
-                    }
+                    snapshot.forEach(doc => {
+                        const data = { id: doc.id, ...doc.data() };
+                        if (StorageService.isDemoAd(data)) {
+                            // Automatically remove demo ad from cloud Firestore
+                            doc.ref.delete().catch(() => {});
+                        } else {
+                            ads.push(data);
+                        }
+                    });
+                    localStorage.setItem("todayindia_ad_campaigns", JSON.stringify(ads));
+                    window.dispatchEvent(new CustomEvent('todayindia:cloud_updated', {
+                        detail: { type: 'ads', count: ads.length }
+                    }));
                 }
             }, (err) => console.warn("Firestore ads listener warning:", err));
             this._activeListeners.push(unsubAds);

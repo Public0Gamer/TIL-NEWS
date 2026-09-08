@@ -466,7 +466,7 @@
                 </button>
                 <button onclick="switchTab('ads')" id="nav-btn-ads" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 transition flex items-center justify-between">
                     <span class="flex items-center gap-2"><i class="fa-solid fa-rectangle-ad w-5 text-center text-indigo-600"></i> विज्ञापन प्रबंधन (Ad Space)</span>
-                    <span id="sidebar-ads-count" class="text-xs bg-indigo-100 text-indigo-800 font-mono px-1.5 py-0.5 rounded font-bold">3</span>
+                    <span id="sidebar-ads-count" class="text-xs bg-indigo-100 text-indigo-800 font-mono px-1.5 py-0.5 rounded font-bold">0</span>
                 </button>
                 <button onclick="switchTab('audit')" id="nav-btn-audit" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 transition flex items-center justify-between">
                     <span class="flex items-center gap-2"><i class="fa-solid fa-list-check w-5 text-center text-purple-600"></i> अपलोड लेजर (Upload History)</span>
@@ -1114,12 +1114,12 @@
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6 font-hindi">
                         <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
                             <div class="text-[11px] text-slate-500 font-bold mb-0.5">कुल विज्ञापन (Total)</div>
-                            <h4 id="ad-stat-total" class="text-xl font-black text-slate-900 font-brand">3</h4>
+                            <h4 id="ad-stat-total" class="text-xl font-black text-slate-900 font-brand">0</h4>
                             <span class="text-[10px] text-slate-400">पोर्टल में पंजीकृत</span>
                         </div>
                         <div class="bg-emerald-50 p-3.5 rounded-xl border border-emerald-200">
                             <div class="text-[11px] text-emerald-800 font-bold mb-0.5">सक्रिय अभियान (Active)</div>
-                            <h4 id="ad-stat-active" class="text-xl font-black text-emerald-900 font-brand">3</h4>
+                            <h4 id="ad-stat-active" class="text-xl font-black text-emerald-900 font-brand">0</h4>
                             <span class="text-[10px] text-emerald-700">अभी लाइव चल रहे हैं</span>
                         </div>
                         <div class="bg-blue-50 p-3.5 rounded-xl border border-blue-200">
@@ -1240,9 +1240,9 @@
                             <h3 class="text-sm font-black text-slate-900 flex items-center gap-2">
                                 <i class="fa-solid fa-list-check text-slate-600"></i> पंजीकृत विज्ञापन अभियान (Active Campaigns)
                             </h3>
-                            <button type="button" onclick="resetToDefaultAds()" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold underline cursor-pointer">
-                                🔄 डिफॉल्ट डेमो विज्ञापन रीस्टोर करें
-                            </button>
+                            <span class="text-xs text-slate-400 font-hindi flex items-center gap-1">
+                                <i class="fa-solid fa-shield-check text-emerald-600"></i> केवल आपके जोड़े गए असली विज्ञापन चलेंगे
+                            </span>
                         </div>
 
                         <div id="campaigns-table-container" class="overflow-x-auto rounded-xl border border-slate-200">
@@ -4261,12 +4261,8 @@
         }
 
         function resetToDefaultAds() {
-            if (!confirm("क्या आप सभी डिफॉल्ट डेमो विज्ञापनों को रीस्टोर करना चाहते हैं?")) return;
-            localStorage.removeItem("todayindia_ad_campaigns");
-            StorageService.getAdCampaigns();
-            window.showToast("🔄 डिफॉल्ट विज्ञापन रीस्टोर कर दिए गए!", "success");
+            // Deprecated: Only user-added ads operate
             renderAdCampaignsList();
-            refreshDashboard();
         }
 
         // Web Audio Synthesizer for Breaking Alert Chime

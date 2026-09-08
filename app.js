@@ -581,12 +581,14 @@ const AdEngine = {
         }
     },
 
-    // C. Dynamic In-Page & Header Slots
+    // C. Dynamic In-Page & Header Slots (Only active when real ads exist)
     renderInPageSlots() {
         const headerSlot = document.getElementById("header-ad-banner");
         if (headerSlot) {
-            const ad = StorageService.getRandomActiveAd("inpage") || StorageService.getRandomActiveAd("all");
-            if (ad) {
+            const ad = (typeof StorageService !== 'undefined' && StorageService.getRandomActiveAd)
+                ? (StorageService.getRandomActiveAd("inpage") || StorageService.getRandomActiveAd("all"))
+                : null;
+            if (ad && !StorageService.isDemoAd(ad)) {
                 headerSlot.innerHTML = `
                     <div class="relative group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs">
                         <div class="flex flex-col sm:flex-row items-center justify-between p-2 sm:p-3 gap-3 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white">
@@ -607,6 +609,9 @@ const AdEngine = {
                 `;
                 headerSlot.classList.remove("hidden");
                 StorageService.recordAdImpression(ad.id);
+            } else {
+                headerSlot.innerHTML = "";
+                headerSlot.classList.add("hidden");
             }
         }
     },
