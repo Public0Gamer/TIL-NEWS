@@ -1868,6 +1868,27 @@
                                 <input type="text" id="custom-video-url" required placeholder="उदा. https://youtu.be/... या watch?v=..." class="w-full px-3 py-2 bg-slate-50 rounded-xl text-xs text-slate-800 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans">
                             </div>
                             <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                                    वीडियो प्रारूप (Format / Type):
+                                </label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 cursor-pointer text-xs font-bold text-slate-800 transition">
+                                        <input type="radio" name="custom-video-type" value="video" checked class="text-red-600 focus:ring-red-500">
+                                        <span class="flex items-center gap-1.5">
+                                            <i class="fa-solid fa-film text-blue-600"></i>
+                                            <span>📹 वीडियो (16:9)</span>
+                                        </span>
+                                    </label>
+                                    <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 cursor-pointer text-xs font-bold text-slate-800 transition">
+                                        <input type="radio" name="custom-video-type" value="short" class="text-red-600 focus:ring-red-500">
+                                        <span class="flex items-center gap-1.5">
+                                            <i class="fa-solid fa-bolt text-red-600"></i>
+                                            <span>⚡ शॉर्ट्स (9:16)</span>
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">
                                     वीडियो शीर्षक (Headline):
                                 </label>
@@ -1903,12 +1924,14 @@
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-list-check text-red-600 text-base"></i>
                         <h3 class="font-black text-slate-900 text-base">
-                            वर्तमान में वेबसाइट पर सक्रिय वीडियो बुलेटिन (Active Videos)
+                            वेबसाइट पर सक्रिय वीडियो एवं शॉर्ट्स (Active Media)
                         </h3>
                     </div>
-                    <span id="admin-videos-count-badge" class="bg-slate-100 text-slate-700 text-xs font-bold px-3 py-1 rounded-full">
-                        0 वीडियो सक्रिय
-                    </span>
+                    <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl text-xs font-bold">
+                        <button type="button" onclick="setAdminVideoFilter('all', this)" class="admin-vfilter-btn px-3 py-1 bg-white text-slate-900 rounded-lg shadow-2xs cursor-pointer">सभी (<span id="admin-count-all">0</span>)</button>
+                        <button type="button" onclick="setAdminVideoFilter('video', this)" class="admin-vfilter-btn px-3 py-1 text-slate-600 hover:text-slate-900 rounded-lg cursor-pointer">📹 वीडियो (<span id="admin-count-video">0</span>)</button>
+                        <button type="button" onclick="setAdminVideoFilter('short', this)" class="admin-vfilter-btn px-3 py-1 text-slate-600 hover:text-slate-900 rounded-lg cursor-pointer">⚡ शॉर्ट्स (<span id="admin-count-short">0</span>)</button>
+                    </div>
                 </div>
 
                 <div id="admin-videos-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -4288,7 +4311,21 @@
         // ==========================================
         // SECTION 9: VIDEO NEWS & LIVE TV CONTROL DESK ENGINE
         // ==========================================
-        function renderVideosManager() {
+                window.adminCurrentVideoFilter = 'all';
+        window.setAdminVideoFilter = function(filterName, btn) {
+            window.adminCurrentVideoFilter = filterName;
+            document.querySelectorAll('.admin-vfilter-btn').forEach(b => {
+                b.classList.remove('bg-white', 'text-slate-900', 'shadow-2xs');
+                b.classList.add('text-slate-600');
+            });
+            if (btn) {
+                btn.classList.add('bg-white', 'text-slate-900', 'shadow-2xs');
+                btn.classList.remove('text-slate-600');
+            }
+            renderVideosManager();
+        };
+
+function renderVideosManager() {
             if (typeof StorageService === 'undefined') return;
             const liveCfg = StorageService.getLiveTVConfig();
             
@@ -4332,40 +4369,60 @@
                 }
             }
 
-            // 3. Render Active Videos Grid
-            const videos = StorageService.getVideos();
-            const countBadge = document.getElementById("admin-videos-count-badge");
+            // 3. Render Active Videos & Shorts Grid
+            const allVideos = (typeof StorageService !== 'undefined' && StorageService.getVideos) ? StorageService.getVideos('all') : [];
+            const countAllEl = document.getElementById("admin-count-all");
+            const countVideoEl = document.getElementById("admin-count-video");
+            const countShortEl = document.getElementById("admin-count-short");
             const totalCountEl = document.getElementById("admin-total-videos-count");
             const sidebarCountEl = document.getElementById("sidebar-videos-count");
-            
-            if (countBadge) countBadge.innerText = `${videos.length} वीडियो सक्रिय`;
-            if (totalCountEl) totalCountEl.innerText = videos.length;
-            if (sidebarCountEl) sidebarCountEl.innerText = `${videos.length}`;
+
+            const vCount = allVideos.filter(v => v.type !== 'short').length;
+            const sCount = allVideos.filter(v => v.type === 'short').length;
+
+            if (countAllEl) countAllEl.innerText = allVideos.length;
+            if (countVideoEl) countVideoEl.innerText = vCount;
+            if (countShortEl) countShortEl.innerText = sCount;
+            if (totalCountEl) totalCountEl.innerText = allVideos.length;
+            if (sidebarCountEl) sidebarCountEl.innerText = `${allVideos.length}`;
+
+            const activeFilter = window.adminCurrentVideoFilter || 'all';
+            let displayVideos = allVideos;
+            if (activeFilter === 'video') displayVideos = allVideos.filter(v => v.type !== 'short');
+            else if (activeFilter === 'short') displayVideos = allVideos.filter(v => v.type === 'short');
 
             const grid = document.getElementById("admin-videos-grid");
             if (grid) {
-                if (videos.length === 0) {
+                if (displayVideos.length === 0) {
                     grid.innerHTML = `
                         <div class="col-span-full text-center py-10 text-slate-400 font-hindi">
                             <i class="fa-brands fa-youtube text-4xl text-slate-300 mb-2"></i>
-                            <p>कोई वीडियो उपलब्ध नहीं है। ऊपर दिए गए बटन से YouTube से वीडियो सिंक करें या नया वीडियो जोड़ें।</p>
+                            <p>कोई सामग्री उपलब्ध नहीं है। ऊपर दिए गए बटन से YouTube से वीडियो/शॉर्ट्स सिंक करें या नया जोड़ें।</p>
                         </div>
                     `;
                 } else {
-                    grid.innerHTML = videos.map(v => {
+                    grid.innerHTML = displayVideos.map(v => {
                         const vid = v.videoId || ((typeof YouTubeSyncService !== 'undefined' && v.link) ? YouTubeSyncService.extractVideoId(v.link) : '');
                         const safeTitle = (v.title || "वीडियो समाचार").replace(/'/g, "&#39;").replace(/"/g, "&quot;");
-                        const safeTitleJs = (v.title || "वीडियो समाचार").replace(/'/g, "\\'").replace(/"/g, '\\"');
+                        const safeTitleJs = (v.title || "वीडियो समाचार").replace(/'/g, "\'").replace(/"/g, '\\"');
+                        const isShort = v.type === 'short';
+                        const ytUrl = isShort ? `https://www.youtube.com/shorts/${vid}` : `https://www.youtube.com/watch?v=${vid}`;
                         return `
                             <div class="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden shadow-2xs flex flex-col justify-between hover:border-red-300 transition">
                                 <div>
                                     <div class="relative h-36 bg-black overflow-hidden group">
                                         <img src="${v.thumbnail}" alt="${safeTitle}" class="w-full h-full object-cover">
-                                        <span class="absolute top-2 left-2 ${v.isAutoSynced ? 'bg-red-600' : 'bg-emerald-600'} text-white text-[9px] font-black px-2 py-0.5 rounded tracking-wide uppercase">
-                                            ${v.isAutoSynced ? 'YouTube Feed' : 'कस्टम बुलेटिन'}
-                                        </span>
+                                        <div class="absolute top-2 left-2 flex items-center gap-1">
+                                            <span class="${isShort ? 'bg-red-600' : 'bg-blue-600'} text-white text-[9px] font-black px-2 py-0.5 rounded tracking-wide uppercase flex items-center gap-1">
+                                                <i class="${isShort ? 'fa-solid fa-bolt' : 'fa-solid fa-film'} text-[8px]"></i>
+                                                ${isShort ? 'SHORTS (9:16)' : 'VIDEO (16:9)'}
+                                            </span>
+                                            <span class="bg-black/60 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
+                                                ${v.isAutoSynced ? 'Auto-Sync' : 'Custom'}
+                                            </span>
+                                        </div>
                                         <span class="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] px-1.5 py-0.5 rounded font-mono">
-                                            ${v.duration || 'बुलेटिन'}
+                                            ${v.duration || (isShort ? 'शॉर्ट्स' : 'बुलेटिन')}
                                         </span>
                                     </div>
                                     <div class="p-3">
@@ -4379,10 +4436,10 @@
                                     </div>
                                 </div>
                                 <div class="p-3 bg-white border-t border-slate-100 flex items-center justify-between gap-2">
-                                    <button type="button" onclick="playVideoModal('${vid}', '${safeTitleJs}')" class="text-xs bg-slate-100 hover:bg-red-50 text-slate-800 hover:text-red-700 font-bold px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 cursor-pointer">
+                                    <button type="button" onclick="playVideoModal('${vid}', '${safeTitleJs}', '${isShort ? "short" : "video"}')" class="text-xs bg-slate-100 hover:bg-red-50 text-slate-800 hover:text-red-700 font-bold px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 cursor-pointer">
                                         <i class="fa-solid fa-play text-red-600 text-xs"></i> चलाएं
                                     </button>
-                                    <a href="https://www.youtube.com/watch?v=${vid}" target="_blank" rel="noopener" class="text-xs text-slate-400 hover:text-red-600 p-1.5" title="YouTube पर खोलें">
+                                    <a href="${ytUrl}" target="_blank" rel="noopener" class="text-xs text-slate-400 hover:text-red-600 p-1.5" title="YouTube पर खोलें">
                                         <i class="fa-brands fa-youtube text-base"></i>
                                     </a>
                                     <button type="button" onclick="handleDeleteVideoAction('${vid}')" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 cursor-pointer" title="वेबसाइट से हटाएं">
@@ -4501,10 +4558,12 @@
             const urlInput = document.getElementById("custom-video-url");
             const titleInput = document.getElementById("custom-video-title");
             const catInput = document.getElementById("custom-video-category");
+            const typeInput = document.querySelector('input[name="custom-video-type"]:checked');
 
             const url = (urlInput?.value || "").trim();
             const title = (titleInput?.value || "").trim();
             const category = catInput?.value || "विशेष बुलेटिन";
+            let selectedType = typeInput ? typeInput.value : "video";
 
             let vid = "";
             if (typeof YouTubeSyncService !== 'undefined') {
@@ -4516,14 +4575,21 @@
                 return;
             }
 
+            // Heuristic detection: if URL has /shorts/ or title has #short, auto-classify as short
+            if (url.includes("/shorts/") || title.toLowerCase().includes("#short")) {
+                selectedType = "short";
+            }
+
+            const isShort = selectedType === "short";
             const newVideo = {
                 id: "custom-" + Date.now(),
                 videoId: vid,
+                type: selectedType,
                 title: title,
-                link: url.startsWith("http") ? url : `https://www.youtube.com/watch?v=${vid}`,
+                link: isShort ? `https://www.youtube.com/shorts/${vid}` : (url.startsWith("http") ? url : `https://www.youtube.com/watch?v=${vid}`),
                 thumbnail: `https://i.ytimg.com/vi/${vid}/hqdefault.jpg`,
                 pubDate: new Date().toISOString(),
-                duration: category,
+                duration: isShort ? "यूट्यूब शॉर्ट्स" : category,
                 views: "ताज़ा",
                 isAutoSynced: false
             };
@@ -4533,7 +4599,7 @@
             if (titleInput) titleInput.value = "";
 
             renderVideosManager();
-            window.showToast("✅ नया वीडियो सफलतापूर्वक वेबसाइट पर जोड़ दिया गया!", "success");
+            window.showToast(`✅ नया ${isShort ? 'यूट्यूब शॉर्ट्स (9:16)' : 'वीडियो (16:9)'} सफलतापूर्वक प्रकाशित हो गया!`, "success");
         }
 
         function handleDeleteVideoAction(videoId) {

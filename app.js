@@ -631,61 +631,160 @@ function renderAdBanners() {
     }
 }
 
-// 3.01 Dedicated Video Bulletins Grid Renderer
-window.renderVideoBulletinsGrid = function(videosList) {
+// 3.01 Dedicated Video & Shorts Media Hub Renderer (National Studio Grade)
+window.currentVideoTab = 'videos'; // 'videos' | 'shorts'
+
+window.switchVideoTab = function(tab) {
+    window.currentVideoTab = tab;
+    const btnVideos = document.getElementById("tab-btn-videos");
+    const btnShorts = document.getElementById("tab-btn-shorts");
+    if (tab === 'shorts') {
+        if (btnShorts) {
+            btnShorts.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 bg-red-600 text-white shadow-md cursor-pointer";
+        }
+        if (btnVideos) {
+            btnVideos.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 cursor-pointer";
+        }
+    } else {
+        if (btnVideos) {
+            btnVideos.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 bg-red-600 text-white shadow-md cursor-pointer";
+        }
+        if (btnShorts) {
+            btnShorts.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 cursor-pointer";
+        }
+    }
+    if (typeof window.renderVideoBulletinsGrid === 'function') {
+        window.renderVideoBulletinsGrid(null, tab);
+    }
+};
+
+window.renderVideoBulletinsGrid = function(videosList, tabName) {
     const videoContainer = document.getElementById("video-bulletins-grid");
     if (!videoContainer) return;
 
-    const videos = videosList || ((typeof StorageService !== 'undefined' && StorageService.getVideos) 
-        ? StorageService.getVideos() 
-        : (typeof INITIAL_VIDEOS !== 'undefined' ? INITIAL_VIDEOS : []));
+    const tab = tabName || window.currentVideoTab || 'videos';
+    window.currentVideoTab = tab;
 
-    if (!Array.isArray(videos) || videos.length === 0) {
+    const allVideos = videosList || ((typeof StorageService !== 'undefined' && StorageService.getVideos) 
+        ? StorageService.getVideos('all') 
+        : []);
+
+    const videosOnly = allVideos.filter(v => v.type !== 'short');
+    const shortsOnly = allVideos.filter(v => v.type === 'short');
+
+    // Update tab count badges if elements exist
+    const badgeVideos = document.getElementById("tab-badge-videos");
+    const badgeShorts = document.getElementById("tab-badge-shorts");
+    if (badgeVideos) badgeVideos.innerText = videosOnly.length;
+    if (badgeShorts) badgeShorts.innerText = shortsOnly.length;
+
+    const activeList = tab === 'shorts' ? shortsOnly : videosOnly;
+
+    if (!Array.isArray(activeList) || activeList.length === 0) {
+        videoContainer.className = "col-span-full w-full";
+        const emptyMsg = tab === 'shorts' 
+            ? "वर्तमान में कोई यूट्यूब शॉर्ट्स उपलब्ध नहीं हैं।" 
+            : "वर्तमान में कोई वीडियो बुलेटिन उपलब्ध नहीं है।";
         videoContainer.innerHTML = `
-            <div class="col-span-full text-center py-8 text-slate-400 font-hindi">
-                <i class="fa-brands fa-youtube text-4xl text-red-500 mb-2"></i>
-                <p>वर्तमान में कोई वीडियो उपलब्ध नहीं है।</p>
+            <div class="col-span-full text-center py-10 px-4 bg-slate-800/40 rounded-2xl border border-slate-800 text-slate-400 font-hindi">
+                <div class="w-12 h-12 mx-auto rounded-full bg-red-600/20 text-red-500 flex items-center justify-center text-xl mb-3">
+                    <i class="fa-brands fa-youtube"></i>
+                </div>
+                <p class="font-bold text-slate-300 text-sm mb-1">${emptyMsg}</p>
+                <p class="text-xs text-slate-500 mb-4">YouTube चैनल @TILNEWS पर नई वीडियो या शॉर्ट्स अपलोड होते ही यहाँ स्वतः दिखाई देंगे।</p>
+                <a href="https://www.youtube.com/@TILNEWS" target="_blank" rel="noopener" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-4 py-2 rounded-xl transition shadow-md">
+                    <i class="fa-brands fa-youtube text-sm"></i> @TILNEWS चैनल खोलें
+                </a>
             </div>
         `;
         return;
     }
 
-    videoContainer.innerHTML = videos.slice(0, 6).map(v => {
-        const safeTitle = (v.title || "ताज़ा वीडियो बुलेटिन").replace(/'/g, "&#39;").replace(/"/g, "&quot;");
-        const safeTitleJs = (v.title || "ताज़ा वीडियो बुलेटिन").replace(/'/g, "\\'").replace(/"/g, '\\"');
-        const vid = v.videoId || ((typeof YouTubeSyncService !== 'undefined' && v.link) ? YouTubeSyncService.extractVideoId(v.link) : '');
-        return `
-            <div class="bg-slate-800/90 hover:bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-md news-card cursor-pointer group transition duration-300 flex flex-col justify-between" onclick="playVideoModal('${vid}', '${safeTitleJs}')">
-                <div class="relative h-44 overflow-hidden bg-black">
-                    <img src="${v.thumbnail}" alt="${safeTitle}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
-                    <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition flex items-center justify-center">
-                        <div class="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl group-hover:scale-115 transition">
-                            <i class="fa-solid fa-play ml-1 text-base"></i>
+    if (tab === 'shorts') {
+        // National Channel Shorts Shelf (9:16 Vertical Portrait Cards)
+        videoContainer.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4";
+        videoContainer.innerHTML = activeList.slice(0, 10).map(v => {
+            const safeTitle = (v.title || "ताज़ा यूट्यूब शॉर्ट्स").replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+            const safeTitleJs = (v.title || "ताज़ा यूट्यूब शॉर्ट्स").replace(/'/g, "\'").replace(/"/g, '\\"');
+            const vid = v.videoId || ((typeof YouTubeSyncService !== 'undefined' && v.link) ? YouTubeSyncService.extractVideoId(v.link) : '');
+            return `
+                <div class="group relative rounded-2xl overflow-hidden aspect-[9/16] bg-slate-950 border border-slate-800 hover:border-red-500 shadow-md hover:shadow-xl hover:shadow-red-950/40 transition-all duration-300 cursor-pointer flex flex-col justify-between" onclick="playVideoModal('${vid}', '${safeTitleJs}', 'short')">
+                    <img src="${v.thumbnail}" alt="${safeTitle}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
+                    <div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition"></div>
+
+                    <!-- Top Badge -->
+                    <div class="relative z-10 p-2.5 flex items-center justify-between">
+                        <span class="bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded-md tracking-wider uppercase flex items-center gap-1 shadow-sm">
+                            <i class="fa-solid fa-bolt text-[8px]"></i> SHORTS
+                        </span>
+                        <span class="w-6 h-6 rounded-full bg-black/60 text-white text-[10px] flex items-center justify-center group-hover:scale-110 group-hover:bg-red-600 transition">
+                            <i class="fa-solid fa-play ml-0.5"></i>
+                        </span>
+                    </div>
+
+                    <!-- Center Hover Play Icon -->
+                    <div class="absolute inset-0 flex items-center justify-center z-10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                        <div class="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center text-lg shadow-xl">
+                            <i class="fa-solid fa-play ml-0.5"></i>
                         </div>
                     </div>
-                    <span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded tracking-wide uppercase flex items-center gap-1 shadow-xs">
-                        <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span> ${v.isAutoSynced ? 'YOUTUBE' : 'VIDEO'}
-                    </span>
-                    <span class="absolute bottom-2 right-2 bg-black/85 text-white text-[11px] px-2 py-0.5 rounded font-mono font-semibold">
-                        ${v.duration || 'बुलेटिन'}
-                    </span>
-                </div>
-                <div class="p-3.5 flex flex-col justify-between flex-grow">
-                    <h4 class="font-bold text-sm text-white group-hover:text-amber-300 transition clamp-2 font-hindi leading-snug mb-2">
-                        ${safeTitle}
-                    </h4>
-                    <div class="flex items-center justify-between text-xs text-slate-400 mt-2 pt-2 border-t border-slate-700/60">
-                        <span class="flex items-center gap-1 text-[11px]">
-                            <i class="fa-brands fa-youtube text-red-500"></i> ${v.views || 'TIL NEWS'}
-                        </span>
-                        <span class="text-red-400 font-bold flex items-center gap-1 text-[11px] group-hover:text-red-300 transition">
-                            <i class="fa-regular fa-circle-play"></i> अभी देखें ➔
-                        </span>
+
+                    <!-- Bottom Content -->
+                    <div class="relative z-10 p-3 text-white">
+                        <h4 class="font-bold text-xs line-clamp-3 leading-snug group-hover:text-amber-300 transition font-hindi mb-2">
+                            ${safeTitle}
+                        </h4>
+                        <div class="flex items-center justify-between text-[10px] text-slate-300 pt-1.5 border-t border-white/15">
+                            <span class="flex items-center gap-1">
+                                <i class="fa-brands fa-youtube text-red-500"></i> ${v.views || 'TIL'}
+                            </span>
+                            <span class="text-amber-400 font-bold">देखें ➔</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
-    }).join("");
+            `;
+        }).join("");
+    } else {
+        // National Channel Widescreen Videos (16:9 Landscape Cards)
+        videoContainer.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5";
+        videoContainer.innerHTML = activeList.slice(0, 6).map(v => {
+            const safeTitle = (v.title || "ताज़ा वीडियो बुलेटिन").replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+            const safeTitleJs = (v.title || "ताज़ा वीडियो बुलेटिन").replace(/'/g, "\'").replace(/"/g, '\\"');
+            const vid = v.videoId || ((typeof YouTubeSyncService !== 'undefined' && v.link) ? YouTubeSyncService.extractVideoId(v.link) : '');
+            return `
+                <div class="bg-slate-800/90 hover:bg-slate-800 rounded-2xl border border-slate-700/80 overflow-hidden shadow-md news-card cursor-pointer group transition duration-300 flex flex-col justify-between" onclick="playVideoModal('${vid}', '${safeTitleJs}', 'video')">
+                    <div class="relative aspect-video overflow-hidden bg-black">
+                        <img src="${v.thumbnail}" alt="${safeTitle}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
+                        <div class="absolute inset-0 bg-black/35 group-hover:bg-black/15 transition flex items-center justify-center">
+                            <div class="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl group-hover:scale-115 transition">
+                                <i class="fa-solid fa-play ml-1 text-base"></i>
+                            </div>
+                        </div>
+                        <span class="absolute top-2.5 left-2.5 bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded tracking-wide uppercase flex items-center gap-1 shadow-xs">
+                            <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span> ${v.isAutoSynced ? 'YOUTUBE' : 'VIDEO'}
+                        </span>
+                        <span class="absolute bottom-2.5 right-2.5 bg-black/85 text-white text-[11px] px-2 py-0.5 rounded font-mono font-semibold">
+                            ${v.duration || 'बुलेटिन'}
+                        </span>
+                    </div>
+                    <div class="p-4 flex flex-col justify-between flex-grow">
+                        <h4 class="font-bold text-sm text-white group-hover:text-amber-300 transition clamp-2 font-hindi leading-snug mb-3">
+                            ${safeTitle}
+                        </h4>
+                        <div class="flex items-center justify-between text-xs text-slate-400 mt-2 pt-2.5 border-t border-slate-700/60">
+                            <span class="flex items-center gap-1.5 text-[11px]">
+                                <i class="fa-brands fa-youtube text-red-500"></i> ${v.views || 'TIL NEWS'}
+                            </span>
+                            <span class="text-red-400 font-bold flex items-center gap-1 text-[11px] group-hover:text-red-300 transition">
+                                <i class="fa-regular fa-circle-play"></i> अभी देखें ➔
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join("");
+    }
 };
 
 // 6. Live TV & National Video Player Modals (National Media Grade)
@@ -818,62 +917,64 @@ function setupLiveTVModal() {
         });
     }
 
-    // Dynamic Dedicated Video Player Modal for Bulletins
-    window.playVideoModal = function(videoId, title) {
+    // Dynamic Dedicated Video & Shorts Player Modal (Dual 16:9 and 9:16 Support)
+    window.playVideoModal = function(videoId, title, type = 'video') {
         let vModal = document.getElementById("video-player-modal");
-        if (!vModal) {
-            vModal = document.createElement("div");
-            vModal.id = "video-player-modal";
-            vModal.className = "fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs";
-            vModal.innerHTML = `
-                <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl animate-fade-in text-white">
-                    <div class="px-5 py-3.5 bg-slate-800 border-b border-slate-700 flex items-center justify-between">
-                        <div class="flex items-center gap-2.5 truncate pr-2">
-                            <span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>
-                            <span id="vpm-title" class="font-hindi font-bold text-sm sm:text-base text-white truncate"></span>
-                        </div>
-                        <button onclick="closeVideoModal()" class="text-slate-400 hover:text-white text-xl p-1 shrink-0 cursor-pointer">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    </div>
-                    <div id="vpm-player" class="relative aspect-video bg-black flex items-center justify-center overflow-hidden">
-                    </div>
-                    <div class="p-4 bg-slate-800/90 flex flex-wrap items-center justify-between gap-3 text-xs">
-                        <div class="flex items-center gap-2 text-slate-300 font-hindi">
-                            <i class="fa-solid fa-circle-check text-red-500"></i>
-                            <span>TODAY INDIA LIVE NEWS • आधिकारिक वीडियो बुलेटिन</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <a id="vpm-yt-link" href="#" target="_blank" rel="noopener" class="bg-red-600 hover:bg-red-700 text-white px-3.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer">
-                                <i class="fa-brands fa-youtube text-sm"></i> YouTube पर देखें (HD)
-                            </a>
-                            <button id="vpm-wa-btn" type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 cursor-pointer">
-                                <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp शेयर
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(vModal);
-            vModal.addEventListener("click", (e) => {
-                if (e.target === vModal) window.closeVideoModal();
-            });
+        const isShort = type === 'short';
+
+        if (vModal) {
+            vModal.remove(); // Recreate with proper aspect ratio container
         }
 
-        const titleEl = document.getElementById("vpm-title");
-        if (titleEl) titleEl.innerText = title || "वीडियो बुलेटिन";
+        vModal = document.createElement("div");
+        vModal.id = "video-player-modal";
+        vModal.className = "fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-xs";
+        
+        const modalMaxWidth = isShort ? "max-w-sm sm:max-w-md" : "max-w-4xl";
+        const playerAspect = isShort ? "aspect-[9/16] max-h-[75vh]" : "aspect-video";
 
-        const ytLinkEl = document.getElementById("vpm-yt-link");
-        if (ytLinkEl) ytLinkEl.href = videoId ? `https://www.youtube.com/watch?v=${videoId}` : `https://www.youtube.com/@TILNEWS`;
+        vModal.innerHTML = `
+            <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full ${modalMaxWidth} overflow-hidden shadow-2xl animate-fade-in text-white flex flex-col">
+                <div class="px-4 py-3 bg-slate-800 border-b border-slate-700 flex items-center justify-between">
+                    <div class="flex items-center gap-2 truncate pr-2">
+                        <span class="w-2.5 h-2.5 rounded-full ${isShort ? 'bg-amber-400' : 'bg-red-600'} animate-pulse shrink-0"></span>
+                        <span class="bg-red-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider shrink-0">
+                            ${isShort ? '⚡ SHORTS' : '📹 VIDEO'}
+                        </span>
+                        <span id="vpm-title" class="font-hindi font-bold text-xs sm:text-sm text-white truncate">${title || 'वीडियो बुलेटिन'}</span>
+                    </div>
+                    <button onclick="closeVideoModal()" class="text-slate-400 hover:text-white text-xl p-1 shrink-0 cursor-pointer">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div id="vpm-player" class="relative ${playerAspect} bg-black flex items-center justify-center overflow-hidden mx-auto w-full">
+                </div>
+                <div class="p-3.5 bg-slate-800/90 flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <div class="flex items-center gap-1.5 text-slate-300 font-hindi text-[11px]">
+                        <i class="fa-solid fa-circle-check text-red-500"></i>
+                        <span>TODAY INDIA LIVE • @TILNEWS</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <a id="vpm-yt-link" href="${videoId ? (isShort ? `https://www.youtube.com/shorts/${videoId}` : `https://www.youtube.com/watch?v=${videoId}`) : 'https://www.youtube.com/@TILNEWS'}" target="_blank" rel="noopener" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 text-xs shadow-xs cursor-pointer">
+                            <i class="fa-brands fa-youtube text-sm"></i> YouTube पर खोलें
+                        </a>
+                        <button id="vpm-wa-btn" type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 text-xs cursor-pointer">
+                            <i class="fa-brands fa-whatsapp text-sm"></i> शेयर
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(vModal);
 
         const waBtn = document.getElementById("vpm-wa-btn");
         if (waBtn) {
             waBtn.onclick = function() {
-                const url = videoId ? `https://www.youtube.com/watch?v=${videoId}` : window.location.href;
-                const shareText = encodeURIComponent(`📹 TODAY INDIA LIVE NEWS:
+                const url = videoId ? (isShort ? `https://www.youtube.com/shorts/${videoId}` : `https://www.youtube.com/watch?v=${videoId}`) : window.location.href;
+                const shareText = encodeURIComponent(`${isShort ? '⚡' : '📹'} TODAY INDIA LIVE NEWS:
 *${title}*
 
-वीडियो देखें: ${url}`);
+${isShort ? 'शॉर्ट्स' : 'वीडियो'} देखें: ${url}`);
                 window.open(`https://api.whatsapp.com/send?text=${shareText}`, '_blank');
             };
         }
@@ -889,6 +990,10 @@ function setupLiveTVModal() {
 
         vModal.classList.remove("hidden");
         document.body.style.overflow = "hidden";
+
+        vModal.addEventListener("click", (e) => {
+            if (e.target === vModal) window.closeVideoModal();
+        });
     };
 
     window.closeVideoModal = function() {
@@ -904,7 +1009,7 @@ function setupLiveTVModal() {
     if (typeof YouTubeSyncService !== 'undefined') {
         YouTubeSyncService.syncVideos().then(res => {
             if (res && res.success && res.videos && typeof window.renderVideoBulletinsGrid === 'function') {
-                window.renderVideoBulletinsGrid(res.videos);
+                window.renderVideoBulletinsGrid(res.videos, window.currentVideoTab || 'videos');
             }
         }).catch(err => console.warn("Auto-sync background check notice:", err));
     }
@@ -912,14 +1017,15 @@ function setupLiveTVModal() {
     if (typeof CloudStorageService !== 'undefined' && CloudStorageService.listenToVideos) {
         CloudStorageService.listenToVideos((newVideos) => {
             if (typeof window.renderVideoBulletinsGrid === 'function') {
-                window.renderVideoBulletinsGrid(newVideos);
+                window.renderVideoBulletinsGrid(newVideos, window.currentVideoTab || 'videos');
             }
         });
     }
 
     window.addEventListener("todayindia_videos_updated", (e) => {
-        if (e.detail && e.detail.videos && typeof window.renderVideoBulletinsGrid === 'function') {
-            window.renderVideoBulletinsGrid(e.detail.videos);
+        if (typeof window.renderVideoBulletinsGrid === 'function') {
+            const v = e.detail && e.detail.videos ? e.detail.videos : null;
+            window.renderVideoBulletinsGrid(v, window.currentVideoTab || 'videos');
         }
     });
 }

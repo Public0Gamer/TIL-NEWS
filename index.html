@@ -608,29 +608,62 @@
             </div>
         </section>
 
-        <!-- SECTION D: Live TV & Video Bulletins (National Studio Grade) -->
-        <section id="video-section" class="bg-slate-900 text-white rounded-2xl p-5 sm:p-7 shadow-lg">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 mb-5 border-b border-slate-800">
-                <div class="flex flex-wrap items-center gap-2.5">
-                    <span class="w-3 h-3 rounded-full bg-red-500 animate-pulse"></span>
-                    <h2 class="text-lg sm:text-2xl font-black font-hindi">
-                        वीडियो बुलेटिन एवं लाइव कवरेज
-                    </h2>
-                    <span class="bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-red-400 animate-ping"></span> YouTube Auto-Sync
-                    </span>
+        <!-- SECTION D: Live TV & Video Bulletins (National News Media Hub) -->
+        <section id="video-section" class="bg-slate-900 text-white rounded-3xl p-5 sm:p-7 shadow-xl border border-slate-800 relative overflow-hidden">
+            <!-- Background subtle accent -->
+            <div class="absolute -top-24 -right-24 w-72 h-72 bg-red-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- Header & Action Row -->
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 mb-5 border-b border-slate-800">
+                <div class="flex flex-col gap-1">
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <span class="w-3 h-3 rounded-full bg-red-600 animate-ping"></span>
+                        <h2 class="text-xl sm:text-2xl font-black font-hindi tracking-tight">
+                            वीडियो एवं शॉर्ट्स मीडिया हब
+                        </h2>
+                        <span class="bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-brands fa-youtube text-red-500"></i> YouTube Auto-Sync
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-400 font-hindi">
+                        YouTube चैनल <a href="https://www.youtube.com/@TILNEWS" target="_blank" rel="noopener" class="text-red-400 hover:text-red-300 font-bold font-brand">@TILNEWS</a> से सीधे प्रसारित ताज़ा वीडियो बुलेटिन एवं वर्टिकल शॉर्ट्स
+                    </p>
                 </div>
-                <div class="flex items-center gap-2">
-                    <a href="https://www.youtube.com/@TILNEWS" target="_blank" rel="noopener" class="text-xs bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-xs">
-                        <i class="fa-brands fa-youtube text-sm"></i> @TILNEWS सब्सक्राइब करें
+
+                <div class="flex flex-wrap items-center gap-2">
+                    <a href="https://www.youtube.com/@TILNEWS" target="_blank" rel="noopener" class="text-xs bg-red-600 hover:bg-red-700 text-white font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-2 shadow-sm shadow-red-900/30 hover:scale-105 active:scale-95">
+                        <i class="fa-brands fa-youtube text-base"></i>
+                        <span>चैनल सब्सक्राइब करें</span>
                     </a>
-                    <button type="button" onclick="openLiveTVModal()" class="text-xs bg-slate-800 hover:bg-slate-700 text-white font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 border border-slate-700 cursor-pointer">
-                        <i class="fa-solid fa-play text-red-500"></i> LIVE टीवी
+                    <button type="button" onclick="openLiveTVModal()" class="text-xs bg-slate-800 hover:bg-slate-700 text-white font-bold px-3.5 py-2 rounded-xl transition flex items-center gap-2 border border-slate-700 cursor-pointer shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                        <span>24x7 LIVE टीवी</span>
                     </button>
                 </div>
             </div>
 
-            <div id="video-bulletins-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <!-- National Channel Category Tabs Switcher -->
+            <div class="relative z-10 flex flex-wrap items-center justify-between gap-3 mb-6 bg-slate-950/70 p-1.5 rounded-2xl border border-slate-800/80">
+                <div class="flex items-center gap-2">
+                    <button type="button" id="tab-btn-videos" onclick="switchVideoTab('videos')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 bg-red-600 text-white shadow-md cursor-pointer">
+                        <i class="fa-solid fa-film text-xs"></i>
+                        <span>वीडियो बुलेटिन (16:9)</span>
+                        <span id="tab-badge-videos" class="bg-black/40 text-white text-[10px] px-1.5 py-0.5 rounded-full font-mono">0</span>
+                    </button>
+                    <button type="button" id="tab-btn-shorts" onclick="switchVideoTab('shorts')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 cursor-pointer">
+                        <i class="fa-solid fa-bolt text-red-500 text-xs"></i>
+                        <span>यूट्यूब शॉर्ट्स (9:16)</span>
+                        <span id="tab-badge-shorts" class="bg-black/40 text-white text-[10px] px-1.5 py-0.5 rounded-full font-mono">0</span>
+                    </button>
+                </div>
+                <div class="hidden sm:flex items-center gap-2 text-[11px] text-slate-400 px-3">
+                    <i class="fa-solid fa-rotate text-red-400"></i>
+                    <span>लाइव यूट्यूब ऑटो-रिफ्रेश सक्रिय</span>
+                </div>
+            </div>
+
+            <!-- Dynamic Media Grid (Auto-toggles between 16:9 widescreen and 9:16 vertical cards) -->
+            <div id="video-bulletins-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 min-h-[160px]">
                 <!-- Populated dynamically via js/app.js -->
             </div>
         </section>
