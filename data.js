@@ -88,7 +88,7 @@ const INITIAL_ARTICLES = [
         category: "kanpur",
         categoryName: "हमारा कानपुर",
         subLocation: "बड़ा चौराहा / चुन्नीगंज",
-        author: "दीपक राजपूत (प्रधान संपादक)",
+        author: "सुरेंद्र कुमार राजपूत (प्रधान संपादक)",
         status: "published",
         date: "6 सितंबर 2026",
         time: "11:45 AM",
@@ -766,7 +766,7 @@ const StorageService = {
         };
     },
 
-    // Official WhatsApp Community Channel Link Engine
+    // Official WhatsApp Community Channel Link Engine (Dynamic Admin Configured)
     getWhatsAppLink() {
         try {
             const saved = localStorage.getItem("todayindia_whatsapp_channel_link");
@@ -774,7 +774,7 @@ const StorageService = {
                 return saved.trim();
             }
         } catch(e) {}
-        return "https://whatsapp.com/channel/0029Va51llxJpe8ZsuceeA73C";
+        return ""; // Dynamic: Set via Admin Desk!
     },
 
     setWhatsAppLink(link) {
@@ -976,7 +976,7 @@ const TrackingService = {
     getRoleTitle(role) {
         if (role === 'reporter') return 'फील्ड रिपोर्टर';
         if (role === 'sub_editor') return 'उप-संपादक (डेस्क)';
-        if (role === 'chief_editor') return 'दीपक राजपूत (डायरेक्टर)';
+        if (role === 'chief_editor') return 'सुरेंद्र कुमार राजपूत (डायरेक्टर)';
         return 'संपादकीय सदस्य';
     },
 
@@ -1242,7 +1242,7 @@ const TrackingService = {
                         timeStr: "09:30 AM",
                         type: "खबर (Article)",
                         title: "कानपुर गल्ला मंडी व सर्राफा अपडेट: चकरपुर मंडी में ताज़ा भाव",
-                        authorName: "दीपक राजपूत (प्रधान संपादक / डायरेक्टर)",
+                        authorName: "सुरेंद्र कुमार राजपूत (प्रधान संपादक / डायरेक्टर)",
                         authorRole: "chief_editor",
                         status: "published"
                     },
@@ -1264,7 +1264,7 @@ const TrackingService = {
                         timeStr: "07:00 AM",
                         type: "लाइव ब्लॉग (LiveBlog)",
                         title: "कानपुर मेट्रो: अंडरग्राउंड सेक्शन ट्रायल रन लाइव अपडेट्स",
-                        authorName: "दीपक राजपूत (प्रधान संपादक / डायरेक्टर)",
+                        authorName: "सुरेंद्र कुमार राजपूत (प्रधान संपादक / डायरेक्टर)",
                         authorRole: "chief_editor",
                         status: "published"
                     }
@@ -1290,7 +1290,7 @@ const TrackingService = {
     },
 
     getRoleTitle(role) {
-        if (role === 'chief_editor') return 'दीपक राजपूत (प्रधान संपादक / डायरेक्टर)';
+        if (role === 'chief_editor') return 'सुरेंद्र कुमार राजपूत (प्रधान संपादक / डायरेक्टर)';
         if (role === 'sub_editor') return 'उप-संपादक (डेस्क)';
         if (role === 'reporter') return 'फील्ड रिपोर्टर (संवाददाता)';
         return 'संपादकीय सदस्य';
@@ -1699,6 +1699,25 @@ const CloudStorageService = {
         } catch(e) {
             console.warn("Cloud saveSetting failed:", e);
             return false;
+        }
+    },
+
+        listenToWhatsAppLink(callback) {
+        if (!this.isCloudReady() || typeof callback !== 'function') return null;
+        try {
+            const unsub = this.db.collection("settings").doc("whatsapp_channel_link")
+                .onSnapshot((doc) => {
+                    if (doc.exists && doc.data() && doc.data().value) {
+                        const link = doc.data().value;
+                        localStorage.setItem("todayindia_whatsapp_channel_link", link);
+                        callback(link);
+                    }
+                }, (err) => console.warn("WhatsApp link listener warning:", err));
+            this._activeListeners.push(unsub);
+            return unsub;
+        } catch(e) {
+            console.warn("Could not attach WhatsApp link listener:", e);
+            return null;
         }
     },
 

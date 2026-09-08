@@ -201,7 +201,7 @@ function renderHomePageContent(filterZone = 'all') {
                         </p>
                         <div class="flex flex-wrap items-center justify-between text-xs text-slate-300 pt-2 border-t border-white/15 gap-2">
                             <div class="flex items-center gap-3 sm:gap-4">
-                                <span class="font-semibold text-white flex items-center gap-1.5"><img src="director.jpg" alt="दीपक राजपूत" class="w-5 h-5 rounded-full object-cover border border-amber-400 shrink-0"> ${heroArticle.author || "दीपक राजपूत (डायरेक्टर)"}</span>
+                                <span class="font-semibold text-white flex items-center gap-1.5"><img src="director.jpg" alt="सुरेंद्र कुमार राजपूत" class="w-5 h-5 rounded-full object-cover border border-amber-400 shrink-0"> ${heroArticle.author || "सुरेंद्र कुमार राजपूत (डायरेक्टर)"}</span>
                                 <span><i class="fa-regular fa-clock text-amber-400 mr-1"></i> ${heroArticle.time || "ताज़ा"}</span>
                                 <span class="hidden sm:inline"><i class="fa-regular fa-eye text-emerald-400 mr-1"></i> ${heroArticle.views} देखा गया</span>
                             </div>
@@ -986,7 +986,7 @@ window.performLiveSearch = function(query) {
                     <button type="button" onclick="fillSearchTag('कानपुर')" class="text-[11px] bg-white border border-slate-200 hover:border-red-300 px-2 py-0.5 rounded-full text-slate-700 hover:text-red-600 cursor-pointer">#कानपुर</button>
                     <button type="button" onclick="fillSearchTag('अपराध')" class="text-[11px] bg-white border border-slate-200 hover:border-red-300 px-2 py-0.5 rounded-full text-slate-700 hover:text-red-600 cursor-pointer">#अपराध</button>
                     <button type="button" onclick="fillSearchTag('सोना')" class="text-[11px] bg-white border border-slate-200 hover:border-red-300 px-2 py-0.5 rounded-full text-slate-700 hover:text-red-600 cursor-pointer">#सोना</button>
-                    <button type="button" onclick="fillSearchTag('दीपक राजपूत')" class="text-[11px] bg-white border border-slate-200 hover:border-red-300 px-2 py-0.5 rounded-full text-slate-700 hover:text-red-600 cursor-pointer">#दीपक राजपूत</button>
+                    <button type="button" onclick="fillSearchTag('सुरेंद्र कुमार राजपूत')" class="text-[11px] bg-white border border-slate-200 hover:border-red-300 px-2 py-0.5 rounded-full text-slate-700 hover:text-red-600 cursor-pointer">#सुरेंद्र कुमार राजपूत</button>
                 </div>
             </div>
         `;
@@ -1066,7 +1066,7 @@ window.openEPaperModal = function() {
     }
 
     const epaper = (typeof StorageService !== 'undefined' && StorageService.getEPaperInfo) ? StorageService.getEPaperInfo() : null;
-    const waLink = (typeof StorageService !== 'undefined' && StorageService.getWhatsAppLink) ? StorageService.getWhatsAppLink() : "https://whatsapp.com/channel/0029Va51llxJpe8ZsuceeA73C";
+    const waLink = (typeof StorageService !== 'undefined' && StorageService.getWhatsAppLink) ? StorageService.getWhatsAppLink() : "";
 
     if (!epaper || !Array.isArray(epaper.pages) || epaper.pages.length === 0) {
         renderEPaperEmptyState(modal, waLink);
@@ -1103,7 +1103,7 @@ function renderEPaperEmptyState(modal, waLink) {
                     <p class="text-[11px] text-emerald-800 dark:text-emerald-400">रोज सुबह कानपुर की हर बड़ी ब्रेकिंग व ई-अखबार अपने फोन पर प्राप्त करें।</p>
                 </div>
             </div>
-            <a href="${waLink}" target="_blank" rel="noopener" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-2xl text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-md cursor-pointer">
+            <a href="javascript:void(0)" onclick="openWhatsAppCommunity(event)" data-whatsapp-btn="true" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-2xl text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-md cursor-pointer">
                 <i class="fa-brands fa-whatsapp text-lg"></i>
                 <span>ऑफिशियल WhatsApp चैनल से जुड़ें</span>
             </a>
@@ -1204,16 +1204,43 @@ window.downloadEPaperPDF = function() {
 
 // Dynamic WhatsApp Channel Link Auto-Binder
 function initWhatsAppLinks() {
-    if (typeof StorageService === 'undefined' || !StorageService.getWhatsAppLink) return;
-    const link = StorageService.getWhatsAppLink();
-    document.querySelectorAll('a[href*="whatsapp.com/channel"], a[href*="wa.me"]').forEach(a => {
-        if (a.innerText.includes('चैनल') || a.innerText.includes('ग्रुप') || a.closest('.bg-gradient-to-r') || a.href.includes('channel')) {
-            a.href = link;
-        }
-    });
+    if (typeof window.updateAllWhatsAppLinks === 'function') {
+        window.updateAllWhatsAppLinks();
+    }
+    if (typeof CloudStorageService !== 'undefined' && CloudStorageService.listenToWhatsAppLink) {
+        CloudStorageService.listenToWhatsAppLink((newLink) => {
+            if (typeof window.updateAllWhatsAppLinks === 'function') {
+                window.updateAllWhatsAppLinks(newLink);
+            }
+        });
+    }
 }
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initWhatsAppLinks);
 } else {
     initWhatsAppLinks();
 }
+
+// Global Dynamic WhatsApp Community Dispatcher (Admin Controlled)
+window.openWhatsAppCommunity = function(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const link = (typeof StorageService !== 'undefined' && StorageService.getWhatsAppLink) ? StorageService.getWhatsAppLink() : "";
+    if (link && link.startsWith("http")) {
+        window.open(link, "_blank");
+    } else {
+        window.open("https://wa.me/918840026359?text=नमस्ते,%20मुझे%20TODAY%20INDIA%20LIVE%20NEWS%20व्हाट्सएप%20से%20जुड़ना%20है", "_blank");
+    }
+};
+
+window.updateAllWhatsAppLinks = function(customLink) {
+    const link = customLink || ((typeof StorageService !== 'undefined' && StorageService.getWhatsAppLink) ? StorageService.getWhatsAppLink() : "");
+    const targetUrl = (link && link.startsWith("http")) ? link : "https://wa.me/918840026359?text=नमस्ते,%20मुझे%20TODAY%20INDIA%20LIVE%20NEWS%20व्हाट्सएप%20से%20जुड़ना%20है";
+
+    document.querySelectorAll('[data-whatsapp-btn], .whatsapp-channel-btn, .whatsapp-community-link').forEach(el => {
+        if (el.tagName === 'A') {
+            el.href = targetUrl;
+            el.target = "_blank";
+            el.rel = "noopener";
+        }
+    });
+};
