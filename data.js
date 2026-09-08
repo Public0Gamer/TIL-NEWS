@@ -1206,7 +1206,7 @@ const TrackingService = {
     },
 
     // 3. Editorial Upload Ledger (किसने क्या अपलोड किया)
-    recordUploadEvent(type, title, authorName, authorRole, status = "published") {
+    recordUploadEvent(type, title, authorName, authorRole, status = "published", articleId = null) {
         try {
             let ledger = JSON.parse(localStorage.getItem("todayindia_upload_ledger") || "[]");
             const entry = {
@@ -1218,7 +1218,8 @@ const TrackingService = {
                 title: title,
                 authorName: authorName || this.getRoleTitle(authorRole),
                 authorRole: authorRole,
-                status: status
+                status: status,
+                articleId: articleId
             };
             ledger.unshift(entry);
             if (ledger.length > 100) ledger = ledger.slice(0, 100);
@@ -1244,7 +1245,8 @@ const TrackingService = {
                         title: "कानपुर गल्ला मंडी व सर्राफा अपडेट: चकरपुर मंडी में ताज़ा भाव",
                         authorName: "सुरेंद्र कुमार राजपूत (प्रधान संपादक / डायरेक्टर)",
                         authorRole: "chief_editor",
-                        status: "published"
+                        status: "published",
+                        articleId: "art-1"
                     },
                     {
                         id: "upl-init-2",
