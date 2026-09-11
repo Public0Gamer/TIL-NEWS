@@ -117,7 +117,7 @@
                 </button>
 
                 <!-- Password Change Button (DIRECTOR ONLY) -->
-                <button type="button" id="btn-change-pass" onclick="openChangePasswordModal()" class="bg-slate-900 hover:bg-slate-800 text-amber-300 hover:text-amber-200 text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-slate-700 transition flex items-center gap-1.5 cursor-pointer shadow-xs" title="सुरक्षा पासवर्ड या पिन प्रबंधन (केवल डायरेक्टर)">
+                <button type="button" id="btn-change-pass" onclick="openChangePasswordModal()" class="bg-slate-900 hover:bg-slate-800 text-amber-300 hover:text-amber-200 text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-slate-700 transition flex items-center gap-1.5 cursor-pointer shadow-xs" title="सुरक्षा पासवर्ड प्रबंधन (केवल डायरेक्टर)">
                     <i class="fa-solid fa-key text-[11px] text-amber-400"></i>
                     <span class="hidden sm:inline font-hindi">पासवर्ड प्रबंधन</span>
                 </button>
@@ -179,7 +179,7 @@
                     <!-- Error Alert Box -->
                     <div id="login-error-alert" class="hidden bg-red-50 border border-red-300 text-red-700 text-xs px-3.5 py-2.5 rounded-xl flex items-start gap-2">
                         <i class="fa-solid fa-triangle-exclamation text-red-600 mt-0.5 shrink-0"></i>
-                        <span id="login-error-text" class="font-semibold">दर्ज किया गया पासवर्ड या पिन अमान्य है!</span>
+                        <span id="login-error-text" class="font-semibold">दर्ज किया गया पासवर्ड अमान्य है!</span>
                     </div>
 
                     <!-- Role Select -->
@@ -200,17 +200,17 @@
                         </div>
                     </div>
 
-                    <!-- Password / PIN Input -->
+                    <!-- Password Input -->
                     <div>
                         <label for="login-password" class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center justify-between">
-                            <span>संपादकीय सुरक्षा पासवर्ड या 6-अंकीय पिन:</span>
+                            <span>संपादकीय सुरक्षा पासवर्ड:</span>
                             <span class="text-[11px] text-slate-400 font-normal">Security Key</span>
                         </label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                                 <i class="fa-solid fa-key text-xs"></i>
                             </div>
-                            <input type="password" id="login-password" required placeholder="पासवर्ड अथवा पिन दर्ज करें..." autocomplete="current-password" class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-10 py-2.5 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-red-600 transition font-sans">
+                            <input type="password" id="login-password" required placeholder="सुरक्षा पासवर्ड दर्ज करें..." autocomplete="current-password" class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-10 py-2.5 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-red-600 transition font-sans">
                             <button type="button" onclick="togglePasswordVisibility('login-password', 'eye-login-icon')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-700 cursor-pointer" title="पासवर्ड दिखाएं / छुपाएं">
                                 <i id="eye-login-icon" class="fa-solid fa-eye text-xs"></i>
                             </button>
@@ -293,17 +293,17 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">डायरेक्टर का वर्तमान पासवर्ड या पिन (प्रमाणीकरण हेतु):</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">डायरेक्टर का वर्तमान पासवर्ड (प्रमाणीकरण हेतु):</label>
                     <input type="password" id="current-pass-input" required placeholder="अपना डायरेक्टर पासवर्ड दर्ज करें..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-red-600 font-sans">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">चुनी गई भूमिका के लिए नया पासवर्ड या 6-अंकीय पिन:</label>
-                    <input type="password" id="new-pass-input" required minlength="4" placeholder="नया पासवर्ड या 6-अंकीय पिन..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-red-600 font-sans">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">चुनी गई भूमिका के लिए नया पासवर्ड:</label>
+                    <input type="password" id="new-pass-input" required minlength="4" placeholder="नया पासवर्ड दर्ज करें..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-red-600 font-sans">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">नए पासवर्ड / पिन की पुष्टि करें:</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">नए पासवर्ड की पुष्टि करें:</label>
                     <input type="password" id="confirm-pass-input" required minlength="4" placeholder="नया पासवर्ड दोबारा दर्ज करें..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-red-600 font-sans">
                 </div>
 
@@ -925,14 +925,23 @@
 
                     <!-- Push Update Form -->
                     <form id="push-liveblog-form" class="bg-blue-50/50 p-4 rounded-xl border border-blue-200 mb-6 font-hindi space-y-3">
-                        <h4 class="font-bold text-sm text-blue-950">नई लाइव अपडेट जोड़ें:</h4>
+                        <h4 class="font-bold text-sm text-blue-950 flex items-center gap-2">
+                            <i class="fa-solid fa-tower-broadcast text-red-600"></i> नई लाइव अपडेट जोड़ें:
+                        </h4>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <input type="text" id="lb-headline" required placeholder="अपडेट की मुख्य हेडलाइन" class="text-sm p-2.5 rounded-lg border border-blue-200 focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
+                            <input type="text" id="lb-headline" required placeholder="अपडेट की मुख्य हेडलाइन (क्लिक करने पर पूरी खबर खुलेगी)" class="text-sm p-2.5 rounded-lg border border-blue-200 focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
                             <input type="text" id="lb-badge" placeholder="टैग (जैसे: अंतिम रिपोर्ट, बड़ा बयान, ग्राउंड रिपोर्ट)" value="बड़ा अपडेट" class="text-sm p-2.5 rounded-lg border border-blue-200 focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
                         </div>
-                        <textarea id="lb-text" rows="3" required placeholder="घटना की 2-3 पंक्तियों में विस्तृत जानकारी..." class="w-full text-sm p-2.5 rounded-lg border border-blue-200 focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white"></textarea>
-                        <div class="flex justify-end">
-                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-2 rounded-xl text-xs transition flex items-center gap-1.5 shadow-xs">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <select id="lb-article-select" class="text-sm p-2.5 rounded-lg border border-blue-200 focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
+                                <option value="">-- संबंधित पूरी खबर चुनें (आर्टिकल लिंक) --</option>
+                            </select>
+                            <input type="text" id="lb-custom-link" placeholder="या सीधा लिंक/आर्टिकल आईडी (वैकल्पिक)" class="text-sm p-2.5 rounded-lg border border-blue-200 focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
+                        </div>
+                        <textarea id="lb-text" rows="3" required placeholder="घटना की विस्तृत जानकारी (2-3 पंक्तियों में)..." class="w-full text-sm p-2.5 rounded-lg border border-blue-200 focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white"></textarea>
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pt-1">
+                            <span class="text-[11px] text-slate-500">💡 होमपेज पर पाठक इस अपडेट पर टच करके सीधे पूरी खबर पढ़ सकेंगे।</span>
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-2 rounded-xl text-xs transition flex items-center gap-1.5 shadow-xs cursor-pointer shrink-0">
                                 <i class="fa-solid fa-plus"></i> लाइव ब्लॉग में जोड़ें
                             </button>
                         </div>
@@ -980,13 +989,13 @@
                     <div class="flex flex-col lg:flex-row lg:items-center justify-between pb-4 mb-5 border-b border-slate-100 gap-4">
                         <div>
                             <div class="flex items-center gap-2">
-                                <span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2 py-0.5 rounded uppercase font-mono">CONTENT MANAGER</span>
+                                <span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2 py-0.5 rounded uppercase font-mono">EDITORIAL MANAGER</span>
                                 <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
                                     <i class="fa-solid fa-newspaper text-emerald-600"></i> लाइव प्रकाशित समाचार सूची एवं प्रबंधन
                                 </h2>
                             </div>
                             <p class="text-xs text-slate-500 mt-0.5">
-                                वेबसाइट पर कौन सी खबर रखनी है और कौन सी हटानी है, इसका पूर्ण नियंत्रण। डेमो खबरें हटाएं या नई खबरें जोड़ें।
+                                वेबसाइट पर प्रकाशित सभी प्रामाणिक समाचारों का लाइव प्रबंधन एवं संपादन।
                             </p>
                         </div>
 
@@ -995,11 +1004,8 @@
                             <button type="button" onclick="startNewStory()" class="bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 shadow-2xs cursor-pointer">
                                 <i class="fa-solid fa-plus text-xs"></i> ➕ नई खबर लिखें
                             </button>
-                            <button type="button" onclick="clearAllDemoArticles()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-xs px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer" title="सभी 6 डेमो खबरों को एक साथ हटाएं">
-                                <i class="fa-solid fa-trash-can text-xs text-rose-600"></i> 🗑️ सभी डेमो खबरें हटाएं
-                            </button>
-                            <button type="button" onclick="restoreDemoArticles()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs px-3 py-2 rounded-xl transition flex items-center gap-1 cursor-pointer" title="डिफ़ॉल्ट डेमो खबरें दोबारा लोड करें">
-                                <i class="fa-solid fa-rotate-left text-xs text-slate-500"></i> डेमो रीस्टोर
+                            <button type="button" onclick="renderPublishedStories()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs px-3 py-2 rounded-xl transition flex items-center gap-1 cursor-pointer" title="समाचार सूची ताज़ा करें">
+                                <i class="fa-solid fa-rotate text-xs text-slate-500"></i> रिफ्रेश सूची
                             </button>
                         </div>
                     </div>
@@ -1011,16 +1017,16 @@
                             <div id="stories-stat-total" class="text-xl font-black text-slate-900 font-brand mt-0.5">0</div>
                         </div>
                         <div class="p-3 bg-emerald-50/60 border border-emerald-200 rounded-xl">
-                            <div class="text-[11px] text-emerald-800 font-bold">✅ वास्तविक असली खबरें</div>
-                            <div id="stories-stat-real" class="text-xl font-black text-emerald-900 font-brand mt-0.5">0</div>
+                            <div class="text-[11px] text-emerald-800 font-bold">⭐ मुख्य लीड (Hero Lead)</div>
+                            <div id="stories-stat-hero" class="text-xs font-bold text-emerald-900 mt-1 truncate">सक्रिय</div>
                         </div>
-                        <div class="p-3 bg-amber-50/60 border border-amber-200 rounded-xl">
-                            <div class="text-[11px] text-amber-800 font-bold">⚠️ डेमो खबरें (Demo)</div>
-                            <div id="stories-stat-demo" class="text-xl font-black text-amber-900 font-brand mt-0.5">0</div>
+                        <div class="p-3 bg-red-50/60 border border-red-200 rounded-xl">
+                            <div class="text-[11px] text-red-800 font-bold">🔴 ब्रेकिंग अलर्ट्स</div>
+                            <div id="stories-stat-breaking" class="text-xl font-black text-red-700 font-brand mt-0.5">0</div>
                         </div>
                         <div class="p-3 bg-blue-50/60 border border-blue-200 rounded-xl">
-                            <div class="text-[11px] text-blue-800 font-bold">⭐ मुख्य लीड खबर</div>
-                            <div id="stories-stat-hero" class="text-xs font-bold text-blue-900 mt-1 truncate">सक्रिय</div>
+                            <div class="text-[11px] text-blue-800 font-bold">👁️ कुल पाठक व्यूज</div>
+                            <div id="stories-stat-views" class="text-xl font-black text-blue-900 font-brand mt-0.5">0</div>
                         </div>
                     </div>
 
@@ -1029,10 +1035,9 @@
                         <div class="flex flex-wrap items-center gap-1.5">
                             <span class="text-slate-500 font-bold mr-1">फ़िल्टर:</span>
                             <button type="button" onclick="filterStories('all', this)" class="story-filter-btn active bg-slate-900 text-white font-bold px-3 py-1.5 rounded-lg transition cursor-pointer">सभी खबरें</button>
-                            <button type="button" onclick="filterStories('hero', this)" class="story-filter-btn text-slate-600 hover:bg-slate-100 font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer">⭐ मुख्य लीड (Hero)</button>
+                            <button type="button" onclick="filterStories('hero', this)" class="story-filter-btn text-slate-600 hover:bg-slate-100 font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer">⭐ मुख्य लीड</button>
                             <button type="button" onclick="filterStories('breaking', this)" class="story-filter-btn text-slate-600 hover:bg-slate-100 font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer">🔴 ब्रेकिंग न्यूज़</button>
-                            <button type="button" onclick="filterStories('real', this)" class="story-filter-btn text-slate-600 hover:bg-slate-100 font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer">✅ असली खबरें</button>
-                            <button type="button" onclick="filterStories('demo', this)" class="story-filter-btn text-slate-600 hover:bg-slate-100 font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer">⚠️ डेमो खबरें</button>
+                            <button type="button" onclick="filterStories('kanpur', this)" class="story-filter-btn text-slate-600 hover:bg-slate-100 font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer">📍 कानपुर विशेष</button>
                         </div>
 
                         <div class="relative w-full sm:w-64">
@@ -1181,7 +1186,7 @@
                                             <i class="fa-solid fa-folder-open"></i> फोन / लैपटॉप से फोटो चुनें
                                         </button>
                                         <input type="text" id="campaign-image" placeholder="या इमेज URL: https://..." required class="flex-1 p-2 rounded-xl border border-slate-300 bg-white focus:border-indigo-500 focus:outline-hidden text-xs font-sans">
-                                        <button type="button" onclick="cycleSampleImages()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-3 py-2 rounded-xl font-bold text-xs shrink-0 cursor-pointer" title="डेमो सैंपल इमेज चुनें">
+                                        <button type="button" onclick="cycleSampleImages()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-3 py-2 rounded-xl font-bold text-xs shrink-0 cursor-pointer" title="सैंपल इमेज चुनें">
                                             🎨 सैंपल
                                         </button>
                                     </div>
@@ -2004,16 +2009,28 @@
         // 0. Security Login Gate & Authentication Engine
         // ==========================================
         const DEFAULT_CREDENTIALS = {
-            chief_editor: { pass: "Surendra@TIL2026", pin: "884002", title: "प्रधान संपादक (सुरेंद्र कुमार राजपूत)" },
-            sub_editor: { pass: "Sub@TIL2026", pin: "112233", title: "उप-संपादक (डेस्क)" },
-            reporter: { pass: "Rep@TIL2026", pin: "445566", title: "फील्ड रिपोर्टर" }
+            chief_editor: { pass: "Surendra@TIL2026", title: "प्रधान संपादक (सुरेंद्र कुमार राजपूत)" },
+            sub_editor: { pass: "Sub@TIL2026", title: "उप-संपादक (डेस्क)" },
+            reporter: { pass: "Rep@TIL2026", title: "फील्ड रिपोर्टर" }
         };
 
         function getStoredCredentials() {
             try {
                 const stored = localStorage.getItem("til_newsroom_credentials");
                 if (stored) {
-                    return JSON.parse(stored);
+                    const parsed = JSON.parse(stored);
+                    let changed = false;
+                    // Strict Security: eliminate any legacy PIN bypass or secondary backdoor
+                    Object.keys(parsed).forEach(k => {
+                        if (parsed[k] && parsed[k].pin) {
+                            delete parsed[k].pin;
+                            changed = true;
+                        }
+                    });
+                    if (changed) {
+                        localStorage.setItem("til_newsroom_credentials", JSON.stringify(parsed));
+                    }
+                    return parsed;
                 }
             } catch (e) {
                 console.error("Credentials storage error:", e);
@@ -2022,6 +2039,10 @@
         }
 
         function saveStoredCredentials(creds) {
+            // Guarantee no PIN key exists before saving
+            Object.keys(creds).forEach(k => {
+                if (creds[k] && creds[k].pin) delete creds[k].pin;
+            });
             localStorage.setItem("til_newsroom_credentials", JSON.stringify(creds));
         }
 
@@ -2128,8 +2149,8 @@
             const creds = getStoredCredentials();
             const roleCreds = creds[role] || DEFAULT_CREDENTIALS[role];
 
-            // Verify against password or 6-digit pin (supporting both Surendra@TIL2026 and legacy Deepak@TIL2026)
-            const isValid = (inputPass === roleCreds.pass || inputPass === roleCreds.pin || (role === 'chief_editor' && (inputPass === 'Deepak@TIL2026' || inputPass === 'Surendra@TIL2026')));
+            // Verify strictly against the single active password (zero PIN bypass or legacy backdoor)
+            const isValid = (roleCreds && inputPass === roleCreds.pass);
 
             if (!isValid) {
                 if (typeof TrackingService !== 'undefined') {
@@ -2137,7 +2158,7 @@
                 }
                 if (errorAlert) {
                     errorAlert.classList.remove("hidden");
-                    errorText.innerText = "अमान्य पासवर्ड या पिन! कृपया सही क्रेडेंशियल्स दर्ज करें।";
+                    errorText.innerText = "अमान्य पासवर्ड! कृपया सही पासवर्ड दर्ज करें।";
                 }
                 if (cardBox) {
                     cardBox.classList.add("animate-shake");
@@ -2255,10 +2276,10 @@
             const creds = getStoredCredentials();
             const directorCreds = creds['chief_editor'] || DEFAULT_CREDENTIALS['chief_editor'];
 
-            // Verify Director's current password or pin
-            if (currentPass !== directorCreds.pass && currentPass !== directorCreds.pin) {
+            // Verify Director's current password strictly (no PIN or backdoor)
+            if (currentPass !== directorCreds.pass) {
                 err.classList.remove("hidden");
-                errText.innerText = "डायरेक्टर का वर्तमान पासवर्ड या पिन गलत है!";
+                errText.innerText = "डायरेक्टर का वर्तमान पासवर्ड गलत है!";
                 return;
             }
 
@@ -2274,14 +2295,22 @@
                 return;
             }
 
-            // Update credentials for targetRole
-            const targetCreds = creds[targetRole] || DEFAULT_CREDENTIALS[targetRole];
+            // Update credentials for targetRole (single active password, purge any PIN)
+            const targetCreds = creds[targetRole] || { title: getRoleLabel(targetRole) };
             targetCreds.pass = newPass;
-            if (/^\d{6}$/.test(newPass)) {
-                targetCreds.pin = newPass;
-            }
+            delete targetCreds.pin;
             creds[targetRole] = targetCreds;
             saveStoredCredentials(creds);
+
+            // Also synchronize with Firestore/Cloud credentials collection if active
+            if (typeof CloudStorageService !== 'undefined' && CloudStorageService.isCloudReady && CloudStorageService.isCloudReady()) {
+                try {
+                    const db = firebase.firestore();
+                    db.collection("system_settings").doc("credentials").set(creds, { merge: true });
+                } catch(cErr) {
+                    console.warn("Cloud credential sync notice:", cErr);
+                }
+            }
 
             if (typeof TrackingService !== 'undefined') {
                 TrackingService.recordUploadEvent("पासवर्ड अपडेट", `${getRoleLabel(targetRole)} का पासवर्ड बदला गया`, "सुरेंद्र कुमार राजपूत (डायरेक्टर)", "chief_editor", "सफल");
@@ -3119,26 +3148,42 @@
 
             // Live Blog Form
             const lbForm = document.getElementById('push-liveblog-form');
-            lbForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const headline = document.getElementById('lb-headline').value.trim();
-                const badge = document.getElementById('lb-badge').value.trim();
-                const text = document.getElementById('lb-text').value.trim();
-                const author = document.getElementById('role-name-display').innerText;
+            if (lbForm) {
+                // Populate article selector with published stories
+                const populateLbArticleSelect = () => {
+                    const sel = document.getElementById('lb-article-select');
+                    if (!sel) return;
+                    const arts = StorageService.getArticles();
+                    sel.innerHTML = `<option value="">-- संबंधित पूरी खबर चुनें (आर्टिकल लिंक) --</option>` +
+                        arts.map(a => `<option value="${a.id}">📍 ${a.title.substring(0, 55)}...</option>`).join("");
+                };
+                populateLbArticleSelect();
+                window.populateLbArticleSelect = populateLbArticleSelect;
 
-                StorageService.addLiveBlogUpdate("lb-1", { headline, badge, text, author });
+                lbForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const headline = document.getElementById('lb-headline').value.trim();
+                    const badge = document.getElementById('lb-badge').value.trim();
+                    const text = document.getElementById('lb-text').value.trim();
+                    const selectedArtId = document.getElementById('lb-article-select') ? document.getElementById('lb-article-select').value : '';
+                    const customLink = document.getElementById('lb-custom-link') ? document.getElementById('lb-custom-link').value.trim() : '';
+                    const articleId = customLink || selectedArtId || '';
+                    const author = document.getElementById('role-name-display').innerText;
 
-                // Record in internal upload audit ledger
-                const session = getActiveSession();
-                const activeRole = session ? session.role : StorageService.getCurrentRole();
-                TrackingService.recordUploadEvent("लाइव ब्लॉग (LiveBlog)", headline, author || getRoleLabel(activeRole), activeRole, "अपडेट");
+                    StorageService.addLiveBlogUpdate("lb-1", { headline, badge, text, author, articleId });
 
-                lbForm.reset();
-                renderLiveBlogTimeline();
-                renderUploadLedgerTable();
-                refreshDashboard();
-                window.showToast("⚡ लाइव ब्लॉग में नई अपडेट जोड़ दी गई है!", "success");
-            });
+                    // Record in internal upload audit ledger
+                    const session = getActiveSession();
+                    const activeRole = session ? session.role : StorageService.getCurrentRole();
+                    TrackingService.recordUploadEvent("लाइव ब्लॉग (LiveBlog)", headline, author || getRoleLabel(activeRole), activeRole, "अपडेट");
+
+                    lbForm.reset();
+                    renderLiveBlogTimeline();
+                    renderUploadLedgerTable();
+                    refreshDashboard();
+                    window.showToast("⚡ लाइव ब्लॉग में नई अपडेट जोड़ दी गई है!", "success");
+                });
+            }
 
             // Ads handling is now managed by handleSaveAdCampaign() in Section 10
         }
@@ -3186,7 +3231,10 @@
                 <div class="p-3 bg-slate-50 border-l-4 border-blue-600 rounded-r-xl border border-slate-200 text-xs">
                     <div class="flex justify-between items-center mb-1">
                         <span class="font-mono font-bold text-blue-700 bg-blue-100 px-1.5 py-0.5 rounded">${u.time}</span>
-                        <span class="text-slate-400">${u.author}</span>
+                        <div class="flex items-center gap-2">
+                            ${u.articleId ? `<span class="bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold px-1.5 py-0.5 rounded text-[10px]"><i class="fa-solid fa-link"></i> लिंक: ${u.articleId}</span>` : ''}
+                            <span class="text-slate-400">${u.author}</span>
+                        </div>
                     </div>
                     <h5 class="font-bold text-slate-900 text-sm mb-1">${u.headline}</h5>
                     <p class="text-slate-600 leading-relaxed">${u.text}</p>
@@ -3489,28 +3537,26 @@
 
             // Metrics Update
             const totalCount = articles.length;
-            const demoCount = articles.filter(a => a.isDemo || a.id.startsWith("kanpur-")).length;
-            const realCount = totalCount - demoCount;
             const heroArt = articles.find(a => a.isHero);
+            const breakingCount = articles.filter(a => a.isBreaking).length;
+            const totalViews = articles.reduce((sum, a) => sum + (Number(a.views) || 1), 0);
 
             const statTotalEl = document.getElementById('stories-stat-total');
             if (statTotalEl) statTotalEl.innerText = totalCount;
-            const statRealEl = document.getElementById('stories-stat-real');
-            if (statRealEl) statRealEl.innerText = realCount;
-            const statDemoEl = document.getElementById('stories-stat-demo');
-            if (statDemoEl) statDemoEl.innerText = demoCount;
             const statHeroEl = document.getElementById('stories-stat-hero');
-            if (statHeroEl) statHeroEl.innerText = heroArt ? heroArt.title.substring(0, 25) + '...' : 'कोई नहीं';
+            if (statHeroEl) statHeroEl.innerText = heroArt ? heroArt.title.substring(0, 22) + '...' : 'कोई नहीं';
+            const statBreakingEl = document.getElementById('stories-stat-breaking');
+            if (statBreakingEl) statBreakingEl.innerText = breakingCount;
+            const statViewsEl = document.getElementById('stories-stat-views');
+            if (statViewsEl) statViewsEl.innerText = totalViews.toLocaleString('hi-IN');
 
             // Filter by category / flag
-            if (currentStoryFilter === 'demo') {
-                articles = articles.filter(a => a.isDemo || a.id.startsWith("kanpur-"));
-            } else if (currentStoryFilter === 'real') {
-                articles = articles.filter(a => !a.isDemo && !a.id.startsWith("kanpur-"));
-            } else if (currentStoryFilter === 'hero') {
+            if (currentStoryFilter === 'hero') {
                 articles = articles.filter(a => a.isHero);
             } else if (currentStoryFilter === 'breaking') {
                 articles = articles.filter(a => a.isBreaking);
+            } else if (currentStoryFilter === 'kanpur') {
+                articles = articles.filter(a => a.category === 'kanpur' || (a.subLocation && a.subLocation.includes('कानपुर')));
             }
 
             // Search Filter
@@ -3536,7 +3582,6 @@
             }
 
             container.innerHTML = articles.map(art => {
-                const isDemo = art.isDemo || art.id.startsWith("kanpur-");
                 const isHero = art.isHero;
                 const isBreaking = art.isBreaking;
 
@@ -3547,7 +3592,7 @@
                             <div class="min-w-0 flex-1">
                                 <div class="flex flex-wrap items-center gap-1.5 mb-1">
                                     <span class="text-[11px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded">📍 ${art.subLocation || "कानपुर"} • ${art.categoryName || "खबर"}</span>
-                                    ${isDemo ? '<span class="text-[10px] font-extrabold bg-amber-100 text-amber-900 px-2 py-0.5 rounded border border-amber-200">⚠️ डेमो खबर</span>' : '<span class="text-[10px] font-extrabold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded border border-emerald-200">✅ वास्तविक खबर</span>'}
+                                    <span class="text-[10px] font-extrabold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded border border-emerald-200"><i class="fa-solid fa-circle-check text-[9px]"></i> प्रकाशित खबर</span>
                                     ${isHero ? '<span class="text-[10px] font-black bg-yellow-400 text-slate-900 px-2 py-0.5 rounded flex items-center gap-1">⭐ मुख्य लीड (Hero)</span>' : ''}
                                     ${isBreaking ? '<span class="text-[10px] font-black bg-red-600 text-white px-2 py-0.5 rounded">🔴 ब्रेकिंग</span>' : ''}
                                 </div>
@@ -3607,43 +3652,7 @@
             }
         };
 
-        window.clearAllDemoArticles = function() {
-            const session = getActiveSession();
-            if (!session || session.role !== 'chief_editor') {
-                window.showToast("⛔ सभी डेमो खबरें एक साथ हटाने की अनुमति केवल डायरेक्टर को है।", "error");
-                return;
-            }
-            const articles = StorageService.getArticles();
-            const demoCount = articles.filter(a => a.isDemo || a.id.startsWith("kanpur-")).length;
-            if (demoCount === 0) {
-                window.showToast("वेबसाइट पर कोई डेमो खबर नहीं है। सभी वास्तविक खबरें हैं!", "warning");
-                return;
-            }
-            if (confirm(`वेबसाइट पर कुल ${demoCount} डेमो खबरें मौजूद हैं।\n\nक्या आप इन सभी ${demoCount} डेमो खबरों को एक साथ हटाना चाहते हैं? इसके बाद केवल आपकी अपलोड की हुई असली खबरें ही वेबसाइट पर दिखेंगी।`)) {
-                StorageService.deleteDemoArticles();
-                const authorName = (session && session.role === 'chief_editor') ? "सुरेंद्र कुमार राजपूत (डायरेक्टर)" : getRoleLabel(session.role);
-                TrackingService.recordUploadEvent("डेमो क्लीनअप (Clear Demo)", `सभी ${demoCount} डेमो खबरें हटाई गईं`, authorName, session.role, "सफल");
-                renderPublishedStories();
-                refreshDashboard();
-                renderUploadLedgerTable();
-                window.showToast(`🎉 सभी ${demoCount} डेमो खबरें हटाई गईं! अब केवल आपकी नई खबरें लाइव हैं।`, "success");
-            }
-        };
 
-        window.restoreDemoArticles = function() {
-            const session = getActiveSession();
-            if (!session || session.role !== 'chief_editor') {
-                window.showToast("⚠️ डेमो खबरें रीस्टोर करने की अनुमति केवल डायरेक्टर को है।", "warning");
-                return;
-            }
-            if (confirm("क्या आप डिफ़ॉल्ट डेमो खबरें पुनः लोड करना चाहते हैं?")) {
-                StorageService.restoreDemoArticles();
-                renderPublishedStories();
-                refreshDashboard();
-                renderUploadLedgerTable();
-                window.showToast("✅ डिफ़ॉल्ट डेमो खबरें पुनः लोड कर दी गई हैं।", "success");
-            }
-        };
 
         window.setAsHeroArticle = function(id) {
             const session = getActiveSession();

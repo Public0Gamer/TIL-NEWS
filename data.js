@@ -96,7 +96,6 @@ const INITIAL_ARTICLES = [
         shares: 2,
         isBreaking: true,
         isHero: true,
-        isDemo: true,
         imageUrl: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=1000&auto=format&fit=crop&q=80",
         tags: ["KanpurMetro", "KanpurNews", "UPMRC", "SmartCity"]
     },
@@ -122,7 +121,6 @@ const INITIAL_ARTICLES = [
         shares: 1,
         isBreaking: true,
         isHero: false,
-        isDemo: true,
         imageUrl: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&auto=format&fit=crop&q=80",
         tags: ["CyberCrime", "KanpurPolice", "DigitalArrest"]
     },
@@ -152,7 +150,6 @@ const INITIAL_ARTICLES = [
         shares: 1,
         isBreaking: false,
         isHero: false,
-        isDemo: true,
         imageUrl: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=800&auto=format&fit=crop&q=80",
         tags: ["MandiBhav", "KanpurMandi", "GoldSilverRate"]
     },
@@ -174,7 +171,6 @@ const INITIAL_ARTICLES = [
         shares: 0,
         isBreaking: false,
         isHero: false,
-        isDemo: true,
         imageUrl: "https://images.unsplash.com/photo-1596176530529-78163a4f7af2?w=800&auto=format&fit=crop&q=80",
         tags: ["NamamiGange", "KanpurTourism", "Bithoor"]
     },
@@ -196,7 +192,6 @@ const INITIAL_ARTICLES = [
         shares: 3,
         isBreaking: false,
         isHero: false,
-        isDemo: true,
         imageUrl: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800&auto=format&fit=crop&q=80",
         tags: ["GreenPark", "Cricket", "UPCA", "KanpurSports"]
     },
@@ -218,7 +213,6 @@ const INITIAL_ARTICLES = [
         shares: 1,
         isBreaking: false,
         isHero: false,
-        isDemo: true,
         imageUrl: "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=800&auto=format&fit=crop&q=80",
         tags: ["NagarNigam", "KanpurPolitics", "Motijheel"]
     }
@@ -228,6 +222,7 @@ const INITIAL_ARTICLES = [
 const INITIAL_LIVE_BLOGS = [
     {
         id: "lb-1",
+        articleId: "kanpur-metro-phase2",
         title: "कानपुर मेट्रो: अंडरग्राउंड सेक्शन ट्रायल रन लाइव अपडेट्स",
         status: "active",
         topic: "कानपुर विकास",
@@ -235,6 +230,7 @@ const INITIAL_LIVE_BLOGS = [
         updates: [
             {
                 id: "upd-3",
+                articleId: "kanpur-metro-phase2",
                 time: "02:15 PM",
                 badge: "अंतिम रिपोर्ट",
                 headline: "बड़ा चौराहा स्टेशन पर ट्रेन का दूसरा ट्रायल सफलतापूर्वक संपन्न",
@@ -243,6 +239,7 @@ const INITIAL_LIVE_BLOGS = [
             },
             {
                 id: "upd-2",
+                articleId: "kanpur-metro-phase2",
                 time: "01:30 PM",
                 badge: "बड़ा अपडेट",
                 headline: "नवीन मार्केट स्टेशन पर यात्रियों की सुरक्षा जांच प्रणाली का मॉकड्रिल",
@@ -251,6 +248,7 @@ const INITIAL_LIVE_BLOGS = [
             },
             {
                 id: "upd-1",
+                articleId: "kanpur-metro-phase2",
                 time: "12:05 PM",
                 badge: "शुरुआत",
                 headline: "चुन्नीगंज स्टेशन से पहली ट्रायल मेट्रो ट्रेन रवाना हुई",
@@ -340,8 +338,14 @@ const StorageService = {
         try {
             let list = JSON.parse(stored);
             let needsResave = false;
-            // Authentic Real Views - No Random alteration
-            list.forEach(a => { if (typeof a.views !== "number") a.views = 1; });
+            // Authentic Real Articles - Strip any legacy demo tags
+            list.forEach(a => { 
+                if (typeof a.views !== "number") a.views = 1;
+                if (a.isDemo !== undefined) {
+                    delete a.isDemo;
+                    needsResave = true;
+                }
+            });
             if (needsResave) {
                 this.safeSetItem("todayindia_articles", JSON.stringify(list));
             }

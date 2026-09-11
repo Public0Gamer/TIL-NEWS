@@ -335,7 +335,7 @@ window.filterKanpurByZone = function(zone, btn) {
     }
 };
 
-// 4. Render Live Blog Timeline on Homepage
+// 4. Render Live Blog Timeline on Homepage (Interactive Clickable Links to Full Articles)
 function renderLiveBlogWidget() {
     const liveBlogContainer = document.getElementById("live-blog-timeline-container");
     if (!liveBlogContainer) return;
@@ -345,21 +345,44 @@ function renderLiveBlogWidget() {
 
     const activeBlog = blogs.find(b => b.status === "active") || blogs[0];
     
-    document.getElementById("live-blog-title").innerText = activeBlog.title;
-    document.getElementById("live-blog-started").innerText = activeBlog.startedAt;
+    const titleEl = document.getElementById("live-blog-title");
+    if (titleEl) titleEl.innerText = activeBlog.title;
+    const startedEl = document.getElementById("live-blog-started");
+    if (startedEl) startedEl.innerText = activeBlog.startedAt;
 
-    liveBlogContainer.innerHTML = activeBlog.updates.map(u => `
-        <div class="relative pl-6 pb-5 border-l-2 border-red-500 last:border-transparent last:pb-0">
-            <span class="absolute -left-1.5 top-1 w-3 h-3 rounded-full bg-red-600 border-2 border-white"></span>
-            <div class="flex items-center gap-2 text-xs text-slate-500 mb-1">
-                <span class="font-mono font-bold text-red-700 bg-red-50 px-1.5 py-0.5 rounded">${u.time}</span>
-                <span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-bold">${u.badge || 'अपडेट'}</span>
-                <span>• ${u.author}</span>
+    liveBlogContainer.innerHTML = activeBlog.updates.map(u => {
+        const articleTarget = u.articleId || activeBlog.articleId || "kanpur-metro-phase2";
+        const linkUrl = (u.link && u.link.startsWith("http")) 
+            ? u.link 
+            : (articleTarget.startsWith("http") ? articleTarget : `article.html?id=${encodeURIComponent(articleTarget)}`);
+
+        return `
+            <div class="relative pl-6 pb-5 border-l-2 border-red-500 last:border-transparent last:pb-0 group">
+                <span class="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-red-600 border-2 border-white group-hover:scale-125 transition-transform"></span>
+                <div class="flex items-center gap-2 text-xs text-slate-500 mb-1">
+                    <span class="font-mono font-bold text-red-700 bg-red-50 px-1.5 py-0.5 rounded">${u.time}</span>
+                    <span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-bold">${u.badge || 'अपडेट'}</span>
+                    <span>• ${u.author}</span>
+                </div>
+                <!-- Clickable Headline navigating to full news report -->
+                <a href="${linkUrl}" class="block group/link cursor-pointer my-1">
+                    <h4 class="font-bold text-slate-900 text-sm sm:text-base font-hindi leading-snug group-hover/link:text-red-600 transition flex items-center justify-between gap-2">
+                        <span>${u.headline}</span>
+                        <span class="text-xs text-red-500 opacity-0 group-hover/link:opacity-100 transition shrink-0">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </span>
+                    </h4>
+                </a>
+                <p class="text-xs text-slate-600 font-hindi leading-relaxed mb-2">${u.text}</p>
+                <!-- Direct Tap to Full Story Action -->
+                <div>
+                    <a href="${linkUrl}" class="inline-flex items-center gap-1.5 text-xs font-bold text-red-600 hover:text-red-700 hover:underline bg-red-50 hover:bg-red-100 px-2.5 py-1 rounded-md transition font-hindi cursor-pointer">
+                        <i class="fa-solid fa-newspaper text-[11px]"></i> पूरी खबर विस्तार से पढ़ें ➔
+                    </a>
+                </div>
             </div>
-            <h4 class="font-bold text-slate-900 text-sm font-hindi leading-snug mb-1">${u.headline}</h4>
-            <p class="text-xs text-slate-600 font-hindi leading-relaxed">${u.text}</p>
-        </div>
-    `).join("");
+        `;
+    }).join("");
 }
 
 // 5. Universal Professional News Ad & Sponsorship Engine
@@ -633,6 +656,8 @@ function renderAdBanners() {
 
 // 3.01 Dedicated Video & Shorts Media Hub Renderer (National Studio Grade)
 window.currentVideoTab = 'videos'; // 'videos' | 'shorts'
+window.videosVisibleCount = 6;
+window.shortsVisibleCount = 8;
 
 window.switchVideoTab = function(tab) {
     window.currentVideoTab = tab;
@@ -658,6 +683,16 @@ window.switchVideoTab = function(tab) {
     }
 };
 
+window.loadMoreVideos = function() {
+    const tab = window.currentVideoTab || 'videos';
+    if (tab === 'shorts') {
+        window.shortsVisibleCount = (window.shortsVisibleCount || 8) + 8;
+    } else {
+        window.videosVisibleCount = (window.videosVisibleCount || 6) + 6;
+    }
+    window.renderVideoBulletinsGrid();
+};
+
 window.renderVideoBulletinsGrid = function(videosList, tabName) {
     const videoContainer = document.getElementById("video-bulletins-grid");
     if (!videoContainer) return;
@@ -679,6 +714,7 @@ window.renderVideoBulletinsGrid = function(videosList, tabName) {
     if (badgeShorts) badgeShorts.innerText = shortsOnly.length;
 
     const activeList = tab === 'shorts' ? shortsOnly : videosOnly;
+    const moreContainer = document.getElementById("video-load-more-container");
 
     if (!Array.isArray(activeList) || activeList.length === 0) {
         videoContainer.className = "col-span-full w-full";
@@ -691,19 +727,28 @@ window.renderVideoBulletinsGrid = function(videosList, tabName) {
                     <i class="fa-brands fa-youtube"></i>
                 </div>
                 <p class="font-bold text-slate-300 text-sm mb-1">${emptyMsg}</p>
-                <p class="text-xs text-slate-500 mb-4">YouTube चैनल @TILNEWS पर नई वीडियो या शॉर्ट्स अपलोड होते ही यहाँ स्वतः दिखाई देंगे।</p>
-                <a href="https://www.youtube.com/@TILNEWS" target="_blank" rel="noopener" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-4 py-2 rounded-xl transition shadow-md">
-                    <i class="fa-brands fa-youtube text-sm"></i> @TILNEWS चैनल खोलें
-                </a>
+                <p class="text-xs text-slate-500 mb-4">🔴 लाइव यूट्यूब ऑटो-सिंक सक्रिय • YouTube चैनल @TILNEWS पर नई वीडियो या शॉर्ट्स अपलोड होते ही यहाँ स्वतः दिखाई देंगे।</p>
+                <div class="flex flex-wrap items-center justify-center gap-2">
+                    <a href="https://www.youtube.com/@TILNEWS" target="_blank" rel="noopener" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-4 py-2 rounded-xl transition shadow-md">
+                        <i class="fa-brands fa-youtube text-sm"></i> @TILNEWS चैनल खोलें
+                    </a>
+                    <button type="button" onclick="if(typeof YouTubeSyncService!=='undefined'){YouTubeSyncService.syncVideos(true);}" class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3.5 py-2 rounded-xl border border-slate-700 transition cursor-pointer">
+                        <i class="fa-solid fa-rotate text-red-500"></i> अभी सिंक करें
+                    </button>
+                </div>
             </div>
         `;
+        if (moreContainer) moreContainer.innerHTML = "";
         return;
     }
 
+    const visibleCount = tab === 'shorts' ? (window.shortsVisibleCount || 8) : (window.videosVisibleCount || 6);
+    const toShow = activeList.slice(0, visibleCount);
+
     if (tab === 'shorts') {
         // National Channel Shorts Shelf (9:16 Vertical Portrait Cards)
-        videoContainer.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4";
-        videoContainer.innerHTML = activeList.slice(0, 10).map(v => {
+        videoContainer.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4";
+        videoContainer.innerHTML = toShow.map(v => {
             const safeTitle = (v.title || "ताज़ा यूट्यूब शॉर्ट्स").replace(/'/g, "&#39;").replace(/"/g, "&quot;");
             const safeTitleJs = (v.title || "ताज़ा यूट्यूब शॉर्ट्स").replace(/'/g, "\'").replace(/"/g, '\\"');
             const vid = v.videoId || ((typeof YouTubeSyncService !== 'undefined' && v.link) ? YouTubeSyncService.extractVideoId(v.link) : '');
@@ -748,7 +793,7 @@ window.renderVideoBulletinsGrid = function(videosList, tabName) {
     } else {
         // National Channel Widescreen Videos (16:9 Landscape Cards)
         videoContainer.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5";
-        videoContainer.innerHTML = activeList.slice(0, 6).map(v => {
+        videoContainer.innerHTML = toShow.map(v => {
             const safeTitle = (v.title || "ताज़ा वीडियो बुलेटिन").replace(/'/g, "&#39;").replace(/"/g, "&quot;");
             const safeTitleJs = (v.title || "ताज़ा वीडियो बुलेटिन").replace(/'/g, "\'").replace(/"/g, '\\"');
             const vid = v.videoId || ((typeof YouTubeSyncService !== 'undefined' && v.link) ? YouTubeSyncService.extractVideoId(v.link) : '');
@@ -762,7 +807,7 @@ window.renderVideoBulletinsGrid = function(videosList, tabName) {
                             </div>
                         </div>
                         <span class="absolute top-2.5 left-2.5 bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded tracking-wide uppercase flex items-center gap-1 shadow-xs">
-                            <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span> ${v.isAutoSynced ? 'YOUTUBE' : 'VIDEO'}
+                            <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span> ${v.isAutoSynced ? 'YOUTUBE LIVE' : 'VIDEO'}
                         </span>
                         <span class="absolute bottom-2.5 right-2.5 bg-black/85 text-white text-[11px] px-2 py-0.5 rounded font-mono font-semibold">
                             ${v.duration || 'बुलेटिन'}
@@ -784,6 +829,32 @@ window.renderVideoBulletinsGrid = function(videosList, tabName) {
                 </div>
             `;
         }).join("");
+    }
+
+    // Render 'More Videos' (Load More / Archive) Controls
+    if (moreContainer) {
+        const remaining = activeList.length - toShow.length;
+        if (remaining > 0) {
+            moreContainer.innerHTML = `
+                <div class="flex flex-col items-center gap-2">
+                    <button type="button" onclick="loadMoreVideos()" class="group bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-bold text-xs sm:text-sm px-6 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-red-950/40 hover:scale-105 active:scale-95 cursor-pointer">
+                        <i class="fa-solid fa-layer-group text-sm group-hover:rotate-12 transition-transform"></i>
+                        <span>और ${tab === 'shorts' ? 'शॉर्ट्स' : 'वीडियो'} देखें (${remaining} और लोड करें)</span>
+                        <i class="fa-solid fa-chevron-down text-xs"></i>
+                    </button>
+                    <span class="text-[11px] text-slate-500">कुल ${activeList.length} में से ${toShow.length} प्रदर्शित</span>
+                </div>
+            `;
+        } else {
+            moreContainer.innerHTML = `
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3 text-xs text-slate-400">
+                    <span>✅ सभी ${activeList.length} ${tab === 'shorts' ? 'शॉर्ट्स' : 'वीडियो'} लोड हो चुके हैं।</span>
+                    <a href="${tab === 'shorts' ? 'https://www.youtube.com/@TILNEWS/shorts' : 'https://www.youtube.com/@TILNEWS/videos'}" target="_blank" rel="noopener" class="bg-slate-800 hover:bg-slate-700 text-red-400 hover:text-white font-bold px-4 py-2 rounded-xl transition flex items-center gap-1.5 border border-slate-700">
+                        <i class="fa-brands fa-youtube text-red-500"></i> YouTube चैनल @TILNEWS पर संपूर्ण लाइब्रेरी देखें ➔
+                    </a>
+                </div>
+            `;
+        }
     }
 };
 
