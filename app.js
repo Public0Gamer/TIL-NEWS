@@ -718,6 +718,28 @@ window.renderVideoBulletinsGrid = function(videosList, tabName) {
 
     if (!Array.isArray(activeList) || activeList.length === 0) {
         videoContainer.className = "col-span-full w-full";
+        const isInitialLoading = !window._ytSyncAttempted;
+        if (isInitialLoading) {
+            videoContainer.innerHTML = `
+                <div class="col-span-full text-center py-12 px-4 bg-slate-800/40 rounded-2xl border border-slate-800 text-slate-300 font-hindi">
+                    <div class="w-12 h-12 mx-auto rounded-full bg-red-600/20 text-red-500 flex items-center justify-center text-xl mb-3 animate-pulse">
+                        <i class="fa-brands fa-youtube"></i>
+                    </div>
+                    <div class="flex items-center justify-center gap-2 mb-2">
+                        <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+                        <p class="font-black text-white text-sm sm:text-base">🔴 लाइव ब्रॉडकास्ट: YouTube चैनल (@TILNEWS) से वीडियो लोड हो रहे हैं...</p>
+                    </div>
+                    <p class="text-xs text-slate-400 mb-3">ताज़ा वीडियो बुलेटिन एवं 9:16 शॉर्ट्स स्वतः सिंक किए जा रहे हैं...</p>
+                    <div class="inline-flex items-center gap-2 bg-slate-900/80 border border-slate-700 px-3.5 py-1.5 rounded-xl text-xs text-amber-400">
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                        <span>लाइव ऑटो-सिंक जारी है...</span>
+                    </div>
+                </div>
+            `;
+            if (moreContainer) moreContainer.innerHTML = "";
+            return;
+        }
+
         const emptyMsg = tab === 'shorts' 
             ? "वर्तमान में कोई यूट्यूब शॉर्ट्स उपलब्ध नहीं हैं।" 
             : "वर्तमान में कोई वीडियो बुलेटिन उपलब्ध नहीं है।";
@@ -911,7 +933,7 @@ function setupLiveTVModal() {
 
         const cfg = (typeof StorageService !== 'undefined' && StorageService.getLiveTVConfig) 
             ? StorageService.getLiveTVConfig() 
-            : { channelId: "UC0pvCtEkKsmeCmGdxRKrBaA", isOnAir: true, title: "TODAY INDIA LIVE 24x7 कानपुर लाइव बुलेटिन", viewers: "14,280" };
+            : { channelId: "UCFGKrpI4nrgrufZLaadC_8A", isOnAir: true, title: "TODAY INDIA LIVE 24x7 कानपुर लाइव बुलेटिन", viewers: "14,280" };
 
         const playerContainer = document.getElementById("live-tv-player-container");
         const titleEl = document.getElementById("live-tv-title-display");
@@ -956,7 +978,7 @@ function setupLiveTVModal() {
                 if (vid) {
                     embedUrl = `https://www.youtube-nocookie.com/embed/${vid}?autoplay=1&rel=0`;
                 } else {
-                    embedUrl = `https://www.youtube-nocookie.com/embed/live_stream?channel=UC0pvCtEkKsmeCmGdxRKrBaA&autoplay=1`;
+                    embedUrl = `https://www.youtube-nocookie.com/embed/live_stream?channel=UCFGKrpI4nrgrufZLaadC_8A&autoplay=1`;
                 }
 
                 playerContainer.innerHTML = `
@@ -1079,10 +1101,17 @@ ${isShort ? 'शॉर्ट्स' : 'वीडियो'} देखें: ${u
     // Auto-Sync Video Bulletins from YouTube Channel (@TILNEWS)
     if (typeof YouTubeSyncService !== 'undefined') {
         YouTubeSyncService.syncVideos().then(res => {
+            window._ytSyncAttempted = true;
             if (res && res.success && res.videos && typeof window.renderVideoBulletinsGrid === 'function') {
                 window.renderVideoBulletinsGrid(res.videos, window.currentVideoTab || 'videos');
+            } else if (typeof window.renderVideoBulletinsGrid === 'function') {
+                window.renderVideoBulletinsGrid();
             }
-        }).catch(err => console.warn("Auto-sync background check notice:", err));
+        }).catch(err => {
+            window._ytSyncAttempted = true;
+            if (typeof window.renderVideoBulletinsGrid === 'function') window.renderVideoBulletinsGrid();
+            console.warn("Auto-sync background check notice:", err);
+        });
     }
 
     if (typeof CloudStorageService !== 'undefined' && CloudStorageService.listenToVideos) {

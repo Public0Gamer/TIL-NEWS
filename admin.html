@@ -1840,7 +1840,7 @@
                             </div>
                             <div class="flex justify-between text-slate-400">
                                 <span>Channel ID:</span>
-                                <strong class="text-amber-400 font-mono text-[11px]">UC0pvCtEkKsmeCmGdxRKrBaA</strong>
+                                <strong class="text-amber-400 font-mono text-[11px]">UCFGKrpI4nrgrufZLaadC_8A</strong>
                             </div>
                             <div class="flex justify-between text-slate-400">
                                 <span>अंतिम सिंक समय:</span>
@@ -1851,7 +1851,23 @@
                                 <strong id="admin-total-videos-count" class="text-emerald-400 font-mono">0</strong>
                             </div>
                         </div>
-                        <button type="button" onclick="syncYouTubeVideosFromAdmin()" class="w-full bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-md cursor-pointer">
+
+                        <!-- Optional YouTube Data API Key Accordion -->
+                        <div class="mb-4 bg-slate-800/50 rounded-2xl p-3 border border-slate-700/60 text-xs">
+                            <label class="block text-[11px] font-bold text-slate-300 mb-1 flex items-center justify-between">
+                                <span><i class="fa-solid fa-key text-amber-400 mr-1"></i> YouTube Data API Key (वैकल्पिक):</span>
+                                <span class="text-[10px] text-emerald-400">Free 10K/Day</span>
+                            </label>
+                            <div class="flex gap-1.5">
+                                <input type="password" id="admin-yt-api-key" placeholder="AIzaSy... (खाली छोड़ें तो RSS ऑटो-सिंक चलेगा)" class="flex-1 px-2.5 py-1.5 bg-slate-900 rounded-lg text-slate-200 border border-slate-700 text-xs font-mono focus:outline-none focus:border-red-500">
+                                <button type="button" onclick="saveAdminYoutubeApiKey()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 cursor-pointer">
+                                    सेव
+                                </button>
+                            </div>
+                            <p class="text-[10px] text-slate-400 mt-1">Google Cloud की फ्री API Key लगाने पर नेशनल चैनल्स की तरह 0ms में बिना किसी प्रॉक्सी के डायरेक्ट सिंक होता है।</p>
+                        </div>
+
+                        <button type="button" id="btn-admin-sync-yt" onclick="syncYouTubeVideosFromAdmin()" class="w-full bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-md cursor-pointer">
                             <i class="fa-solid fa-rotate"></i>
                             <span>🔄 YouTube से ताज़ा वीडियो तुरंत सिंक करें</span>
                         </button>
@@ -1870,7 +1886,19 @@
                                 <label class="block text-xs font-bold text-slate-700 mb-1">
                                     YouTube वीडियो URL या ID:
                                 </label>
-                                <input type="text" id="custom-video-url" required placeholder="उदा. https://youtu.be/... या watch?v=..." class="w-full px-3 py-2 bg-slate-50 rounded-xl text-xs text-slate-800 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans">
+                                <input type="text" id="custom-video-url" required placeholder="उदा. https://youtu.be/... या watch?v=... या /shorts/..." class="w-full px-3 py-2 bg-slate-50 rounded-xl text-xs text-slate-800 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-sans">
+                                
+                                <!-- Smart Live oEmbed Auto-Fetch Preview Card -->
+                                <div id="video-oembed-preview" class="hidden mt-2 p-2.5 bg-slate-50 border border-emerald-200 rounded-xl flex items-center gap-3 animate-fade-in">
+                                    <img id="video-preview-thumb" src="" alt="Thumbnail" class="w-16 h-12 object-cover rounded-lg border border-slate-200 shadow-2xs shrink-0">
+                                    <div class="flex-1 min-w-0 text-xs">
+                                        <div class="flex items-center gap-1.5 mb-0.5">
+                                            <span id="video-preview-badge" class="bg-red-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded uppercase">📹 VIDEO</span>
+                                            <span id="video-preview-status" class="text-[10px] text-emerald-600 font-semibold"></span>
+                                        </div>
+                                        <p id="video-preview-title" class="font-bold text-slate-800 text-xs truncate"></p>
+                                    </div>
+                                </div>
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1.5">
@@ -2123,6 +2151,7 @@
                     renderAdminRatesPreview();
                     renderAdCampaignsList();
                     renderVideosManager();
+                    initYouTubeAdminTools();
                     initCloudAdmin();
                     setupFormHandlers();
                     setupHeartbeat();
@@ -4493,7 +4522,7 @@ function renderVideosManager() {
             if (vid) {
                 embedUrl = `https://www.youtube-nocookie.com/embed/${vid}?autoplay=0&rel=0`;
             } else {
-                embedUrl = `https://www.youtube-nocookie.com/embed/live_stream?channel=UC0pvCtEkKsmeCmGdxRKrBaA&autoplay=0`;
+                embedUrl = `https://www.youtube-nocookie.com/embed/live_stream?channel=UCFGKrpI4nrgrufZLaadC_8A&autoplay=0`;
             }
 
             previewBox.innerHTML = `
@@ -4518,7 +4547,7 @@ function renderVideosManager() {
             }
 
             const config = {
-                channelId: "UC0pvCtEkKsmeCmGdxRKrBaA",
+                channelId: "UCFGKrpI4nrgrufZLaadC_8A",
                 channelHandle: "@TILNEWS",
                 streamUrl: urlVal || "https://www.youtube.com/@TILNEWS/live",
                 videoId: vid,
@@ -4605,7 +4634,12 @@ function renderVideosManager() {
 
             StorageService.addVideo(newVideo);
             if (urlInput) urlInput.value = "";
-            if (titleInput) titleInput.value = "";
+            if (titleInput) {
+                titleInput.value = "";
+                delete titleInput.dataset.autofilled;
+            }
+            const previewCard = document.getElementById("video-oembed-preview");
+            if (previewCard) previewCard.classList.add("hidden");
 
             renderVideosManager();
             window.showToast(`✅ नया ${isShort ? 'यूट्यूब शॉर्ट्स (9:16)' : 'वीडियो (16:9)'} सफलतापूर्वक प्रकाशित हो गया!`, "success");
@@ -4616,6 +4650,117 @@ function renderVideosManager() {
             StorageService.deleteVideo(videoId);
             renderVideosManager();
             window.showToast("🗑️ वीडियो वेबसाइट से हटा दिया गया!", "success");
+        }
+
+        function saveAdminYoutubeApiKey() {
+            const input = document.getElementById("admin-yt-api-key");
+            const key = input ? input.value.trim() : "";
+            if (typeof StorageService !== 'undefined' && StorageService.saveYoutubeApiKey) {
+                StorageService.saveYoutubeApiKey(key);
+                if (key) {
+                    window.showToast("✅ YouTube Data API Key सुरक्षित रूप से सेव हो गई!", "success");
+                } else {
+                    window.showToast("ℹ️ API Key हटा दी गई, अब RSS ऑटो-सिंक चलेगा।", "info");
+                }
+            }
+        }
+
+        function initYouTubeAdminTools() {
+            // Load saved YouTube Data API Key
+            const apiKeyInput = document.getElementById("admin-yt-api-key");
+            if (apiKeyInput && typeof StorageService !== 'undefined' && StorageService.getYoutubeApiKey) {
+                apiKeyInput.value = StorageService.getYoutubeApiKey();
+            }
+
+            // Real-time oEmbed Auto-Fetch on Video URL input
+            const urlInput = document.getElementById("custom-video-url");
+            const titleInput = document.getElementById("custom-video-title");
+            const previewCard = document.getElementById("video-oembed-preview");
+            const previewThumb = document.getElementById("video-preview-thumb");
+            const previewBadge = document.getElementById("video-preview-badge");
+            const previewStatus = document.getElementById("video-preview-status");
+            const previewTitle = document.getElementById("video-preview-title");
+            const radioVideo = document.querySelector('input[name="custom-video-type"][value="video"]');
+            const radioShort = document.querySelector('input[name="custom-video-type"][value="short"]');
+
+            if (!urlInput || urlInput._hasYtListener) return;
+            urlInput._hasYtListener = true;
+
+            let debounceTimer = null;
+            const handleUrlChange = () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(async () => {
+                    const val = (urlInput.value || "").trim();
+                    if (!val) {
+                        if (previewCard) previewCard.classList.add("hidden");
+                        return;
+                    }
+
+                    let vid = "";
+                    if (typeof YouTubeSyncService !== 'undefined') {
+                        vid = YouTubeSyncService.extractVideoId(val);
+                    }
+
+                    if (!vid) {
+                        if (previewCard) previewCard.classList.add("hidden");
+                        return;
+                    }
+
+                    const isShort = val.includes("/shorts/") || val.toLowerCase().includes("#short");
+                    if (isShort && radioShort) {
+                        radioShort.checked = true;
+                    } else if (!isShort && radioVideo) {
+                        radioVideo.checked = true;
+                    }
+
+                    if (previewBadge) {
+                        previewBadge.className = isShort 
+                            ? "bg-red-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded uppercase"
+                            : "bg-blue-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded uppercase";
+                        previewBadge.innerText = isShort ? "⚡ SHORTS (9:16)" : "📹 VIDEO (16:9)";
+                    }
+
+                    if (previewThumb) {
+                        previewThumb.src = `https://i.ytimg.com/vi/${vid}/hqdefault.jpg`;
+                    }
+
+                    if (previewStatus) previewStatus.innerText = "⏳ विवरण लोड हो रहा है...";
+                    if (previewTitle) previewTitle.innerText = "YouTube से शीर्षक प्राप्त किया जा रहा है...";
+                    if (previewCard) previewCard.classList.remove("hidden");
+
+                    try {
+                        const oembedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${vid}&format=json`;
+                        const resp = await fetch(oembedUrl);
+                        if (resp.ok) {
+                            const data = await resp.json();
+                            if (data && data.title) {
+                                if (previewTitle) previewTitle.innerText = data.title;
+                                if (previewStatus) previewStatus.innerText = "✅ लाइव डिटेक्टेड";
+                                if (titleInput && (!titleInput.value || titleInput.dataset.autofilled === "true")) {
+                                    titleInput.value = data.title;
+                                    titleInput.dataset.autofilled = "true";
+                                }
+                            }
+                        } else {
+                            if (previewStatus) previewStatus.innerText = "ID: " + vid;
+                            if (previewTitle) previewTitle.innerText = "YouTube Video (" + vid + ")";
+                        }
+                    } catch(err) {
+                        if (previewStatus) previewStatus.innerText = "ID: " + vid;
+                        if (previewTitle) previewTitle.innerText = "YouTube Video (" + vid + ")";
+                    }
+                }, 300);
+            };
+
+            urlInput.addEventListener("input", handleUrlChange);
+            urlInput.addEventListener("paste", () => setTimeout(handleUrlChange, 100));
+            urlInput.addEventListener("change", handleUrlChange);
+
+            if (titleInput) {
+                titleInput.addEventListener("input", () => {
+                    delete titleInput.dataset.autofilled;
+                });
+            }
         }
 
         // ==========================================

@@ -282,11 +282,11 @@ const INITIAL_ADS = {
     }
 };
 
-const YOUTUBE_CHANNEL_ID = "UC0pvCtEkKsmeCmGdxRKrBaA";
+const YOUTUBE_CHANNEL_ID = "UCFGKrpI4nrgrufZLaadC_8A";
 const YOUTUBE_CHANNEL_HANDLE = "@TILNEWS";
 
 const DEFAULT_LIVE_TV_CONFIG = {
-    channelId: "UC0pvCtEkKsmeCmGdxRKrBaA",
+    channelId: "UCFGKrpI4nrgrufZLaadC_8A",
     channelHandle: "@TILNEWS",
     streamUrl: "https://www.youtube.com/@TILNEWS/live",
     videoId: "",
@@ -802,10 +802,7 @@ const StorageService = {
 
     // Video News & YouTube Bulletins Desk (Pure Dynamic Live Media Engine - Videos & Shorts)
     isLegacyDemoVideo(v) {
-        if (!v) return true;
-        const demoIds = ["ScVssakcrJg", "TNtY8qUqg3o", "Ec9Mr5a5dl8", "16tMwtWdsg4", "hodH5wGNnjg", "WOlifyDj6xM"];
-        if (v.videoId && demoIds.includes(v.videoId)) return true;
-        if (v.id && demoIds.some(d => v.id.includes(d))) return true;
+        if (!v || (!v.videoId && !v.id)) return true;
         return false;
     },
     getVideos(filter = 'all') {
@@ -873,6 +870,18 @@ const StorageService = {
         if (typeof CloudStorageService !== 'undefined' && CloudStorageService.isCloudReady && CloudStorageService.isCloudReady()) {
             CloudStorageService.saveLiveTV(cfg);
         }
+    },
+
+    // Optional YouTube Data API v3 Key
+    getYoutubeApiKey() {
+        return localStorage.getItem("todayindia_youtube_api_key") || "";
+    },
+    saveYoutubeApiKey(key) {
+        if (key && key.trim()) {
+            localStorage.setItem("todayindia_youtube_api_key", key.trim());
+        } else {
+            localStorage.removeItem("todayindia_youtube_api_key");
+        }
     }
 };
 
@@ -881,10 +890,11 @@ const StorageService = {
 // Dual Category Support: 16:9 Videos & 9:16 Shorts
 // ==========================================
 const YouTubeSyncService = {
-    CHANNEL_ID: "UC0pvCtEkKsmeCmGdxRKrBaA",
+    CHANNEL_ID: "UCFGKrpI4nrgrufZLaadC_8A",
+    UPLOADS_PLAYLIST_ID: "UUFGKrpI4nrgrufZLaadC_8A",
     CHANNEL_HANDLE: "@TILNEWS",
     CACHE_KEY: "todayindia_youtube_last_sync",
-    CACHE_TTL_MS: 15 * 60 * 1000, // 15 minutes auto-sync cache
+    CACHE_TTL_MS: 90 * 1000, // 90 seconds auto-sync check
 
     extractVideoId(url) {
         if (!url || typeof url !== 'string') return "";
@@ -902,73 +912,135 @@ const YouTubeSyncService = {
     },
 
     async fetchChannelVideos() {
-        const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${this.CHANNEL_ID}`;
-        const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`;
+        // 1. If YouTube Data API v3 key is configured, use it directly (100% reliable, zero proxy)
+        const apiKey = (typeof StorageService !== 'undefined' && StorageService.getYoutubeApiKey) 
+            ? StorageService.getYoutubeApiKey() 
+            : (localStorage.getItem("todayindia_youtube_api_key") || "");
 
-        try {
-            const resp = await fetch(proxyUrl, { headers: { 'Accept': 'application/json' } });
-            if (!resp.ok) throw new Error("rss2json status " + resp.status);
-            const data = await resp.json();
-            if (data.status !== "ok" || !Array.isArray(data.items)) throw new Error("Invalid RSS response");
-
-            return data.items.map(item => {
-                const vid = this.extractVideoId(item.link);
-                const isShort = this.isShortVideo(item);
-                return {
-                    id: "yt-" + (vid || Math.random().toString(36).substr(2, 9)),
-                    videoId: vid,
-                    type: isShort ? 'short' : 'video',
-                    title: item.title || (isShort ? "ताज़ा शॉर्ट्स" : "ताज़ा वीडियो बुलेटिन"),
-                    link: item.link || (vid ? (isShort ? `https://www.youtube.com/shorts/${vid}` : `https://www.youtube.com/watch?v=${vid}`) : `https://www.youtube.com/@TILNEWS`),
-                    thumbnail: vid ? `https://i.ytimg.com/vi/${vid}/hqdefault.jpg` : (item.thumbnail || "https://images.unsplash.com/photo-1495020689067-958852a7765e?w=600"),
-                    pubDate: item.pubDate || new Date().toISOString(),
-                    duration: isShort ? "शॉर्ट्स" : "वीडियो बुलेटिन",
-                    views: "TIL NEWS",
-                    isAutoSynced: true
-                };
-            }).filter(v => v.videoId && !StorageService.isLegacyDemoVideo(v));
-        } catch (err) {
-            console.warn("Primary YouTube RSS sync notice, trying fallback...", err);
+        if (apiKey) {
             try {
-                const fallbackUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(feedUrl)}`;
-                const rawResp = await fetch(fallbackUrl);
-                if (rawResp.ok) {
-                    const xmlText = await rawResp.text();
-                    const parser = new DOMParser();
-                    const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-                    const entries = Array.from(xmlDoc.querySelectorAll("entry"));
-                    if (entries.length > 0) {
-                        return entries.map(entry => {
-                            const vidEl = entry.querySelector("videoId") || entry.getElementsByTagNameNS("*", "videoId")[0];
-                            const vid = vidEl ? vidEl.textContent.trim() : "";
-                            const titleEl = entry.querySelector("title");
-                            const title = titleEl ? titleEl.textContent.trim() : "ताज़ा वीडियो";
-                            const linkEl = entry.querySelector("link");
-                            const link = linkEl ? linkEl.getAttribute("href") : (vid ? `https://www.youtube.com/watch?v=${vid}` : "");
-                            const pubDateEl = entry.querySelector("published");
-                            const pubDate = pubDateEl ? pubDateEl.textContent.trim() : "";
-                            const isShort = this.isShortVideo({ title, link });
-
+                const apiEndpoint = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${this.UPLOADS_PLAYLIST_ID}&maxResults=25&key=${apiKey}`;
+                const apiResp = await fetch(apiEndpoint);
+                if (apiResp.ok) {
+                    const apiData = await apiResp.json();
+                    if (apiData && Array.isArray(apiData.items)) {
+                        return apiData.items.map(item => {
+                            const snippet = item.snippet || {};
+                            const vid = snippet.resourceId ? snippet.resourceId.videoId : "";
+                            const title = snippet.title || "ताज़ा वीडियो";
+                            const isShort = this.isShortVideo({ title, link: `https://www.youtube.com/watch?v=${vid}` });
                             return {
                                 id: "yt-" + (vid || Math.random().toString(36).substr(2, 9)),
                                 videoId: vid,
                                 type: isShort ? 'short' : 'video',
                                 title: title,
-                                link: link || (isShort ? `https://www.youtube.com/shorts/${vid}` : `https://www.youtube.com/watch?v=${vid}`),
-                                thumbnail: vid ? `https://i.ytimg.com/vi/${vid}/hqdefault.jpg` : "https://images.unsplash.com/photo-1495020689067-958852a7765e?w=600",
-                                pubDate: pubDate || new Date().toISOString(),
+                                link: isShort ? `https://www.youtube.com/shorts/${vid}` : `https://www.youtube.com/watch?v=${vid}`,
+                                thumbnail: vid ? `https://i.ytimg.com/vi/${vid}/hqdefault.jpg` : (snippet.thumbnails?.high?.url || ""),
+                                pubDate: snippet.publishedAt || new Date().toISOString(),
                                 duration: isShort ? "शॉर्ट्स" : "वीडियो बुलेटिन",
                                 views: "TIL NEWS",
                                 isAutoSynced: true
                             };
-                        }).filter(v => v.videoId && !StorageService.isLegacyDemoVideo(v));
+                        }).filter(v => v.videoId);
                     }
                 }
-            } catch(fallbackErr) {
-                console.warn("YouTube fallback RSS proxy notice:", fallbackErr);
+            } catch(apiErr) {
+                console.warn("YouTube Data API call notice, falling back to RSS feeds:", apiErr);
             }
-            return null;
         }
+
+        // 2. RSS Feeds with Multi-Proxy Redundancy
+        const feedUrls = [
+            `https://www.youtube.com/feeds/videos.xml?channel_id=${this.CHANNEL_ID}`,
+            `https://www.youtube.com/feeds/videos.xml?playlist_id=${this.UPLOADS_PLAYLIST_ID}`
+        ];
+
+        // Strategy A: rss2json.com
+        for (const feedUrl of feedUrls) {
+            try {
+                const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}&order_by=pubDate`;
+                const resp = await fetch(proxyUrl, { headers: { 'Accept': 'application/json' } });
+                if (resp.ok) {
+                    const data = await resp.json();
+                    if (data.status === "ok" && Array.isArray(data.items) && data.items.length > 0) {
+                        return data.items.map(item => {
+                            const vid = this.extractVideoId(item.link) || (item.guid ? this.extractVideoId(item.guid) : "");
+                            const isShort = this.isShortVideo(item);
+                            return {
+                                id: "yt-" + (vid || Math.random().toString(36).substr(2, 9)),
+                                videoId: vid,
+                                type: isShort ? 'short' : 'video',
+                                title: item.title || (isShort ? "ताज़ा शॉर्ट्स" : "ताज़ा वीडियो बुलेटिन"),
+                                link: item.link || (vid ? (isShort ? `https://www.youtube.com/shorts/${vid}` : `https://www.youtube.com/watch?v=${vid}`) : `https://www.youtube.com/@TILNEWS`),
+                                thumbnail: vid ? `https://i.ytimg.com/vi/${vid}/hqdefault.jpg` : (item.thumbnail || "https://images.unsplash.com/photo-1495020689067-958852a7765e?w=600"),
+                                pubDate: item.pubDate || new Date().toISOString(),
+                                duration: isShort ? "शॉर्ट्स" : "वीडियो बुलेटिन",
+                                views: "TIL NEWS",
+                                isAutoSynced: true
+                            };
+                        }).filter(v => v.videoId);
+                    }
+                }
+            } catch(e) {
+                // Try next
+            }
+        }
+
+        // Strategy B: Raw XML via allorigins or corsproxy with DOMParser
+        const xmlProxies = [
+            (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+            (url) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`
+        ];
+
+        for (const feedUrl of feedUrls) {
+            for (const proxyFn of xmlProxies) {
+                try {
+                    const rawResp = await fetch(proxyFn(feedUrl));
+                    if (rawResp.ok) {
+                        const xmlText = await rawResp.text();
+                        if (xmlText && xmlText.includes("<feed")) {
+                            const parser = new DOMParser();
+                            const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+                            const entries = Array.from(xmlDoc.querySelectorAll("entry"));
+                            if (entries.length > 0) {
+                                return entries.map(entry => {
+                                    const vidEl = entry.querySelector("videoId") || entry.getElementsByTagNameNS("*", "videoId")[0];
+                                    let vid = vidEl ? vidEl.textContent.trim() : "";
+                                    if (!vid) {
+                                        const idEl = entry.querySelector("id");
+                                        if (idEl) vid = idEl.textContent.replace("yt:video:", "").trim();
+                                    }
+                                    const titleEl = entry.querySelector("title");
+                                    const title = titleEl ? titleEl.textContent.trim() : "ताज़ा वीडियो";
+                                    const linkEl = entry.querySelector("link");
+                                    const link = linkEl ? linkEl.getAttribute("href") : (vid ? `https://www.youtube.com/watch?v=${vid}` : "");
+                                    const pubDateEl = entry.querySelector("published") || entry.querySelector("updated");
+                                    const pubDate = pubDateEl ? pubDateEl.textContent.trim() : "";
+                                    const isShort = this.isShortVideo({ title, link });
+
+                                    return {
+                                        id: "yt-" + (vid || Math.random().toString(36).substr(2, 9)),
+                                        videoId: vid,
+                                        type: isShort ? 'short' : 'video',
+                                        title: title,
+                                        link: link || (isShort ? `https://www.youtube.com/shorts/${vid}` : `https://www.youtube.com/watch?v=${vid}`),
+                                        thumbnail: vid ? `https://i.ytimg.com/vi/${vid}/hqdefault.jpg` : "https://images.unsplash.com/photo-1495020689067-958852a7765e?w=600",
+                                        pubDate: pubDate || new Date().toISOString(),
+                                        duration: isShort ? "शॉर्ट्स" : "वीडियो बुलेटिन",
+                                        views: "TIL NEWS",
+                                        isAutoSynced: true
+                                    };
+                                }).filter(v => v.videoId);
+                            }
+                        }
+                    }
+                } catch(xErr) {
+                    // Try next proxy
+                }
+            }
+        }
+
+        return null;
     },
 
     async syncVideos(force = false) {
@@ -976,21 +1048,28 @@ const YouTubeSyncService = {
         const now = Date.now();
 
         if (!force && (now - lastSync) < this.CACHE_TTL_MS) {
-            return { success: true, videos: StorageService.getVideos(), cached: true };
+            const currentVideos = StorageService.getVideos();
+            if (currentVideos && currentVideos.length > 0) {
+                return { success: true, videos: currentVideos, cached: true };
+            }
         }
 
         const channelVideos = await this.fetchChannelVideos();
         if (!channelVideos || channelVideos.length === 0) {
-            return { success: false, videos: StorageService.getVideos(), message: "YouTube से नए वीडियो लोड नहीं हो सके" };
+            const existing = StorageService.getVideos();
+            return { 
+                success: existing.length > 0, 
+                videos: existing, 
+                message: existing.length > 0 ? "मौजूदा वीडियो लोड हैं" : "YouTube से नए वीडियो लोड नहीं हो सके" 
+            };
         }
 
         const existing = StorageService.getVideos();
-        const manualVideos = existing.filter(v => !v.isAutoSynced && !StorageService.isLegacyDemoVideo(v));
-
         const seenIds = new Set();
         const merged = [];
 
         // Manual videos take priority
+        const manualVideos = existing.filter(v => !v.isAutoSynced);
         manualVideos.forEach(v => {
             if (v.videoId && !seenIds.has(v.videoId)) {
                 seenIds.add(v.videoId);
@@ -999,12 +1078,27 @@ const YouTubeSyncService = {
             }
         });
 
-        // Add channel auto-synced videos
+        // Add newly synced channel videos
         channelVideos.forEach(v => {
             if (v.videoId && !seenIds.has(v.videoId)) {
                 seenIds.add(v.videoId);
                 merged.push(v);
             }
+        });
+
+        // Retain older previously synced videos so they shift down and remain accessible via 'Load More'
+        existing.forEach(v => {
+            if (v.videoId && !seenIds.has(v.videoId)) {
+                seenIds.add(v.videoId);
+                merged.push(v);
+            }
+        });
+
+        // National News Sorting: Sort by pubDate descending so newest upload is ALWAYS at index 0 (Top)
+        merged.sort((a, b) => {
+            const da = new Date(a.pubDate || 0).getTime();
+            const db = new Date(b.pubDate || 0).getTime();
+            return db - da;
         });
 
         StorageService.saveVideos(merged);
