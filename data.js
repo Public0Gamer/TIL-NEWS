@@ -896,6 +896,19 @@ const YouTubeSyncService = {
     CACHE_KEY: "todayindia_youtube_last_sync",
     CACHE_TTL_MS: 90 * 1000, // 90 seconds auto-sync check
 
+    async fetchWithTimeout(url, options = {}, timeout = 6000) {
+        const controller = new AbortController();
+        const id = setTimeout(() => controller.abort(), timeout);
+        try {
+            const response = await fetch(url, { ...options, signal: controller.signal });
+            clearTimeout(id);
+            return response;
+        } catch (error) {
+            clearTimeout(id);
+            throw error;
+        }
+    },
+
     extractVideoId(url) {
         if (!url || typeof url !== 'string') return "";
         url = url.trim();
@@ -920,7 +933,7 @@ const YouTubeSyncService = {
         if (apiKey) {
             try {
                 const apiEndpoint = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${this.UPLOADS_PLAYLIST_ID}&maxResults=25&key=${apiKey}`;
-                const apiResp = await fetch(apiEndpoint);
+                const apiResp = await this.fetchWithTimeout(apiEndpoint, {}, 5000);
                 if (apiResp.ok) {
                     const apiData = await apiResp.json();
                     if (apiData && Array.isArray(apiData.items)) {
@@ -949,17 +962,19 @@ const YouTubeSyncService = {
             }
         }
 
-        // 2. RSS Feeds with Multi-Proxy Redundancy
+        // 2. RSS Feeds with Multi-Proxy Redundancy (Parallel Execution for Speed)
         const feedUrls = [
             `https://www.youtube.com/feeds/videos.xml?channel_id=${this.CHANNEL_ID}`,
             `https://www.youtube.com/feeds/videos.xml?playlist_id=${this.UPLOADS_PLAYLIST_ID}`
         ];
 
+        const fetchPromises = [];
+
         // Strategy A: rss2json.com
         for (const feedUrl of feedUrls) {
-            try {
-                const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}&order_by=pubDate`;
-                const resp = await fetch(proxyUrl, { headers: { 'Accept': 'application/json' } });
+            const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}&order_by=pubDate&_t=${Date.now()}`;
+            fetchPromises.push((async () => {
+                const resp = await this.fetchWithTimeout(proxyUrl, { headers: { 'Accept': 'application/json' } }, 5000);
                 if (resp.ok) {
                     const data = await resp.json();
                     if (data.status === "ok" && Array.isArray(data.items) && data.items.length > 0) {
@@ -981,9 +996,8 @@ const YouTubeSyncService = {
                         }).filter(v => v.videoId);
                     }
                 }
-            } catch(e) {
-                // Try next
-            }
+                throw new Error("Invalid rss2json response");
+            })());
         }
 
         // Strategy B: Raw XML via allorigins or corsproxy with DOMParser
@@ -994,8 +1008,9 @@ const YouTubeSyncService = {
 
         for (const feedUrl of feedUrls) {
             for (const proxyFn of xmlProxies) {
-                try {
-                    const rawResp = await fetch(proxyFn(feedUrl));
+                const pUrl = proxyFn(feedUrl) + `&_t=${Date.now()}`;
+                fetchPromises.push((async () => {
+                    const rawResp = await this.fetchWithTimeout(pUrl, {}, 5000);
                     if (rawResp.ok) {
                         const xmlText = await rawResp.text();
                         if (xmlText && xmlText.includes("<feed")) {
@@ -1034,10 +1049,20 @@ const YouTubeSyncService = {
                             }
                         }
                     }
-                } catch(xErr) {
-                    // Try next proxy
-                }
+                    throw new Error("Invalid raw XML response");
+                })());
             }
+        }
+
+        try {
+            // Wait for ANY of the proxies to succeed
+            const fastestResult = await Promise.any(fetchPromises);
+            if (fastestResult && fastestResult.length > 0) {
+                return fastestResult;
+            }
+        } catch (aggErr) {
+            // All proxies failed
+            console.warn("All RSS proxies failed to fetch latest videos.");
         }
 
         return null;

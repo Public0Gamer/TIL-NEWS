@@ -1100,7 +1100,15 @@ ${isShort ? 'शॉर्ट्स' : 'वीडियो'} देखें: ${u
 
     // Auto-Sync Video Bulletins from YouTube Channel (@TILNEWS)
     if (typeof YouTubeSyncService !== 'undefined') {
+        const fallbackTimer = setTimeout(() => {
+            if (!window._ytSyncAttempted) {
+                window._ytSyncAttempted = true;
+                if (typeof window.renderVideoBulletinsGrid === 'function') window.renderVideoBulletinsGrid();
+            }
+        }, 8000);
+
         YouTubeSyncService.syncVideos().then(res => {
+            clearTimeout(fallbackTimer);
             window._ytSyncAttempted = true;
             if (res && res.success && res.videos && typeof window.renderVideoBulletinsGrid === 'function') {
                 window.renderVideoBulletinsGrid(res.videos, window.currentVideoTab || 'videos');
@@ -1108,6 +1116,7 @@ ${isShort ? 'शॉर्ट्स' : 'वीडियो'} देखें: ${u
                 window.renderVideoBulletinsGrid();
             }
         }).catch(err => {
+            clearTimeout(fallbackTimer);
             window._ytSyncAttempted = true;
             if (typeof window.renderVideoBulletinsGrid === 'function') window.renderVideoBulletinsGrid();
             console.warn("Auto-sync background check notice:", err);
