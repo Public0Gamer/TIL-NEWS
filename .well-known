@@ -1,8 +1,0 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "com.todayindialive.news",
-        "sha256_cert_fingerprints": ["AB:93:02:82:25:BF:F2:04:BB:CA:FE:FE:E0:6D:CB:DC:84:50:FD:0D:88:3C:C2:B9:32:A2:17:04:29:C3:89:9D"]
-      }
-    }]
