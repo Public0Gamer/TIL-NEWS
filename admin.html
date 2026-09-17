@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TODAY INDIA LIVE NEWS | न्यूज़ रूम CMS एवं संपादकीय प्रणाली (Kanpur)</title>
+    
+    <!-- Emergency Auto-Reset Script (Runs only once) -->
+    <script>
+        if (!localStorage.getItem("emergency_reset_done_v1")) {
+            localStorage.removeItem("til_newsroom_credentials");
+            sessionStorage.removeItem("til_newsroom_active_session");
+            localStorage.setItem("emergency_reset_done_v1", "true");
+            window.location.reload();
+        }
+    </script>
     <link rel="icon" type="image/png" href="logo.png">
     
     <!-- Google Fonts -->
