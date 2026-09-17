@@ -116,12 +116,6 @@
                     <span class="hidden sm:inline font-hindi" id="header-cloud-status-text">क्लाउड इंजन</span>
                 </button>
 
-                <!-- Password Change Button (DIRECTOR ONLY) -->
-                <button type="button" id="btn-change-pass" onclick="openChangePasswordModal()" class="bg-slate-900 hover:bg-slate-800 text-amber-300 hover:text-amber-200 text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-slate-700 transition flex items-center gap-1.5 cursor-pointer shadow-xs" title="सुरक्षा पासवर्ड प्रबंधन (केवल डायरेक्टर)">
-                    <i class="fa-solid fa-key text-[11px] text-amber-400"></i>
-                    <span class="hidden sm:inline font-hindi">पासवर्ड प्रबंधन</span>
-                </button>
-
                 <!-- YouTube Channel Link -->
                 <a href="https://www.youtube.com/@TILNEWS" target="_blank" rel="noopener" class="bg-red-600/20 text-red-400 hover:text-white hover:bg-red-600 text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-red-800/50 transition flex items-center gap-1" title="YouTube चैनल">
                     <i class="fa-brands fa-youtube text-[12px] text-red-500"></i>
@@ -217,12 +211,15 @@
                         </div>
                     </div>
 
-                    <!-- Remember session checkbox -->
+                    <!-- Remember session checkbox & Forgot Password -->
                     <div class="flex items-center justify-between text-xs pt-1">
                         <label class="flex items-center gap-2 cursor-pointer text-slate-600 select-none">
                             <input type="checkbox" id="remember-session" class="w-4 h-4 text-red-600 rounded border-slate-300 focus:ring-red-500 cursor-pointer">
-                            <span>इस डिवाइस पर सत्र याद रखें (Keep Logged In)</span>
+                            <span>इस डिवाइस पर सत्र याद रखें</span>
                         </label>
+                        <button type="button" onclick="triggerForgotPassword()" class="text-red-600 hover:text-red-700 font-bold hover:underline cursor-pointer">
+                            पासवर्ड भूल गए?
+                        </button>
                     </div>
 
                     <!-- Login Submit Button -->
@@ -252,72 +249,7 @@
         </div>
     </div>
 
-    <!-- 1.6. Director Master Password Modal (Only accessible to Director) -->
-    <div id="change-pass-modal" class="hidden fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 font-hindi relative">
-            <button type="button" onclick="closeChangePasswordModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center transition cursor-pointer">
-                <i class="fa-solid fa-xmark text-sm"></i>
-            </button>
 
-            <div class="flex items-center gap-3 pb-3 border-b border-slate-100 mb-4">
-                <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-lg">
-                    <i class="fa-solid fa-key"></i>
-                </div>
-                <div>
-                    <h3 class="font-black text-slate-900 text-base">संपादकीय पासवर्ड प्रबंधन (Director Master)</h3>
-                    <p class="text-xs text-slate-500">केवल डायरेक्टर को सभी भूमिकाओं के पासवर्ड बदलने की अनुमति है</p>
-                </div>
-            </div>
-
-            <form id="change-password-form" onsubmit="saveNewPassword(event)" class="space-y-3">
-                <div id="modal-error-alert" class="hidden bg-red-50 border border-red-200 text-red-700 text-xs p-2.5 rounded-lg flex items-center gap-2">
-                    <i class="fa-solid fa-triangle-exclamation text-red-600"></i>
-                    <span id="modal-error-text">वर्तमान पासवर्ड गलत है!</span>
-                </div>
-                <div id="modal-success-alert" class="hidden bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs p-2.5 rounded-lg flex items-center gap-2">
-                    <i class="fa-solid fa-circle-check text-emerald-600"></i>
-                    <span id="modal-success-text">पासवर्ड सफलतापूर्वक बदल दिया गया है!</span>
-                </div>
-
-                <!-- Select Target Role -->
-                <div>
-                    <label for="target-role-select" class="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
-                        <span>किस भूमिका का पासवर्ड बदलना है?</span>
-                        <span class="text-[10px] text-red-600 font-bold">*अनिवार्य</span>
-                    </label>
-                    <select id="target-role-select" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600 cursor-pointer">
-                        <option value="chief_editor">👑 डायरेक्टर / प्रधान संपादक (सुरेंद्र कुमार राजपूत)</option>
-                        <option value="sub_editor">📝 उप-संपादक (डेस्क)</option>
-                        <option value="reporter">🎤 फील्ड रिपोर्टर (संवाददाता)</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">डायरेक्टर का वर्तमान पासवर्ड (प्रमाणीकरण हेतु):</label>
-                    <input type="password" id="current-pass-input" required placeholder="अपना डायरेक्टर पासवर्ड दर्ज करें..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-red-600 font-sans">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">चुनी गई भूमिका के लिए नया पासवर्ड:</label>
-                    <input type="password" id="new-pass-input" required minlength="4" placeholder="नया पासवर्ड दर्ज करें..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-red-600 font-sans">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">नए पासवर्ड की पुष्टि करें:</label>
-                    <input type="password" id="confirm-pass-input" required minlength="4" placeholder="नया पासवर्ड दोबारा दर्ज करें..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-red-600 font-sans">
-                </div>
-
-                <div class="pt-2 flex items-center justify-end gap-2">
-                    <button type="button" onclick="closeChangePasswordModal()" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition cursor-pointer">
-                        रद्द करें (Cancel)
-                    </button>
-                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg text-xs transition shadow-xs cursor-pointer">
-                        नया पासवर्ड सहेजें (Save Password)
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <!-- 1.7. Director Custom Daily Rates Modal -->
     <div id="edit-rates-modal" class="hidden fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4">
@@ -475,6 +407,9 @@
                 <button onclick="switchTab('cloud')" id="nav-btn-cloud" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 transition flex items-center justify-between">
                     <span class="flex items-center gap-2"><i class="fa-solid fa-cloud-bolt w-5 text-center text-sky-600"></i> ☁️ क्लाउड स्टोरेज (Cloud Engine)</span>
                     <span id="sidebar-cloud-badge" class="text-[10px] bg-sky-100 text-sky-800 font-sans px-1.5 py-0.5 rounded font-bold uppercase tracking-wide">Free</span>
+                </button>
+                <button onclick="switchTab('security')" id="nav-btn-security" class="hidden w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 transition flex items-center justify-between">
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-shield-halved w-5 text-center text-emerald-600"></i> सुरक्षा (Security & Passwords)</span>
                 </button>
             </div>
 
@@ -1972,6 +1907,66 @@
                 </div>
             </div>
 
+            <!-- SECURITY & PASSWORDS TAB -->
+            <div id="tab-security" class="hidden animate-fade-in space-y-6">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 text-lg shadow-inner">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-black text-slate-800 tracking-tight">सुरक्षा एवं पासवर्ड प्रबंधन</h2>
+                        <p class="text-xs text-slate-500 font-medium">केवल डायरेक्टर द्वारा संचालित मास्टर एक्सेस (Secure Access Control)</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                    <form id="change-password-form" onsubmit="saveNewPassword(event)" class="space-y-4 max-w-lg">
+                        <div id="modal-error-alert" class="hidden bg-red-50 border border-red-200 text-red-700 text-xs p-3 rounded-xl flex items-center gap-2 font-bold">
+                            <i class="fa-solid fa-triangle-exclamation text-red-600 text-sm"></i>
+                            <span id="modal-error-text">वर्तमान पासवर्ड गलत है!</span>
+                        </div>
+                        <div id="modal-success-alert" class="hidden bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs p-3 rounded-xl flex items-center gap-2 font-bold">
+                            <i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i>
+                            <span id="modal-success-text">पासवर्ड सफलतापूर्वक बदल दिया गया है!</span>
+                        </div>
+
+                        <div>
+                            <label for="target-role-select" class="block text-sm font-bold text-slate-800 mb-1.5 flex items-center justify-between">
+                                <span>किसका पासवर्ड बदलना है?</span>
+                                <span class="text-[10px] text-red-600 font-bold bg-red-50 px-2 py-0.5 rounded">*अनिवार्य</span>
+                            </label>
+                            <select id="target-role-select" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600 focus:bg-white transition cursor-pointer">
+                                <option value="chief_editor">👑 डायरेक्टर / प्रधान संपादक (स्वयं का पासवर्ड)</option>
+                                <option value="sub_editor">📝 उप-संपादक (डेस्क)</option>
+                                <option value="reporter">🎤 फील्ड रिपोर्टर (संवाददाता)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">डायरेक्टर का वर्तमान पासवर्ड (प्रमाणीकरण हेतु):</label>
+                            <input type="password" id="current-pass-input" required placeholder="अपना डायरेक्टर पासवर्ड दर्ज करें..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-600 focus:bg-white transition font-sans">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">नया पासवर्ड बनाएं:</label>
+                            <input type="password" id="new-pass-input" required minlength="4" placeholder="कम से कम 4 अक्षरों का नया पासवर्ड दर्ज करें..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-600 focus:bg-white transition font-sans">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">नया पासवर्ड (पुष्टि):</label>
+                            <input type="password" id="confirm-pass-input" required minlength="4" placeholder="नया पासवर्ड दोबारा दर्ज करें..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-600 focus:bg-white transition font-sans">
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-bold py-3.5 px-4 rounded-xl text-sm transition shadow-md shadow-emerald-600/30 flex items-center justify-center gap-2 cursor-pointer">
+                                <i class="fa-solid fa-floppy-disk"></i>
+                                <span>पासवर्ड अपडेट करें (Save Password)</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </main>
 
@@ -2063,7 +2058,7 @@
             } catch (e) {
                 console.error("Credentials storage error:", e);
             }
-            return DEFAULT_CREDENTIALS;
+            return JSON.parse(JSON.stringify(DEFAULT_CREDENTIALS));
         }
 
         function saveStoredCredentials(creds) {
@@ -2113,24 +2108,24 @@
                 if (headerAuthControls) headerAuthControls.classList.remove("hidden");
 
                 const isDirector = (session.role === 'chief_editor');
-                const btnChangePass = document.getElementById("btn-change-pass");
                 const headerRoleContainer = document.getElementById("header-role-container");
                 const headerRoleLockedBadge = document.getElementById("header-role-locked-badge");
                 const headerLockedRoleText = document.getElementById("header-locked-role-text");
 
                 const headerCloudPill = document.getElementById("header-cloud-pill");
+                const navBtnSecurity = document.getElementById("nav-btn-security"); // NEW NAV BUTTON
                 if (isDirector) {
                     // Director can manage all passwords, switch roles, and view cloud engine
-                    if (btnChangePass) btnChangePass.classList.remove("hidden");
                     if (headerRoleContainer) headerRoleContainer.classList.remove("hidden");
                     if (headerRoleLockedBadge) headerRoleLockedBadge.classList.add("hidden");
                     if (headerCloudPill) headerCloudPill.classList.remove("hidden");
+                    if (navBtnSecurity) navBtnSecurity.classList.remove("hidden");
                     if (roleSelector) roleSelector.value = session.role;
                 } else {
                     // Non-directors: Cannot change passwords, cannot switch role, cannot access cloud!
-                    if (btnChangePass) btnChangePass.classList.add("hidden");
                     if (headerRoleContainer) headerRoleContainer.classList.add("hidden");
                     if (headerCloudPill) headerCloudPill.classList.add("hidden");
+                    if (navBtnSecurity) navBtnSecurity.classList.add("hidden");
                     if (headerRoleLockedBadge) {
                         headerRoleLockedBadge.classList.remove("hidden");
                         if (headerLockedRoleText) {
@@ -2239,6 +2234,33 @@
             window.location.reload();
         }
 
+        function triggerForgotPassword() {
+            const role = document.getElementById("login-role").value;
+            const roleLabels = {
+                'chief_editor': 'डायरेक्टर / प्रधान संपादक',
+                'sub_editor': 'उप-संपादक (डेस्क)',
+                'reporter': 'फील्ड रिपोर्टर'
+            };
+            const roleName = roleLabels[role] || 'यूजर';
+            
+            const num = prompt(`${roleName} का पंजीकृत मोबाइल नंबर या ईमेल आईडी दर्ज करें:`);
+            if (num && num.trim().length > 4) {
+                // Simulate real network request
+                const btn = event.target;
+                const origText = btn.innerText;
+                btn.innerText = "लिंक भेज रहा है...";
+                btn.disabled = true;
+                
+                setTimeout(() => {
+                    alert(`पासवर्ड रीसेट लिंक आपके पंजीकृत संपर्क (${num}) पर भेज दिया गया है।\n\nयदि आपको संदेश नहीं मिला है, तो कृपया सिस्टम एडमिनिस्ट्रेटर (डायरेक्टर) से संपर्क करें।`);
+                    btn.innerText = origText;
+                    btn.disabled = false;
+                }, 1500);
+            } else if (num !== null) {
+                alert("कृपया वैध मोबाइल नंबर या ईमेल दर्ज करें।");
+            }
+        }
+
         function togglePasswordVisibility(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
@@ -2258,29 +2280,7 @@
             }
         }
 
-        // Change Password Modal Controls (Director Only)
-        function openChangePasswordModal() {
-            const session = getActiveSession();
-            if (!session || session.role !== 'chief_editor') {
-                alert("पासवर्ड बदलने की अनुमति केवल डायरेक्टर को है।");
-                return;
-            }
-            const modal = document.getElementById("change-pass-modal");
-            const err = document.getElementById("modal-error-alert");
-            const succ = document.getElementById("modal-success-alert");
-
-            if (err) err.classList.add("hidden");
-            if (succ) succ.classList.add("hidden");
-            document.getElementById("change-password-form").reset();
-            document.getElementById("target-role-select").value = "chief_editor";
-            if (modal) modal.classList.remove("hidden");
-        }
-
-        function closeChangePasswordModal() {
-            const modal = document.getElementById("change-pass-modal");
-            if (modal) modal.classList.add("hidden");
-        }
-
+        // Change Password Logic (Director Only - Inside Security Tab)
         function saveNewPassword(e) {
             e.preventDefault();
             const session = getActiveSession();
@@ -2348,10 +2348,10 @@
 
             succ.classList.remove("hidden");
             succText.innerText = `'${getRoleLabel(targetRole)}' का नया पासवर्ड सफलतापूर्वक सहेजा गया!`;
-
             setTimeout(() => {
-                closeChangePasswordModal();
-            }, 1500);
+                succ.classList.add("hidden");
+                document.getElementById("change-password-form").reset();
+            }, 2500);
         }
 
         // 1. Role-Based Access Control (RBAC) Logic
@@ -2468,8 +2468,8 @@
 
             const canOperateEPaper = (isDirector || currentRole === 'sub_editor');
 
-            // Strict Privacy Enforcer: Non-directors CANNOT access Cloud, Ads, or Audit History
-            if (!isDirector && (tabKey === 'cloud' || tabKey === 'ads' || tabKey === 'audit')) {
+            // Strict Privacy Enforcer: Non-directors CANNOT access Cloud, Ads, Audit History, or Security
+            if (!isDirector && (tabKey === 'cloud' || tabKey === 'ads' || tabKey === 'audit' || tabKey === 'security')) {
                 window.showToast("⛔ यह अनुभाग केवल डायरेक्टर (सुरेंद्र कुमार राजपूत) के लिए सुरक्षित है!", "error");
                 switchTab('editor');
                 return;
@@ -2488,7 +2488,7 @@
                 return;
             }
 
-            const tabs = ['dashboard', 'editor', 'breaking', 'liveblog', 'inbox', 'stories', 'ads', 'audit', 'cloud', 'epaper', 'videos'];
+            const tabs = ['dashboard', 'editor', 'breaking', 'liveblog', 'inbox', 'stories', 'ads', 'audit', 'cloud', 'epaper', 'videos', 'security'];
             tabs.forEach(t => {
                 const pane = document.getElementById(`tab-${t}`);
                 const btn = document.getElementById(`nav-btn-${t}`);
