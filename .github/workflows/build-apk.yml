@@ -16,13 +16,14 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Set up Android SDK
-      uses: android-actions/setup-android@v3
-
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
       with:
         gradle-version: '8.4'
+
+    - name: Accept Android Licenses
+      run: |
+        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
     - name: Generate Clean Android Project
       run: |
@@ -60,6 +61,7 @@ jobs:
         org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
         android.useAndroidX=true
         android.nonTransitiveRClass=true
+        android.builder.sdkDownload=true
         EOF
 
         cat << 'EOF' > android_build/app/build.gradle
@@ -250,7 +252,7 @@ jobs:
     - name: Build Android APK
       run: |
         cd android_build
-        gradle assembleDebug
+        gradle assembleDebug --stacktrace
 
     - name: Upload Finished APK
       uses: actions/upload-artifact@v4
