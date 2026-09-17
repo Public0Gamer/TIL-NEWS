@@ -56,6 +56,10 @@
     <!-- Custom Stylesheet -->
         <link rel="stylesheet" href="style.css?v=20260907_v12_cloud">
     <link rel="stylesheet" href="css/style.css?v=20260907_v12_cloud">
+    <!-- PWA Setup -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#E63946">
+    <link rel="apple-touch-icon" href="logo.png">
 </head>
 <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
 
@@ -1117,6 +1121,18 @@
       if (typeof AdEngine === 'undefined') {
         document.write('<script src="js/app.js?v=20260907_v12_cloud"><\/script>');
       }
+    </script>
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(registration => {
+                    console.log('App Background Engine (SW) registered!');
+                }).catch(err => {
+                    console.log('SW registration failed: ', err);
+                });
+            });
+        }
     </script>
 </body>
 </html>
