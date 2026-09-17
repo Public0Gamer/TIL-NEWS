@@ -7,10 +7,10 @@
     
     <!-- Emergency Auto-Reset Script (Runs only once) -->
     <script>
-        if (!localStorage.getItem("emergency_reset_done_v1")) {
+        if (!localStorage.getItem("emergency_reset_done_v2")) {
             localStorage.removeItem("til_newsroom_credentials");
             sessionStorage.removeItem("til_newsroom_active_session");
-            localStorage.setItem("emergency_reset_done_v1", "true");
+            localStorage.setItem("emergency_reset_done_v2", "true");
             window.location.reload();
         }
     </script>
@@ -1954,11 +1954,6 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-600 mb-1">डायरेक्टर का वर्तमान पासवर्ड (प्रमाणीकरण हेतु):</label>
-                            <input type="password" id="current-pass-input" required placeholder="अपना डायरेक्टर पासवर्ड दर्ज करें..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-600 focus:bg-white transition font-sans">
-                        </div>
-
-                        <div>
                             <label class="block text-xs font-bold text-slate-600 mb-1">नया पासवर्ड बनाएं:</label>
                             <input type="password" id="new-pass-input" required minlength="4" placeholder="कम से कम 4 अक्षरों का नया पासवर्ड दर्ज करें..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-600 focus:bg-white transition font-sans">
                         </div>
@@ -2299,7 +2294,7 @@
             }
 
             const targetRole = document.getElementById("target-role-select").value;
-            const currentPass = (document.getElementById("current-pass-input").value || "").trim();
+
             const newPass = (document.getElementById("new-pass-input").value || "").trim();
             const confirmPass = (document.getElementById("confirm-pass-input").value || "").trim();
 
@@ -2313,13 +2308,6 @@
 
             const creds = getStoredCredentials();
             const directorCreds = creds['chief_editor'] || DEFAULT_CREDENTIALS['chief_editor'];
-
-            // Verify Director's current password strictly (no PIN or backdoor)
-            if (currentPass !== directorCreds.pass) {
-                err.classList.remove("hidden");
-                errText.innerText = "डायरेक्टर का वर्तमान पासवर्ड गलत है!";
-                return;
-            }
 
             if (newPass.length < 4) {
                 err.classList.remove("hidden");
